@@ -12,7 +12,7 @@ Authors:
     
 * William Boytinck
 * Frank Li
-* Firstname Lastname
+* Ian Harding
 * Firstname Lastname
 * Firstname Lastnmae
 
