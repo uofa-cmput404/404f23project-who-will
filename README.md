@@ -10,7 +10,7 @@ Contributors / Licensing
 
 Authors:
     
-* Firstname Lastname
+* William Boytinck
 * Firstname Lastname
 * Firstname Lastname
 * Firstname Lastname
