@@ -13,7 +13,7 @@ Authors:
 * William Boytinck
 * Frank Li
 * Ian Harding
-* Firstname Lastname
+* Neel Patel
 * Firstname Lastnmae
 
 Generally everything is LICENSE'D under the ______________.
