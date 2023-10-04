@@ -11,7 +11,7 @@ Contributors / Licensing
 Authors:
     
 * William Boytinck
-* Firstname Lastname
+* Frank Li
 * Firstname Lastname
 * Firstname Lastname
 * Firstname Lastnmae
