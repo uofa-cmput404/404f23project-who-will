@@ -15,5 +15,6 @@ Authors:
 * Ian Harding
 * Neel Patel
 * Firstname Lastnmae
+* Xuemeng Wei
 
 Generally everything is LICENSE'D under the ______________.
