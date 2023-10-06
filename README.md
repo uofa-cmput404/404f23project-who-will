@@ -9,12 +9,11 @@ Contributors / Licensing
 ========================
 
 Authors:
-    
+Firstname Lastname    
 * William Boytinck
 * Frank Li
 * Ian Harding
 * Neel Patel
-* Firstname Lastnmae
 * Xuemeng Wei
 
-Generally everything is LICENSE'D under the ______________.
+Generally everything is LICENSE'D under the Apache License 2.0
