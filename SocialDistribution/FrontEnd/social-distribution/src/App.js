@@ -27,7 +27,7 @@ function App() {
         <Button>Danger Button</Button>
         <Button>Warning Button</Button>
         <Button>Primary Button</Button>
-        <TextInput value="test"></TextInput>
+        <TextInput place_holder="test"></TextInput>
       </div>
     </React.Fragment>
   );
