@@ -22,7 +22,7 @@ function App() {
           gap: "10px",
          }}
       >
-        <Button variant="primary">Success Button</Button>
+        <Button variant="success">Success Button</Button>
         <Button>Danger Button</Button>
         <Button>Warning Button</Button>
         <Button>Primary Button</Button>

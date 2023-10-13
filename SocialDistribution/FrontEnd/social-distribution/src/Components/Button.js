@@ -41,6 +41,16 @@ const ButtonComponent = styled.button`
             ? "#212529"
             : props.variant === "primary"
             ? "#0d6efd"
+            : props.variant === "secondary"
+            ? "#6c757d"
+            : props.variant === "success"
+            ? "#198754"
+            : props.variant === "info"
+            ? "#0dcaf0"
+            : props.variant === "warning"
+            ? "#ffc107"
+            : props.variant === "danger"
+            ? "#dc3545"
             : "f8f9fa"
     };
 `;
