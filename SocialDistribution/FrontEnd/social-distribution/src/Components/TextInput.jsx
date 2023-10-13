@@ -15,10 +15,16 @@ const TextAreaComponent = styled.textarea`
     border-radius: 3px
 `;
 
-const TextInput = ({type, place_holder, id, name, onChange, box}) => {
+const TextInput = ({type, placeholder, id, name, onChange, box}) => {
     if (box){
         return(
-            <TextAreaComponent></TextAreaComponent>
+            <TextAreaComponent
+                id={id}
+                name={name}
+                placeholder={placeholder}
+                rows="4"
+                col = "50"
+            ></TextAreaComponent>
         );
     } else {
 
@@ -27,7 +33,7 @@ const TextInput = ({type, place_holder, id, name, onChange, box}) => {
                 id={id}
                 name={name}
                 type={type ? type:"text"}
-                placeholder={place_holder} 
+                placeholder={placeholder} 
                 onChange={onChange}
             />
         );
