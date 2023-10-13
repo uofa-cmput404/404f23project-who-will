@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import Button from './Components/Button';
+import TextInput from './Components/TextInput';
 function App() {
   return (
     <React.Fragment>
@@ -26,6 +27,7 @@ function App() {
         <Button>Danger Button</Button>
         <Button>Warning Button</Button>
         <Button>Primary Button</Button>
+        <TextInput value="test"></TextInput>
       </div>
     </React.Fragment>
   );
