@@ -11,6 +11,20 @@ export const Nav = styled.nav`
     z-index: 10;
 `;
 
+export const NavLogo = styled(Link)`
+    color: #fff;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 0.1rem;
+    padding-left: 1rem;
+    height: 100%;
+    cursor: pointer;
+    &.active{
+        color: #15cdfc;
+    }
+`;
+
 export const NavLink = styled(Link)`
     color: #fff;
     display: flex;
@@ -42,7 +56,7 @@ export const Bars = styled(FaBars)`
 export const NavMenu = styled.div`
     display: flex;
     align-items: center;
-    margin-right: -24px;
+    margin-left: -1400px;
 
     @media screen and (max-width:768px) {
         display: none;

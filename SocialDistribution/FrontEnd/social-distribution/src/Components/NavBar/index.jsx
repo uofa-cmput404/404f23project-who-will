@@ -6,15 +6,16 @@ import {
     NavMenu,
     NavBtn,
     NavBtnLink,
+    NavLogo,
 } from './NavBarElements';
 
 const NavBar = () => {
   return (
     <>
         <Nav>
-            <NavLink to='/'>
+            <NavLogo to='/'>
                 <h1>Logo</h1>
-            </NavLink>
+            </NavLogo>
             <Bars/>
             <NavMenu>
                 <NavLink to="/account" activeStyle>
