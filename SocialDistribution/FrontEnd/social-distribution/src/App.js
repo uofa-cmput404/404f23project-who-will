@@ -1,35 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import Button from './Components/Button';
-import TextInput from './Components/TextInput';
+import NavBar from './Components/NavBar/index';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Account from './pages/Account';
 function App() {
   return (
-    <React.Fragment>
-      <h1
-      style={{
-        textAlign: "center",
-        fontSize: "17px",
-        margin: "15px"
-      }}
-      >
-        Create Reusable Button Components
-      </h1>
-      <div
-        style={{ 
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "10px",
-         }}
-      >
-        <Button variant="success">Success Button</Button>
-        <Button>Danger Button</Button>
-        <Button>Warning Button</Button>
-        <Button>Primary Button</Button>
-        <TextInput place_holder="test" box="true"></TextInput>
-      </div>
-    </React.Fragment>
+    <Router>
+      <NavBar/>
+      <Routes>
+        <Route path='/' exact Component={Home} />
+        <Route path='/account' Component={Account}/>
+      </Routes>
+    </Router>
   );
 }
 

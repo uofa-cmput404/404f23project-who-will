@@ -2,7 +2,12 @@ import React from "react";
 
 const Account = () => {
     return(
-        <div>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '90vh'
+        }}>
             <h1>Account</h1>
         </div>
     );
