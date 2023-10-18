@@ -9,6 +9,7 @@ import {
     NavLogo,
 } from './NavBarElements';
 
+
 const NavBar = () => {
   return (
     <>
@@ -21,10 +22,14 @@ const NavBar = () => {
                 <NavLink to="/account" activeStyle>
                     Account
                 </NavLink>
+                <NavLink to="/friends" activeStyle>
+                    Friends
+                </NavLink>
             </NavMenu>
             <NavBtn>
                 <NavBtnLink to='/signin'>Sign In</NavBtnLink>
             </NavBtn>
+                        
         </Nav>
     </>
   )
