@@ -14,6 +14,9 @@ function App() {
       <Routes>
         <Route path='/' exact Component={Home} />
         <Route path='/account' Component={Account}/>
+        <Route path='/signin' Component={Login}/>
+        <Route path='/friends' Component={Friends}/>
+
       </Routes>
     </Router>
   );

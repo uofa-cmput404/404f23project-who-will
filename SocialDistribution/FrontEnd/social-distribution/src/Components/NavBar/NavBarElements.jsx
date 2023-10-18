@@ -58,11 +58,6 @@ export const Bars = styled(FaBars)`
 export const NavMenu = styled.div`
     display: inline-flex;
     align-items: center;
-<<<<<<< HEAD
-=======
-    
->>>>>>> 9d9b4ed27ba08cbb1ad6173c495e3708705cd608
-
     @media screen and (max-width:768px) {
         display: none;
     }
