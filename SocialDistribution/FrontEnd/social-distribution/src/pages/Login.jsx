@@ -41,7 +41,7 @@ const Login = () => {
           <Button size='md' variant="primary">Sign in</Button>
         </div>
         <TextLink>Forget password?</TextLink>
-        <TextLink>Don't have an account?</TextLink>
+        <TextLink to='/signup'>Don't have an account?</TextLink>
       </Container>
 
     </div>
