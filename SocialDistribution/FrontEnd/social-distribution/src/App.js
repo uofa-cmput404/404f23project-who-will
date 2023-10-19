@@ -7,6 +7,8 @@ import Account from './pages/Account';
 import Friends from './pages/Friends';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import Notifications from './pages/Notifications';
+
 function App() {
   return (
     <Router>
@@ -18,6 +20,8 @@ function App() {
         <Route path='/signin' Component={Login}/>
         <Route path='/friends' Component={Friends}/>
         <Route path='/signup' Component={SignUp}/>
+        <Route path='/notifications' Component={Notifications}/>
+
       </Routes>
     </Router>
   );

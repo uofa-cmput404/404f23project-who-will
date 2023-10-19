@@ -7,6 +7,8 @@ import {
     NavBtn,
     NavBtnLink,
     NavLogo,
+    SearchBar,
+    NavIcon
 } from './NavBarElements';
 
 
@@ -15,8 +17,9 @@ const NavBar = () => {
     <>
         <Nav>
             <NavLogo to='/'>
-                <h1>Logo</h1>
+                <h1>Home</h1>
             </NavLogo>
+           
             <Bars/>
             <NavMenu>
                 <NavLink to="/account" >
@@ -25,11 +28,15 @@ const NavBar = () => {
                 <NavLink to="/friends">
                     Friends
                 </NavLink>
+                <NavLink to="/notifications" activeStyle>
+                    Notifications
+                </NavLink>
             </NavMenu>
+            <SearchBar></SearchBar>
             <NavBtn>
                 <NavBtnLink to='/signin'>Sign In</NavBtnLink>
             </NavBtn>
-                        
+           
         </Nav>
     </>
   )

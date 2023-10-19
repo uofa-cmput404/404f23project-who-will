@@ -38,6 +38,11 @@ export const NavLink = styled(Link)`
     }
 `;
 
+export const NavIcon = styled(Link)`
+    width: 20px;
+    height: 10px;
+    background-image: url("./NavBarIcons/notification-icon.jpg");
+`;
 
 
 export const Bars = styled(FaBars)`
@@ -91,3 +96,27 @@ export const NavBtnLink = styled(Link)`
     }
 `;
 
+export const SearchBar = ({keyword, onChange}) => {
+    const BarStyle = 
+    {
+        width:"20rem",
+        background:"#F0F0F0", 
+        border: "1px solid blue",
+        display: "flex",
+        borderRadius: "10px",
+        margin: "20px",
+        
+    };
+    // in the future, call a query function in Django in the onChange section
+    return (
+      <input 
+       style={BarStyle}
+       key="search-bar"
+       value={keyword}
+       placeholder={"  Search Users"}
+       onChange={(e) => onChange(e.target.value)}
+      />
+    );
+  }
+  
+  
