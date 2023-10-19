@@ -15,6 +15,8 @@ const TextAreaComponent = styled.textarea`
     border-radius: 3px
 `;
 
+
+
 const TextInput = ({type, placeholder, id, name, onChange, box}) => {
     if (box){
         return(
