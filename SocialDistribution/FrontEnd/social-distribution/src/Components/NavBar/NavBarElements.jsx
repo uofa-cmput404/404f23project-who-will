@@ -36,6 +36,17 @@ export const NavLink = styled(Link)`
     &.active{
         color: #15cdfc;
     }
+    @media (max-width: 2250px) {
+        padding: 0 10rem;
+    }
+
+    @media (max-width: 1800px) {
+        padding: 0 7rem;
+    }
+
+    @media (max-width: 1500px) {
+        padding: 0 5rem;
+    }
 `;
 
 export const NavIcon = styled(Link)`
