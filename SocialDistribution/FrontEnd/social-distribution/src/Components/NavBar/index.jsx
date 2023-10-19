@@ -22,7 +22,7 @@ const NavBar = () => {
                 <NavLink to="/account" >
                     Account
                 </NavLink>
-                <NavLink to="/friends" activeStyle>
+                <NavLink to="/friends">
                     Friends
                 </NavLink>
             </NavMenu>

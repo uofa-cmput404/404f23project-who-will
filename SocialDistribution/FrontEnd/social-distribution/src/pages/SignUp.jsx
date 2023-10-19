@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import TextInput from "../Components/TextInput";
 import Button from "../Components/Button";
+import { useState } from "react";
+import { NavLink as Link } from "react-router-dom";
 
 const ScrollContainer = styled.div`
   overflow: auto;
@@ -16,6 +18,19 @@ const ScrollContainer = styled.div`
 `;
 
 const SignUp = () => {
+  const [inputs, setInputs] = useState({});
+
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    alert(inputs);
+    console.log(inputs);
+  };
   return (
     <div
       style={{
@@ -28,20 +43,36 @@ const SignUp = () => {
     >
       <h1>Sign Up</h1>
       <ScrollContainer>
-        <TextInput placeholder="Email"></TextInput>
-        <TextInput placeholder="User Name"></TextInput>
-        <TextInput placeholder="Password"></TextInput>
-        <TextInput placeholder="Re-enter Password"></TextInput>
-        <div
+        <form
+          onSubmit={handleSubmit}
           style={{
-            marginTop: "30px",
-            marginBottom: "30px",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          <Button size="md" variant="primary">
-            Sign Up 
+          <TextInput placeholder="Email" onChange={handleChange} name='email'></TextInput>
+          <TextInput
+            placeholder="User Name"
+            onChange={handleChange}
+            name='userName'
+          ></TextInput>
+          <TextInput
+            type="password"
+            placeholder="Password"
+            onChange={handleChange}
+            name='passWord'
+          ></TextInput>
+          <TextInput
+            type="password"
+            placeholder="Re-enter Password"
+            onChange={handleChange}
+            name='rePassWord'
+          ></TextInput>
+          <Button type="submit" size="md" variant="primary">
+            Sign Up
           </Button>
-        </div>
+        </form>
+        <Link to='/signin'>Have an Account?</Link>
       </ScrollContainer>
     </div>
   );
