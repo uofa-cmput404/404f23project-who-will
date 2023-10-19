@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import Account from './pages/Account';
 import Friends from './pages/Friends';
 import Login from './pages/Login';
+import Notifications from './pages/Notifications';
+
 function App() {
   return (
     <Router>
@@ -16,6 +18,7 @@ function App() {
         <Route path='/account' Component={Account}/>
         <Route path='/signin' Component={Login}/>
         <Route path='/friends' Component={Friends}/>
+        <Route path='/notifications' Component={Notifications}/>
 
       </Routes>
     </Router>
