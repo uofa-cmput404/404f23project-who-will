@@ -14,7 +14,7 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     visibility = models.CharField(max_length=12, choices=VISIBILITY_CHOICES, default='public')
     images = models.ManyToManyField('Image', blank=True)
-    comments = models.ManyToManyField('Comment', blank=True)
+    comments = models.ManyToManyField('Comment', related_name='post_comments', blank=True)
     likes = models.ManyToManyField(User, through='Like', related_name='liked_posts', blank=True)
     shared_with = models.ManyToManyField(User, related_name='shared_posts', blank=True)
 
