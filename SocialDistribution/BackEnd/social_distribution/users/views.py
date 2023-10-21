@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class UserViewSet(viewsets.ViewSet):
     def list(self, request):
-        queryset = UserSerializer.objects.all()
+        queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
     def create(self,request):
