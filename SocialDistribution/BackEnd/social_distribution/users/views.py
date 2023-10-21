@@ -15,8 +15,9 @@ class UserViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    def retrive(self, request, pk):
+    def retrive(self, request, pk=None):
         queryset = User.objects.all()
         user=get_object_or_404(queryset, pk=pk)
+        print(user)
         serializer = UserSerializer(user)
         return Response(serializer.data)
