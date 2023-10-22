@@ -4,6 +4,7 @@ import TextInput from "../Components/TextInput";
 import Button from "../Components/Button";
 import { useState } from "react";
 import { NavLink as Link } from "react-router-dom";
+import axios from "axios";
 
 const ScrollContainer = styled.div`
   overflow: auto;
@@ -28,8 +29,20 @@ const SignUp = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert(inputs);
-    console.log(inputs);
+    let data;
+    data = {
+      "username": inputs['userName'],
+      "email": inputs['email'],
+      "password": inputs['passWord'],
+    }
+    console.log(data);
+    axios.post(`${process.env.REACT_APP_API_URL}/users/`, data)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   };
   return (
     <div

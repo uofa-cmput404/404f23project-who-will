@@ -1,12 +1,13 @@
 import React from "react";
 import axios from "axios";
 
+const api_addr = process.env.REACT_APP_API_URL;
 class Friends extends React.Component {
   state = { details: [] };
   componentDidMount() {
     let info;
     axios
-      .get("http://localhost:8000/api/users/")
+      .get(`${api_addr}/users/`)
       .then((res) => {
         console.log(res);
         info = res.data;
@@ -15,7 +16,7 @@ class Friends extends React.Component {
         });
       })
       .catch((err) => {
-        
+        console.log(err); 
       });
   }
 
