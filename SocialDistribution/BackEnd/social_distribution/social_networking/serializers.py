@@ -1,27 +1,19 @@
 from rest_framework import serializers
-from .models import Post, Image, Comment, Like
-
-class ImageSerializer(serializers.ModelSerializer):
+from django.contrib.auth.models import User
+from user_profile.serializers import ProfileSerializer
+class UserSerializer(serializers.ModelSerializer):
+    profile_data=ProfileSerializer(read_only=True)
     class Meta:
-        model = Image
-        fields = ('id', 'author', 'file', 'timestamp', 'description')
+        model = User 
+        fields=('id','username','email','password','is_active','profile_data')
+        extra_kwargs={'email':{'required':True,'write_only':True},'password':{'write_only':True}}        
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ('id', 'author', 'content', 'timestamp', 'post')
+    def create(self,validared_data):
+        user=User(
+            email=validared_data['email'],
+            username=validared_data['username']
+        )
 
-class LikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Like
-        fields = ('id', 'user', 'post', 'timestamp')
-
-class PostSerializer(serializers.ModelSerializer):
-    images = ImageSerializer(many=True, read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
-    likes = LikeSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Post
-        fields = ('id', 'author', 'content', 'timestamp', 'visibility', 'images', 'comments', 'likes', 'shared_with')
-    
+        user.set_password(validared_data['password'])
+        user.save()
+        return user
