@@ -3,7 +3,9 @@ import Button from "../Components/Button";
 import TextInput from "../Components/TextInput";
 import styled from "styled-components";
 import { NavLink as Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 const Container = styled.div`
   width: 30%;
   height: 60%;
@@ -14,11 +16,11 @@ const Container = styled.div`
   border: 1px solid black;
   border-radius: 10px;
 `;
-
 const TextLink = styled(Link)``;
 
 const Login = () => {
   const [inputs, setInputs] = useState({});
+  const [key, setKey] = useState("");
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -28,9 +30,57 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert(inputs);
-    console.log(inputs);
+    let data;
+    data = {
+      username: inputs["userName"],
+      password: inputs["psw"],
+    };
+    console.log(data);
+    axios
+      .post("http://localhost:8000/api/auth/login/", data)
+      .then((res) => {
+        console.log(res.data);
+        setKey(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
+  const AuthStr = "Token ".concat(key["key"]);
+  axios
+    .get("http://localhost:8000/api/auth/user/", {
+      headers: { Authorization: AuthStr },
+    })
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  const useGetUser = () => {
+    const [pk, setPk] = useState(-1);
+    useEffect(() => {
+      axios
+        .get("http://localhost:8000/api/auth/user/", {
+          headers: { Authorization: AuthStr },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setPk(res.data["pk"]);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+    console.log(pk);
+    return (pk);
+  };
+
+  let testpk = useGetUser();
+  console.log(testpk);
+
   return (
     <div
       style={{
@@ -51,13 +101,13 @@ const Login = () => {
           }}
         >
           <TextInput
-            name='userName'
+            name="userName"
             placeholder="User Name"
             onChange={handleChange}
           ></TextInput>
           <TextInput
             type="password"
-            name='psw'
+            name="psw"
             placeholder="Password"
             onChange={handleChange}
           ></TextInput>

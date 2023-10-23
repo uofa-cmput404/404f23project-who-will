@@ -5,6 +5,7 @@ from rest_framework import generics
 from rest_framework import permissions
 from user_profile.permissions import IsOwnerOrReadOnly
 from rest_framework import status, viewsets
+from rest_framework.views import APIView
 class PostViewSet(viewsets.ModelViewSet):
     """
     Posts
@@ -13,6 +14,6 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
-
+    
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
