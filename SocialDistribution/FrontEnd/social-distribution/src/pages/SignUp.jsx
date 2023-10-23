@@ -1,23 +1,23 @@
 import React from "react";
-import Button from "../Components/Button";
-import TextInput from "../Components/TextInput";
 import styled from "styled-components";
-import { NavLink as Link } from "react-router-dom";
+import TextInput from "../Components/TextInput";
+import Button from "../Components/Button";
 import { useState } from "react";
-const Container = styled.div`
+import { NavLink as Link } from "react-router-dom";
+
+const ScrollContainer = styled.div`
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
   width: 30%;
   height: 60%;
   align-items: center;
   justify-content: center;
-  display: flex;
-  flex-direction: column;
   border: 1px solid black;
   border-radius: 10px;
 `;
 
-const TextLink = styled(Link)``;
-
-const Login = () => {
+const SignUp = () => {
   const [inputs, setInputs] = useState({});
 
   const handleChange = (event) => {
@@ -41,8 +41,8 @@ const Login = () => {
         height: "90vh",
       }}
     >
-      <h1>Sign In</h1>
-      <Container>
+      <h1>Sign Up</h1>
+      <ScrollContainer>
         <form
           onSubmit={handleSubmit}
           style={{
@@ -50,33 +50,32 @@ const Login = () => {
             flexDirection: "column",
           }}
         >
+          <TextInput placeholder="Email" onChange={handleChange} name='email'></TextInput>
           <TextInput
-            name='userName'
             placeholder="User Name"
             onChange={handleChange}
+            name='userName'
           ></TextInput>
           <TextInput
             type="password"
-            name='psw'
             placeholder="Password"
             onChange={handleChange}
+            name='passWord'
           ></TextInput>
-          <div
-            style={{
-              marginTop: "30px",
-              marginBottom: "30px",
-            }}
-          >
-            <Button type="submit" size="md" variant="primary">
-              Sign in
-            </Button>
-          </div>
-          <TextLink>Forget password?</TextLink>
-          <TextLink to="/signup">Don't have an account?</TextLink>
+          <TextInput
+            type="password"
+            placeholder="Re-enter Password"
+            onChange={handleChange}
+            name='rePassWord'
+          ></TextInput>
+          <Button type="submit" size="md" variant="primary">
+            Sign Up
+          </Button>
         </form>
-      </Container>
+        <Link to='/signin'>Have an Account?</Link>
+      </ScrollContainer>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;

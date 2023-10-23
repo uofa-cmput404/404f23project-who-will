@@ -1,0 +1,41 @@
+
+
+.aFriend {
+    border-top: 1px solid black;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 60px;
+}
+
+.myFriends {
+    border-bottom: 1px solid black;
+    margin-top: 25px;
+}
+
+.messageButton, .viewProfileButton {
+    background-color: #256ce1;
+    border-radius: 5px;
+    padding: 10px;
+    color: white;
+    width: 80px;
+    text-align: center;
+}
+
+.messageButton:hover, .viewProfileButton:hover {
+    transition: all 0.2s ease-in-out;
+    background: black;
+}
+
+.friendName {
+    font-size: 18px;
+    width: 10px; /* hacky, fix if need */
+    
+}
+
+.friendsTitle {
+    color: #15cdfc;
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+}
