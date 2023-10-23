@@ -23,6 +23,10 @@ from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+
+# references
+# https://www.youtube.com/watch?v=zpxZX73migE&t=100s&ab_channel=RehmatQadeer
+# https://www.youtube.com/watch?v=0wWMc7USgBY&ab_channel=CodeLett
 # from rest_framework_swagger.views import get_swagger_view
 # schema_view = get_swagger_view(title='API Documentation')
  
