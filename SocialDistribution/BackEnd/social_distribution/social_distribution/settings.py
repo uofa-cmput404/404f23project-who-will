@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'comments',
     'votes',
     'corsheaders',
+    # 'rest_framework_swagger',
+    'drf_yasg',
+
 ]
 
 MIDDLEWARE = [
