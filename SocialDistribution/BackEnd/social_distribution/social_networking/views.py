@@ -1,31 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from rest_framework import viewsets,status
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from . serializers import UserSerializer
 
-# Create your views here.
-
-
-''' Need something like this to make a new post'''
-# # # Assuming 'request' is the current user's request object
-# new_post = Post.objects.create(author=request.user, content="This is the post content", visibility="public")
-
-
-
-
-
-'''code to make a new user'''
-# from django.contrib.auth.models import User
-
-# # Create a new user
-# new_user = User.objects.create_user(
-#     username='new_username',
-#     password='new_password',
-#     email='new_email@example.com',
-# )
-
-# # Optionally, you can set other user attributes like first name, last name, etc.
-# new_user.first_name = 'First'
-# new_user.last_name = 'Last'
-
-# # Save the user to the database
-# new_user.save()
-
-
+class UserViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset=User.objects.all()
+        serializer=UserSerializer(queryset,many=True)
+        return Response(serializer.data)
+    def create(self,request):
+        serializer=UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED) 
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+    def retrieve(self,request,pk):
+        queryset=User.objects.all()
+        user=get_object_or_404(queryset,pk=pk)
+        serializer=UserSerializer(user)
+        return Response(serializer.data) 
