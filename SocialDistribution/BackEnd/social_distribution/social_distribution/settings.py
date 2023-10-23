@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'user_profile',
     'posts',
     'comments',
-    'votes', 
+    'votes',
+    'corsheaders',
     # 'rest_framework_swagger',
     'drf_yasg',
 
@@ -57,7 +58,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
+CORS_ORIGIN_ALLOW_ALL =True
 
 ROOT_URLCONF = 'social_distribution.urls'
 
