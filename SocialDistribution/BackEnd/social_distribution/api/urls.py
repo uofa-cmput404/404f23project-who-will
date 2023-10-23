@@ -6,6 +6,7 @@ from posts.views import PostViewSet
 from comments.views import CommentViewSet
 from votes.views import VoteViewSet
 
+
 router=DefaultRouter()
 router.register(r'users',UserViewSet,basename='users')
 router.register(r'profiles',ProfileViewSet)
