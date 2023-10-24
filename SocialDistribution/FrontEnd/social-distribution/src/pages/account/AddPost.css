@@ -53,19 +53,19 @@
 }
 
 #submit-button {
-    background-color: var(--primary-button-color);
-    color: var(--secondary-button-color);
-    border-color: var(--secondary-button-color);
-    padding: 10px 10px;
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    border-color: var(--main-color);
+    padding: 10px 20px;
     border-style: solid;
-    border-radius: 6px;
+    border-radius: 3px;
     cursor: pointer;
-    margin: 4px;
     font-size: medium;
+    margin: 4px;
+    padding: 8px;
     transition: background-color 0.3s,
         color 0.3s;
         box-shadow: 0.3s;
-    grid-area: sidebar-left;
     width: fit-content;
     height: fit-content;
 }
@@ -81,19 +81,19 @@
 }
 
 #cancel-button {
-    background-color: var(--primary-button-color);
-    color: var(--secondary-button-color);
-    border-color: var(--secondary-button-color);
-    padding: 10px 10px;
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    border-color: var(--main-color);
+    padding: 10px 20px;
     border-style: solid;
-    border-radius: 6px;
+    border-radius: 3px;
     cursor: pointer;
-    margin: 4px;
     font-size: medium;
+    margin: 4px;
+    padding: 8px;
     transition: background-color 0.3s,
         color 0.3s;
         box-shadow: 0.3s;
-    grid-area: sidebar-left;
     width: fit-content;
     height: fit-content;
 }
@@ -112,3 +112,4 @@
     padding: 20px;
     padding-bottom: 30px;
 }
+

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import './AddPost.css';
 
-class AddPost extends Component {
+class EditPost extends Component {
     state = {
         content: '',
         visibility: 'public',
@@ -39,8 +38,6 @@ class AddPost extends Component {
             second: '2-digit' 
         };
 
-        
-
         const formattedDate = date.toLocaleDateString('en-CA', options);
 
         if (content === '' && image === null){
@@ -58,7 +55,7 @@ class AddPost extends Component {
             image: image,
         };
 
-        this.props.onAddPost(newPost);
+        this.props.onEditPost(newPost);
 
         this.closeModal();
     };
@@ -73,7 +70,7 @@ class AddPost extends Component {
         return (
             <div className="add-post-popup">
                 <div className="add-post-content">
-                    <h2>Add New Post</h2>
+                    <h2>Edit Post</h2>
                     <textarea
                         rows="8"
                         placeholder="Write your post here..."
@@ -105,4 +102,4 @@ class AddPost extends Component {
     }
 }
 
-export default AddPost;
+export default EditPost;

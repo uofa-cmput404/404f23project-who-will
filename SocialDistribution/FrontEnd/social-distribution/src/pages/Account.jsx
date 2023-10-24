@@ -4,6 +4,7 @@ import { FaGear, IconName } from "react-icons/fa6";
 import AddPost from './account/AddPost.jsx'
 import photo from '../images/free_profile_picture.png'; //need to import local images, I wonder how this will work for django database
 import Settings from './account/Settings';
+import EditPost from './account/EditPost.jsx'
 
 class Account extends Component {
 
@@ -46,10 +47,10 @@ class Account extends Component {
     state = {
         user: null,
         error: null,
-        isSettingsOpen: false,
         userSettings: null,
         isAddPostOpen: false,
         isSettingsOpen: false,
+        isEditPostOpen: false,
     };
 
     handleSettingsClick = () => {
@@ -59,37 +60,6 @@ class Account extends Component {
     handleCloseSettings = () => {
         this.setState({ isSettingsOpen: false });
     };
-
-    handleAddPost = () => {
-        this.setState({ isAddPostOpen: true });
-    }
-
-    handleCloseAddPost = () => {
-        this.setState({ isAddPostOpen: false, content: '', visibility: 'public' });
-    }
-
-    addNewPost = (newPost) => {
-        this.setState((prevState) => ({
-            user: {
-                ...prevState.user,
-                posts: [...prevState.user.posts, newPost],
-            },
-        }));
-    };
-
-    handleEditPost = () => {
-        console.log('Edit post button clicked -- account');
-    }
-
-    handleDeletePost = (postId) => {
-        const confirmation = window.confirm("Are you sure you want to delete this post?");
-        
-        if (confirmation){
-            const updatedPosts = this.state.user.posts.filter(post => post.id !== postId); //new list with all posts except specified (deleted)
-            const updatedUser = { ...this.state.user, posts: updatedPosts }; 
-            this.setState({ user: updatedUser });
-        }
-    }
 
     handleSettingsClick = () => {
         this.openSettings();
@@ -104,9 +74,53 @@ class Account extends Component {
         this.setState({ isSettingsOpen: true, userSettings });
     };
     
-    closeSettings = () => {
-        this.setState({ isSettingsOpen: false });
+
+    handleAddPost = () => {
+        this.setState({ isAddPostOpen: true });
+    }
+
+    handleCloseAddPost = () => {
+        this.setState({ isAddPostOpen: false, content: '', visibility: 'public' });
+    }
+
+    addNewPost = (newPost) => {
+        this.setState((prevState) => ({
+            user: {
+                ...prevState.user,
+                posts: [newPost, ...prevState.user.posts], 
+            },
+        }));
     };
+
+    handleEditPost = () => {
+        this.setState({ isEditPostOpen: true });
+    }
+
+    handleCloseEditPost = () => {
+        this.setState({ isEditPostOpen: false, content: '', visibility: 'public' });
+    }
+
+    updatePost = (newPost) => {
+        //Update the database in editPost.jsx
+        //This is solely to update the render
+        this.setState((prevState) => ({
+            user: {
+                ...prevState.user,
+                posts: [...prevState.user.posts, newPost],
+            },
+        }));
+    };
+
+    handleDeletePost = (postId) => {
+        const confirmation = window.confirm("Are you sure you want to delete this post?");
+        
+        if (confirmation){
+            const updatedPosts = this.state.user.posts.filter(post => post.id !== postId); //new list with all posts except specified (deleted)
+            const updatedUser = { ...this.state.user, posts: updatedPosts }; 
+            this.setState({ user: updatedUser });
+        }
+    }
+
 
     componentDidMount() {
         // Retrieve user data from Django API
@@ -165,12 +179,19 @@ class Account extends Component {
                             <p>Posted on: {post.timestamp}</p>
                             <div>
                                 <button className="comments-button" onClick={this.handleComments}>Comments</button>
-                                <button className="edit-post-button" onClick={this.handleEditPost}>Edit</button>
+                                <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
                                 <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
                             </div>
                         </div>
                     ))}
                 </div>
+                {this.state.isEditPostOpen && (
+                    <EditPost
+                        onClose={this.handleCloseEditPost}
+                        onEditPost={this.updatePost}
+                        image={this.state.image}
+                    />
+                )}
 
             </div>
         );
