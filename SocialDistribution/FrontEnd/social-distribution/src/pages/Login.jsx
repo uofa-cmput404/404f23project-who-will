@@ -5,7 +5,8 @@ import styled from "styled-components";
 import { NavLink as Link, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Account from './Account';
 
 const Container = styled.div`
   width: 30%;
@@ -40,12 +41,10 @@ const Login = () => {
     axios
       .post("http://localhost:8000/api/auth/login/", data)
       .then((res) => {
-        console.log(res.data); // this is the authorization
-        const authorizationToken = res.data.key; // works
+        console.log(res.data); 
+        const authorizationToken = res.data.key;
         localStorage.setItem('authToken', authorizationToken);
-        //Navigate("/")
-
-
+        window.location.reload(); // this effectively navigates us back to home
         // need to associate authToken with ID
         // also NEED a signout option
         setKey(res.data);

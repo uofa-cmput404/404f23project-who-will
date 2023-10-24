@@ -61,6 +61,7 @@ class AddPost extends Component {
 
         this.sendPostData(newPost);
 
+        // fake data, needs to be reworked with an updated model
         const post = {
             "id": 1,
             "content": "hellwo",
@@ -85,9 +86,11 @@ class AddPost extends Component {
         console.log("HERE 2")
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
-            axios.post('https://localhost8000/api/posts/', postData, {
+            //console.log(authToken);
+            axios.post('http://localhost:8000/api/posts/', postData, {
                 headers: {
-                    'Authorization': authToken
+                    'Authorization': `Token ${authToken}`,
+                    'Content-Type': "application/json"
                 }
             })
             .then((res) => {

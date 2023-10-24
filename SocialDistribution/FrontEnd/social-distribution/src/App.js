@@ -8,6 +8,7 @@ import Friends from './pages/Friends';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Notifications from './pages/Notifications';
+import Logout from './pages/Logout';
 
 function App() {
 
@@ -20,7 +21,7 @@ function App() {
       <Routes>
         <Route path='/' exact Component={Home} />
         <Route path='/account' Component={Account}/>
-        <Route path='/signin' Component={Login}/>
+        <Route path='/signin' Component={Logout}/>
         <Route path='/friends' Component={Friends}/>
         <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Notifications}/>
@@ -30,8 +31,9 @@ function App() {
 
     );
   }
-    
 
+// the if not here is causing some good, but weird behaviour...
+if (!authToken) {
   return (
     <Router>
       <NavBar/>
@@ -46,6 +48,7 @@ function App() {
       </Routes>
     </Router>
   );
+}
 }
 
 export default App;
