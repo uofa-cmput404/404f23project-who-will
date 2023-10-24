@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './AddPost.css';
+import axios from "axios";
+
 
 class AddPost extends Component {
     state = {
@@ -39,8 +41,6 @@ class AddPost extends Component {
             second: '2-digit' 
         };
 
-        
-
         const formattedDate = date.toLocaleDateString('en-CA', options);
 
         if (content === '' && image === null){
@@ -61,6 +61,9 @@ class AddPost extends Component {
         this.props.onAddPost(newPost);
 
         this.closeModal();
+
+        // once "submit" is clicked, get the profile visibility (public/private) -->
+        // make api POST request
     };
 
 

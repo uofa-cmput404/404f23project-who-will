@@ -10,9 +10,12 @@ import SignUp from './pages/SignUp';
 import Notifications from './pages/Notifications';
 
 function App() {
-  return (
-    <Router>
 
+  // if username is also associated, we can route pathes to /friends/id ect
+  const authToken = localStorage.getItem('authToken');
+  if (authToken) {
+    return (
+      <Router>
       <NavBar/>
       <Routes>
         <Route path='/' exact Component={Home} />
@@ -21,6 +24,24 @@ function App() {
         <Route path='/friends' Component={Friends}/>
         <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Notifications}/>
+
+      </Routes>
+    </Router>
+
+    );
+  }
+    
+
+  return (
+    <Router>
+      <NavBar/>
+      <Routes>
+        <Route path='/' exact Component={Login} />
+        <Route path='/account' Component={Login}/>
+        <Route path='/signin' Component={Login}/>
+        <Route path='/friends' Component={Login}/>
+        <Route path='/signup' Component={Login}/>
+        <Route path='/notifications' Component={Login}/>
 
       </Routes>
     </Router>

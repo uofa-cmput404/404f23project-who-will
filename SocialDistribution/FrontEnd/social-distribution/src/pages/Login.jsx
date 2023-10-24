@@ -2,9 +2,10 @@ import React from "react";
 import Button from "../Components/Button";
 import TextInput from "../Components/TextInput";
 import styled from "styled-components";
-import { NavLink as Link } from "react-router-dom";
+import { NavLink as Link, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+
 
 const Container = styled.div`
   width: 30%;
@@ -39,13 +40,21 @@ const Login = () => {
     axios
       .post("http://localhost:8000/api/auth/login/", data)
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data); // this is the authorization
+        const authorizationToken = res.data.key; // works
+        localStorage.setItem('authToken', authorizationToken);
+        //Navigate("/")
+
+
+        // need to associate authToken with ID
+        // also NEED a signout option
         setKey(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+  
 
   const AuthStr = "Token ".concat(key["key"]);
   axios
@@ -67,7 +76,7 @@ const Login = () => {
           headers: { Authorization: AuthStr },
         })
         .then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           setPk(res.data["pk"]);
         })
         .catch((err) => {
