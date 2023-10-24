@@ -58,13 +58,47 @@ class AddPost extends Component {
             image: image,
         };
 
-        this.props.onAddPost(newPost);
+
+        this.sendPostData(newPost);
+
+        const post = {
+            "id": 1,
+            "content": "hellwo",
+            "post_image": "http://127.0.0.1:8000/media/post_image/background.png",
+            "category": "test",
+            "post_date": "2023-10-22",
+            "comments": [],
+            "votes": []
+        };
+
+
+        this.props.onAddPost(post);
 
         this.closeModal();
 
         // once "submit" is clicked, get the profile visibility (public/private) -->
         // make api POST request
     };
+
+
+    sendPostData = (postData) => {
+        console.log("HERE 2")
+        const authToken = localStorage.getItem("authToken");
+        if (authToken) {
+            axios.post('https://localhost8000/api/posts/', postData, {
+                headers: {
+                    'Authorization': authToken
+                }
+            })
+            .then((res) => {
+                console.log(res.data); 
+                console.log("Successful post");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+    }
 
 
     closeModal = () => {
