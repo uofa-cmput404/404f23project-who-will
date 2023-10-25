@@ -4,7 +4,9 @@ import { FaGear, IconName } from "react-icons/fa6";
 import AddPost from './account/AddPost.jsx'
 import photo from '../images/free_profile_picture.png'; //need to import local images, I wonder how this will work for django database
 import Settings from './account/Settings';
-import EditPost from './account/EditPost.jsx'
+import EditPost from './account/EditPost.jsx';
+import DeletePost from './account/DeletePost.jsx';
+import Comments from './account/Comments.jsx';
 
 class Account extends Component {
 
@@ -51,7 +53,18 @@ class Account extends Component {
         isAddPostOpen: false,
         isSettingsOpen: false,
         isEditPostOpen: false,
+        isCommentsOpen: false,
+        postToEdit: null,
     };
+
+    handleCommentsClick = () => {
+        this.setState({ isCommentsOpen: true });
+        console.log("Click registered")
+    }
+
+    handleCloseComments = () => {
+        this.setState({ isCommentsOpen: false });
+    }
 
     handleSettingsClick = () => {
         this.setState({ isSettingsOpen: true });
@@ -61,18 +74,7 @@ class Account extends Component {
         this.setState({ isSettingsOpen: false });
     };
 
-    handleSettingsClick = () => {
-        this.openSettings();
-    };
 
-    openSettings = () => {
-        // Retrieve user settings data
-        const userSettings = {
-
-        };
-    
-        this.setState({ isSettingsOpen: true, userSettings });
-    };
     
 
     handleAddPost = () => {
@@ -92,29 +94,39 @@ class Account extends Component {
         }));
     };
 
-    handleEditPost = () => {
-        this.setState({ isEditPostOpen: true });
+    handleEditPost = (post) => {
+        this.setState({ isEditPostOpen: true, postToEdit: post });
     }
 
     handleCloseEditPost = () => {
         this.setState({ isEditPostOpen: false, content: '', visibility: 'public' });
     }
 
-    updatePost = (newPost) => {
-        //Update the database in editPost.jsx
-        //This is solely to update the render
-        this.setState((prevState) => ({
-            user: {
-                ...prevState.user,
-                posts: [...prevState.user.posts, newPost],
-            },
-        }));
+    updatePost = (editedPost) => {
+
+        console.log("--------------")
+        console.log(editedPost.id)
+
+        
+        const postIndex = this.state.user.posts.findIndex(post => post.id === editedPost.id);
+
+        if (postIndex === -1){
+            console.log("----ERROR----")
+            return;
+        }
+
+        const profileUpdate = { ...this.state.user };
+        profileUpdate.posts[postIndex] = editedPost;
+
+        this.setState({ user: profileUpdate });
     };
 
     handleDeletePost = (postId) => {
         const confirmation = window.confirm("Are you sure you want to delete this post?");
-        
+
         if (confirmation){
+            const deletePost = new DeletePost();
+            deletePost.deletePost(1)
             const updatedPosts = this.state.user.posts.filter(post => post.id !== postId); //new list with all posts except specified (deleted)
             const updatedUser = { ...this.state.user, posts: updatedPosts }; 
             this.setState({ user: updatedUser });
@@ -123,7 +135,27 @@ class Account extends Component {
 
 
     componentDidMount() {
-        // Retrieve user data from Django API
+        //this gets all posts. We only want posts for your account
+    /*    getData = () => {
+            console.log("Fetching data");
+            const authToken = localStorage.getItem("authToken");
+            if (authToken) {
+                axios.get('http://localhost:8000/api/posts/', {
+                    headers: {
+                        'Authorization': `Token ${authToken}`,
+                    }
+                })
+                .then((res) => {
+                    console.log(res.data);
+                    // You can use the data in your React component here
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
+        } */
+
+
         try {
             const user = Account.sampleUserData; //Replace with actual user
             this.setState({ user });
@@ -178,18 +210,22 @@ class Account extends Component {
                             {post.image && <img className="post-image"src={post.image} alt="Post Image" />}
                             <p>Posted on: {post.timestamp}</p>
                             <div>
-                                <button className="comments-button" onClick={this.handleComments}>Comments</button>
+                                <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
                                 <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
                                 <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
                             </div>
                         </div>
                     ))}
                 </div>
+                {this.state.isCommentsOpen && (
+                    <Comments onClose={this.handleCloseComments} />
+                )}
                 {this.state.isEditPostOpen && (
                     <EditPost
                         onClose={this.handleCloseEditPost}
                         onEditPost={this.updatePost}
                         image={this.state.image}
+                        postToEdit={this.state.postToEdit}
                     />
                 )}
 

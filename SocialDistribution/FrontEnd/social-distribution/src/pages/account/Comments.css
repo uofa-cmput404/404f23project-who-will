@@ -1,0 +1,65 @@
+:root {
+    --main-color: #000000;
+    --secondary-color: white;
+    --primary-button-color: rgb(0, 170, 255);
+    --secondary-button-color: rgb(255, 255, 255);
+}
+
+.comments-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comments-content {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+
+.comment {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--main-color);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+
+button {
+    background-color: var(--secondary-button-color);
+    color: var(--main-color);
+    border: 1px solid var(--main-color);
+    border-radius: 3px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: medium;
+    margin: 4px;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    width: fit-content;
+    height: fit-content;
+}
+
+button:hover {
+    background-color: var(--main-color);
+    color: var(--secondary-color);
+    box-shadow: var(--button-shadow);
+}
+
+button:active {
+    opacity: 0.8;
+}
