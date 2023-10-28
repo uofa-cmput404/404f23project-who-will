@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import './AddPost.css'
 
 class EditPost extends Component {
     state = {
@@ -26,19 +28,9 @@ class EditPost extends Component {
     handleSubmit = () => {
         const { content, visibility, image } = this.state;
 
-        const databaseTime = new Date().toISOString();
-        const date = new Date(databaseTime);
+        const postToEdit = this.props.postToEdit;
 
-        const options = { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit' 
-        };
 
-        const formattedDate = date.toLocaleDateString('en-CA', options);
 
         if (content === '' && image === null){
             //empty post
@@ -46,20 +38,46 @@ class EditPost extends Component {
             return;
         }
 
-        //Creates new post
-        const newPost = {
-            id: Date.now(), 
+        console.log(postToEdit.id)
+
+
+        const editedPost = {
+            id: postToEdit.id, 
             content: content,
             visibility: visibility,
-            timestamp: formattedDate,
+            timestamp: postToEdit.timestamp,
             image: image,
         };
 
-        this.props.onEditPost(newPost);
+        if (content === ''){
+            editedPost.content = postToEdit.content;
+        }
+
+        this.props.onEditPost(editedPost);
+
+        this.sendEditPostData(19, editedPost)
 
         this.closeModal();
     };
 
+    sendEditPostData = (postId, editedPostData) => {
+        const authToken = localStorage.getItem("authToken"); // Use localStorage.getItem() to get the authToken
+        if (authToken) {
+            axios.put(`http://localhost:8000/api/posts/${postId}/`, editedPostData, {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((res) => {
+                console.log(res.data);
+                console.log("Successful edit");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+    }
 
     closeModal = () => {
         this.setState({ content: '', visibility: 'public', image: null });

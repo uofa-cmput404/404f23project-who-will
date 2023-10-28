@@ -58,22 +58,22 @@ class AddPost extends Component {
             image: image,
         };
 
+        const testComments = ["comment 1", "comment 2", "comment 3"];
 
-        this.sendPostData(newPost);
+      /*  console.log('--------------------------------------')
+        console.log(typeof testComments);
+        console.log(Array.isArray(testComments)); */
 
-        // fake data, needs to be reworked with an updated model
-        const post = {
-            "id": 1,
-            "content": "hellwo",
-            "post_image": "http://127.0.0.1:8000/media/post_image/background.png",
-            "category": "test",
-            "post_date": "2023-10-22",
-            "comments": [],
-            "votes": []
-        };
+        const dataBasePost = {
+            content: content,
+            post_date: databaseTime,
+            comments: testComments
+        }
 
 
-        this.props.onAddPost(post);
+        this.props.onAddPost(newPost);
+        this.sendPostData(dataBasePost)
+
 
         this.closeModal();
 
@@ -83,8 +83,10 @@ class AddPost extends Component {
 
 
     sendPostData = (postData) => {
-        console.log("HERE 2")
         const authToken = localStorage.getItem("authToken");
+
+        console.log("---------------------")
+        console.log(Array.isArray(postData.comments));
         if (authToken) {
             //console.log(authToken);
             axios.post('http://localhost:8000/api/posts/', postData, {
@@ -95,7 +97,6 @@ class AddPost extends Component {
             })
             .then((res) => {
                 console.log(res.data); 
-                console.log("Successful post");
             })
             .catch((err) => {
                 console.log(err);
