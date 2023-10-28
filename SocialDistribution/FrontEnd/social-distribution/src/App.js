@@ -42,7 +42,7 @@ if (!authToken) {
         <Route path='/account' Component={Login}/>
         <Route path='/signin' Component={Login}/>
         <Route path='/friends' Component={Login}/>
-        <Route path='/signup' Component={Login}/>
+        <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Login}/>
 
       </Routes>
