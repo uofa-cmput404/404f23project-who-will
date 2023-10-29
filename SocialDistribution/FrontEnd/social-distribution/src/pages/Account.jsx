@@ -136,6 +136,7 @@ class Account extends Component {
 
     componentDidMount() {
         //this gets all posts. We only want posts for your account
+        // (bruh, this was a post method to post the user_post to the api so we can call it in main feed...)
     /*    getData = () => {
             console.log("Fetching data");
             const authToken = localStorage.getItem("authToken");

@@ -21,16 +21,16 @@ function App() {
       <Routes>
         <Route path='/' exact Component={Home} />
         <Route path='/account' Component={Account}/>
-        <Route path='/signin' Component={Logout}/>
+        <Route path='/signout' Component={Logout}/>
         <Route path='/friends' Component={Friends}/>
         <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Notifications}/>
-
       </Routes>
     </Router>
 
     );
   }
+  
 
 // the if not here is causing some good, but weird behaviour...
 if (!authToken) {
