@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Notifications from './pages/Notifications';
 import Logout from './pages/Logout';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
         <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Notifications}/>
       </Routes>
+      <ToastContainer autoClose={3000} />
     </Router>
 
     );

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './AddPost.css'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class EditPost extends Component {
     state = {
@@ -53,9 +55,8 @@ class EditPost extends Component {
             editedPost.content = postToEdit.content;
         }
 
-        this.props.onEditPost(editedPost);
-
-        this.sendEditPostData(19, editedPost)
+        //change this to reflect actual post id
+        this.sendEditPostData(postToEdit.id, editedPost)
 
         this.closeModal();
     };
@@ -75,6 +76,7 @@ class EditPost extends Component {
             })
             .catch((err) => {
                 console.log(err);
+                toast.error('Failed to edit post. Please try again.');
             });
         }
     }
