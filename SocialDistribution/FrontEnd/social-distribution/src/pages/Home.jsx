@@ -4,9 +4,6 @@ import "./homepage.css"; // use css style
 import Postlist from "./Postlist";
 import { useEffect, useState } from 'react';
 
-function like(){
-
-}
 
 const Home = () => {
 
@@ -19,8 +16,8 @@ const Home = () => {
     var username = localStorage.getItem("username");
     setUsername(username);
 
-    console.log(authToken);
-    console.log(username);
+    // console.log(authToken);
+    // console.log(username);
 
     if (authToken) {
       axios
@@ -49,8 +46,7 @@ const Home = () => {
   
     return (
         <div >
-            <button></button>
-            <Postlist posts={posts} username = {username}/> {/* Pass the posts array as a prop to Postlist */}
+            <Postlist posts={posts} username = {username} /> {/* Pass the posts array as a prop to Postlist */}
         </div>
     );
 };

@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    owner = models.ForeignKey('auth.User', related_name='posts', on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User',related_name='posts', on_delete=models.CASCADE)
     content=models.CharField(max_length=4000)
     post_image=models.ImageField(upload_to="post_image",null=True,blank=True)
     post_date=models.DateField(auto_now_add=True)
