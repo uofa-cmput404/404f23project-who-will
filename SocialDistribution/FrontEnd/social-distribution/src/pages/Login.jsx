@@ -44,6 +44,7 @@ const Login = () => {
         console.log(res.data); 
         const authorizationToken = res.data.key;
         localStorage.setItem('authToken', authorizationToken);
+        localStorage.setItem('username', data.username );
         window.location.reload(); // this effectively navigates us back to home
         // need to associate authToken with ID
         // also NEED a signout option
