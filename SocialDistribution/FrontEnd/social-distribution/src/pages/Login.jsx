@@ -49,6 +49,7 @@ const Login = () => {
         console.log("Successfully logged in");
         window.location.reload();
         window.location.href = "/";
+      
         // need to associate authToken with ID
         // also NEED a signout option
         setKey(res.data);
