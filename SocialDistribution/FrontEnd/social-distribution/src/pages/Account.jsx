@@ -103,7 +103,15 @@ class Account extends Component {
     componentDidMount() {
         this.retrievePosts();
         this.state.ownerID = localStorage.getItem("pk");
+
+        this.interval = setInterval(() => {
+            this.retrievePosts();
+        }, 5000);
         
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.interval);
     }
 
     formatDate = (dateString) => {
