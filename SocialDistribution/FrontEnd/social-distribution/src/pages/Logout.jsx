@@ -17,6 +17,7 @@ const Logout = () => {
         console.error("Error logging out:", error);
     }
     localStorage.removeItem('authToken');
+    localStorage.removeItem('pk');
     window.location.reload();
     window.location.href = "/signin";
     
