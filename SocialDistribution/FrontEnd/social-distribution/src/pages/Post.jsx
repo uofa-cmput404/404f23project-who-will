@@ -83,12 +83,18 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username}
     }
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
+    return formattedDate;
+  }
+
 
     
   return (
     <div className="postbox">
       <div>
-        <Profile username={userInfo.username} post_date = {post_date} />
+        <Profile username={userInfo.username} post_date = {formatDate(post_date)} />
       </div>
      
       <Content content={content} post_image={post_image}   />

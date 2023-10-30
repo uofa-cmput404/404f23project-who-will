@@ -22,6 +22,7 @@ class Account extends Component {
         isEditPostOpen: false,
         isCommentsOpen: false,
         postToEdit: null,
+        ownerID: null,
     };
 
     handleCommentsClick = () => {
@@ -80,9 +81,8 @@ class Account extends Component {
     retrievePosts = () => {
         console.log("Fetching data");
         const authToken = localStorage.getItem("authToken");
-
-
-        axios.get('http://localhost:8000/api/posts/', {
+    
+        axios.get(`http://localhost:8000/api/posts/`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }
@@ -101,6 +101,14 @@ class Account extends Component {
 
     componentDidMount() {
         this.retrievePosts();
+        this.state.ownerID = localStorage.getItem("pk");
+        
+    }
+
+    formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
+        return formattedDate;
     }
 
     render() {
@@ -140,20 +148,40 @@ class Account extends Component {
                 )}
 
                 {/*Posts*/}
-                <div className="post-content">
+                {/*CODE FOR AFTER DEMO*/}
+                {/* <div className="post-content">
                     {user.posts.map(post => (   //map method iterates over posts, current post is passed to arrow function
                         <div className="post-box" key={post.id}>
                             <p id="visibility">Visibility: {post.visibility}</p>
                             <p>{post.content}</p>
                             {post.post_image && <img className="post-image"src={post.post_image} alt="Post Image" />}
-                            <p>Posted on: {post.post_date}</p>
-                            <p>likes: {post.votes.length}</p>
+                            <p>Posted on: {this.formatDate(post.post_date_time)}</p>
+                            <p className="likes">likes: {post.votes.length}</p>
                             <div>
                                 <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
                                 <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
                                 <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
                             </div>
                         </div>
+                    ))}
+                </div> */}
+                <div className="post-content">
+                {user.posts
+                    .filter(post => post.owner === Number(this.state.ownerID))
+                    .sort((a, b) => new Date(b.post_date_time) - new Date(a.post_date_time))
+                    .map(post => (
+                    <div className="post-box" key={post.id}>
+                        <p id="visibility">Visibility: {post.visibility}</p>
+                        <p>{post.content}</p>
+                        {post.post_image && <img className="post-image" src={post.post_image} alt="Post Image" />}
+                        <p>Posted on: {this.formatDate(post.post_date_time)}</p>
+                        <p className="likes">likes: {post.votes.length}</p>
+                        <div>
+                        <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
+                        <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
+                        <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
+                        </div>
+                    </div>
                     ))}
                 </div>
                 {this.state.isCommentsOpen && (
