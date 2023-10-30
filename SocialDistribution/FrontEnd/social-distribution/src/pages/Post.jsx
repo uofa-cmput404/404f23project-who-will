@@ -2,9 +2,14 @@ import React from "react";
 import Profile from "./Profile";
 import Content from "./Content";
 import "./homepage.css"; // use css style
+import { useState, useEffect } from 'react';
 
 
 function Post({ content , post_image, post_date, username}) {
+
+  const handleLikeClick=() =>{
+
+  }
     
   return (
     <div className="postbox">
@@ -16,7 +21,7 @@ function Post({ content , post_image, post_date, username}) {
       {/* <p id="postdate">{post_date}</p> */}
       
       <div className="bottombar">
-        <button id="like">       
+        <button onClick={handleLikeClick} id="like">       
           <span role="img" aria-label="Heart">❤️</span>
         </button>
 
