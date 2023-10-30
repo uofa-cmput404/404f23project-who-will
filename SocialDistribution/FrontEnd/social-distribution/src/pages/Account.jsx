@@ -58,6 +58,7 @@ class Account extends Component {
 
     handleCloseEditPost = () => {
         this.setState({ isEditPostOpen: false, content: '', visibility: 'public', postToEdit: null });
+        this.retrievePostsWithDelay();
     }
 
     handleDeletePost = (postId) => {

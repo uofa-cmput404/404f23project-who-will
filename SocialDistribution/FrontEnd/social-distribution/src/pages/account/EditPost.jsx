@@ -32,7 +32,7 @@ class EditPost extends Component {
 
         const postToEdit = this.props.postToEdit;
 
-
+        const primaryKey = localStorage.getItem("pk");
 
         if (content === '' && image === null){
             //empty post
@@ -40,24 +40,37 @@ class EditPost extends Component {
             return;
         }
 
-        console.log(postToEdit.id)
+        if (image) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64Image = event.target.result;
+                console.log(base64Image);
+                const editedPost = {
+                    id: postToEdit.id, 
+                    owner: primaryKey,
+                    content: content,
+                    post_image: base64Image,
+                    visibility: visibility,
+                };
+                this.sendEditPostData(postToEdit.id, editedPost);
+            };
+    
+            reader.readAsDataURL(image); 
 
+        } else {
+            const editedPost = {
+                id: postToEdit.id, 
+                owner: primaryKey,
+                content: content,
+                post_image: null,
+                visibility: visibility,
+            };
 
-        const editedPost = {
-            id: postToEdit.id, 
-            content: content,
-            visibility: visibility,
-            timestamp: postToEdit.timestamp,
-            image: image,
-        };
-
-        if (content === ''){
-            editedPost.content = postToEdit.content;
+            console.log("-21-2-1-22-1-2-12-12-12-21-12-21-12");
+            console.log(editedPost);
+            this.sendEditPostData(postToEdit.id, editedPost);
         }
-
-        //change this to reflect actual post id
-        this.sendEditPostData(postToEdit.id, editedPost)
-
+    
         this.closeModal();
     };
 
