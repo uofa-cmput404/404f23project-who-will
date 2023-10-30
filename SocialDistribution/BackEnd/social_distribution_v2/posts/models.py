@@ -6,7 +6,7 @@ class Post(models.Model):
 
     owner = models.ForeignKey('auth.User', related_name='posts', on_delete=models.CASCADE)
     content=models.CharField(max_length=4000, blank=True)
-    post_image=models.CharField(max_length=500000, null=True)
+    post_image=models.CharField(max_length=1000000, null=True)
     post_date_time = models.DateTimeField(default=timezone.now)
 
     category=models.CharField(max_length=3000,default=None,blank=True,null=True)
