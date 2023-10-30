@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Notifications from './pages/Notifications';
 import Logout from './pages/Logout';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -21,28 +22,28 @@ function App() {
       <Routes>
         <Route path='/' exact Component={Home} />
         <Route path='/account' Component={Account}/>
-        <Route path='/signin' Component={Logout}/>
+        <Route path='/signout' Component={Logout}/>
         <Route path='/friends' Component={Friends}/>
         <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Notifications}/>
-
       </Routes>
+      <ToastContainer autoClose={3000} />
     </Router>
 
     );
   }
+  
 
 // the if not here is causing some good, but weird behaviour...
 if (!authToken) {
   return (
     <Router>
-      <NavBar/>
       <Routes>
         <Route path='/' exact Component={Login} />
         <Route path='/account' Component={Login}/>
         <Route path='/signin' Component={Login}/>
         <Route path='/friends' Component={Login}/>
-        <Route path='/signup' Component={Login}/>
+        <Route path='/signup' Component={SignUp}/>
         <Route path='/notifications' Component={Login}/>
 
       </Routes>

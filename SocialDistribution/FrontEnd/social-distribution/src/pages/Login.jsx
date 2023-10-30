@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { NavLink as Link, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Account from './Account';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Account from "./Account";
 
 const Container = styled.div`
   width: 30%;
@@ -18,7 +18,9 @@ const Container = styled.div`
   border: 1px solid black;
   border-radius: 10px;
 `;
-const TextLink = styled(Link)``;
+const TextLink = styled(Link)`
+  margin-top: 30px;
+`;
 
 const Login = () => {
   const [inputs, setInputs] = useState({});
@@ -41,54 +43,24 @@ const Login = () => {
     axios
       .post("http://localhost:8000/api/auth/login/", data)
       .then((res) => {
-        console.log(res.data); 
+        console.log(res.data);
         const authorizationToken = res.data.key;
-        localStorage.setItem('authToken', authorizationToken);
-        localStorage.setItem('username', data.username );
-        window.location.reload(); // this effectively navigates us back to home
+        localStorage.setItem("authToken", authorizationToken);
+        console.log("Successfully logged in");
+        window.location.reload();
+        window.location.href = "/";
+      
         // need to associate authToken with ID
         // also NEED a signout option
         setKey(res.data);
       })
       .catch((err) => {
         console.log(err);
+        alert('Incorrect User Name or Password, Please Try Again.');
       });
   };
-  
 
-  const AuthStr = "Token ".concat(key["key"]);
-  axios
-    .get("http://localhost:8000/api/auth/user/", {
-      headers: { Authorization: AuthStr },
-    })
-    .then((res) => {
-      console.log(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
 
-  const useGetUser = () => {
-    const [pk, setPk] = useState(-1);
-    useEffect(() => {
-      axios
-        .get("http://localhost:8000/api/auth/user/", {
-          headers: { Authorization: AuthStr },
-        })
-        .then((res) => {
-          //console.log(res.data);
-          setPk(res.data["pk"]);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-    console.log(pk);
-    return (pk);
-  };
-
-  let testpk = useGetUser();
-  console.log(testpk);
 
   return (
     <div
@@ -100,6 +72,7 @@ const Login = () => {
         height: "90vh",
       }}
     >
+      <h1>Social Distribution</h1>
       <h1>Sign In</h1>
       <Container>
         <form
@@ -107,6 +80,8 @@ const Login = () => {
           style={{
             display: "flex",
             flexDirection: "column",
+            alignContent: "center",
+            alignItems: "center",
           }}
         >
           <TextInput
@@ -120,17 +95,9 @@ const Login = () => {
             placeholder="Password"
             onChange={handleChange}
           ></TextInput>
-          <div
-            style={{
-              marginTop: "30px",
-              marginBottom: "30px",
-            }}
-          >
-            <Button type="submit" size="md" variant="primary">
-              Sign in
-            </Button>
-          </div>
-          <TextLink>Forget password?</TextLink>
+          <Button type="submit" size="md" variant="primary">
+            Sign in
+          </Button>
           <TextLink to="/signup">Don't have an account?</TextLink>
         </form>
       </Container>

@@ -36,7 +36,7 @@ const NavBar = () => {
             </NavMenu>
             <SearchBar></SearchBar>
             <NavBtn>
-                <NavBtnLink to='/signin'>Sign Out</NavBtnLink>
+                <NavBtnLink to='/signout'>Sign Out</NavBtnLink>
             </NavBtn>
            
         </Nav>

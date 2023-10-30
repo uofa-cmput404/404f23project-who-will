@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './AddPost.css';
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 class AddPost extends Component {
@@ -26,67 +28,57 @@ class AddPost extends Component {
         }
     };
 
+
+    
     handleSubmit = () => {
         const { content, visibility, image } = this.state;
-
-        const databaseTime = new Date().toISOString();
-        const date = new Date(databaseTime);
-
-        const options = { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit' 
-        };
-
-        const formattedDate = date.toLocaleDateString('en-CA', options);
-
-        if (content === '' && image === null){
-            //empty post
+    
+        if (content === '' && image === null) {
+            // Empty post
+            toast.error('Post must contain body or image');
             this.closeModal();
             return;
         }
 
-        //Creates new post
-        const newPost = {
-            id: Date.now(), 
-            content: content,
-            visibility: visibility,
-            timestamp: formattedDate,
-            image: image,
-        };
-
-
-        this.sendPostData(newPost);
-
-        // fake data, needs to be reworked with an updated model
-        const post = {
-            "id": 1,
-            "content": "hellwo",
-            "post_image": "http://127.0.0.1:8000/media/post_image/background.png",
-            "category": "test",
-            "post_date": "2023-10-22",
-            "comments": [],
-            "votes": []
-        };
-
-
-        this.props.onAddPost(post);
-
+        if (content.length > 4000){
+            toast.error('Post cannot exceed 4000 characters');
+            this.closeModal();
+            return;
+        }
+    
+        if (image) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64Image = event.target.result;
+                
+                const newPost = {
+                    content: content,
+                    visibility: visibility,
+                    post_image: base64Image,
+                };
+                this.sendPostData(newPost);
+            };
+    
+            reader.readAsDataURL(image); 
+        } else {
+            const newPost = {
+                content: content,
+                visibility: visibility,
+                post_image: null,
+            };
+            this.sendPostData(newPost);
+        }
+    
         this.closeModal();
-
-        // once "submit" is clicked, get the profile visibility (public/private) -->
-        // make api POST request
     };
 
 
     sendPostData = (postData) => {
-        console.log("HERE 2")
         const authToken = localStorage.getItem("authToken");
+
+        console.log(postData);
+
         if (authToken) {
-            //console.log(authToken);
             axios.post('http://localhost:8000/api/posts/', postData, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
@@ -95,10 +87,10 @@ class AddPost extends Component {
             })
             .then((res) => {
                 console.log(res.data); 
-                console.log("Successful post");
             })
             .catch((err) => {
                 console.log(err);
+                toast.error('Failed to upload post. Please try again.');
             });
         }
     }
