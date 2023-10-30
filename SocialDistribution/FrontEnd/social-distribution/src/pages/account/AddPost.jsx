@@ -46,13 +46,14 @@ class AddPost extends Component {
             return;
         }
     
+        const primaryKey = localStorage.getItem("pk");
         if (image) {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const base64Image = event.target.result;
                 console.log(base64Image);
                 const newPost = {
-                    owner: 1,
+                    owner: primaryKey,
                     content: content,
                     visibility: visibility,
                     post_image: base64Image,
@@ -63,7 +64,7 @@ class AddPost extends Component {
             reader.readAsDataURL(image); 
         } else {
             const newPost = {
-                owner: 1,
+                owner: primaryKey,
                 content: content,
                 visibility: visibility,
                 post_image: null,

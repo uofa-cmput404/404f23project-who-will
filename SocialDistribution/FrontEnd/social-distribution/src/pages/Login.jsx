@@ -46,31 +46,28 @@ const Login = () => {
         console.log(res.data);
         const authorizationToken = res.data.key;
         localStorage.setItem("authToken", authorizationToken);
-        localStorage.setItem("data", res.data);
-        const authToken = localStorage.getItem("authToken");
 
-        if (authToken) {
-            axios.post('http://localhost:8000/api/auth/users/', {
+
+        if (authorizationToken) {
+            axios.get("http://localhost:8000/api/auth/user/", {
                 headers: {
-                    'Authorization': `Token ${authToken}`,
-                    'Content-Type': "application/json"
+                    'Authorization': `Token ${authorizationToken}`,
                 }
             })
             .then((res) => {
                 console.log(res.data); 
+                const primaryKey = res.data["pk"];
+                localStorage.setItem("pk", primaryKey);
+
             })
-            .catch((err) => {
-                console.log(err);
-                // toast.error('Failed to upload post. Please try again.');
-            });
+            
         }
+
 
         console.log("Successfully logged in");
         window.location.reload();
         window.location.href = "/";
       
-        // need to associate authToken with ID
-        // also NEED a signout option
         setKey(res.data);
       })
       .catch((err) => {
@@ -80,25 +77,6 @@ const Login = () => {
   };
 
   
-  // getUserName = () => {
-  //   const authToken = localStorage.getItem("authToken");
-
-  //   if (authToken) {
-  //       axios.post('http://localhost:8000/api/auth/users/', {
-  //           headers: {
-  //               'Authorization': `Token ${authToken}`,
-  //               'Content-Type': "application/json"
-  //           }
-  //       })
-  //       .then((res) => {
-  //           console.log(res.data); 
-  //       })
-  //       .catch((err) => {
-  //           console.log(err);
-  //           toast.error('Failed to upload post. Please try again.');
-  //       });
-  //   }
-  // }
 
 
 
