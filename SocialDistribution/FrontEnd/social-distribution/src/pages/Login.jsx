@@ -46,6 +46,25 @@ const Login = () => {
         console.log(res.data);
         const authorizationToken = res.data.key;
         localStorage.setItem("authToken", authorizationToken);
+        localStorage.setItem("data", res.data);
+        const authToken = localStorage.getItem("authToken");
+
+        if (authToken) {
+            axios.post('http://localhost:8000/api/auth/users/', {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                    'Content-Type': "application/json"
+                }
+            })
+            .then((res) => {
+                console.log(res.data); 
+            })
+            .catch((err) => {
+                console.log(err);
+                // toast.error('Failed to upload post. Please try again.');
+            });
+        }
+
         console.log("Successfully logged in");
         window.location.reload();
         window.location.href = "/";
@@ -59,6 +78,27 @@ const Login = () => {
         alert('Incorrect User Name or Password, Please Try Again.');
       });
   };
+
+  
+  // getUserName = () => {
+  //   const authToken = localStorage.getItem("authToken");
+
+  //   if (authToken) {
+  //       axios.post('http://localhost:8000/api/auth/users/', {
+  //           headers: {
+  //               'Authorization': `Token ${authToken}`,
+  //               'Content-Type': "application/json"
+  //           }
+  //       })
+  //       .then((res) => {
+  //           console.log(res.data); 
+  //       })
+  //       .catch((err) => {
+  //           console.log(err);
+  //           toast.error('Failed to upload post. Please try again.');
+  //       });
+  //   }
+  // }
 
 
 
