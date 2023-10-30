@@ -147,6 +147,7 @@ class Account extends Component {
                             <p>{post.content}</p>
                             {post.post_image && <img className="post-image"src={post.post_image} alt="Post Image" />}
                             <p>Posted on: {post.post_date}</p>
+                            <p>likes: {post.votes.length}</p>
                             <div>
                                 <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
                                 <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
