@@ -9,4 +9,5 @@ class PostSerializer(serializers.ModelSerializer):
     votes=VoteSerializer(many=True,read_only=True)
     class Meta:
         model = Post
-        fields = ['id', 'content','post_image','category','post_date_time','comments','votes']
+        fields = ['id', 'content','post_image','category','post_date_time', 'visibility', 'comments', 'votes']
+
