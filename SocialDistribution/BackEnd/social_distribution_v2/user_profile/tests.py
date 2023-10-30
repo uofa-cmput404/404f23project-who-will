@@ -13,5 +13,6 @@ class ProfileTestCases(TestCase):
         user = User.objects.create(username='test', email='test@test.com', password='password')
         user.save()
         UserProfile.objects.create(owner=user)
-        profile = UserProfile.objects.get(owner=user)
+    def test_Profile_owner(self):
+        profile = UserProfile.objects.get()
         self.assertAlmostEqual(profile.owner.username, 'test')
