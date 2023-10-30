@@ -38,7 +38,6 @@ function App() {
 if (!authToken) {
   return (
     <Router>
-      <NavBar/>
       <Routes>
         <Route path='/' exact Component={Login} />
         <Route path='/account' Component={Login}/>
