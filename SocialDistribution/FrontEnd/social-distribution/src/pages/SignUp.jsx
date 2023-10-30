@@ -29,20 +29,28 @@ const SignUp = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let data;
-    data = {
-      "username": inputs['userName'],
-      "email": inputs['email'],
-      "password": inputs['passWord'],
+    if (inputs["passWord"] !== inputs["rePassWord"]) {
+      alert("Make Sure the 2 passwords are matching.");
+    } else {
+      let data;
+      data = {
+        username: inputs["userName"],
+        email: inputs["email"],
+        password: inputs["passWord"],
+      };
+      console.log(data);
+      axios
+        .post(`${process.env.REACT_APP_API_URL}/users/`, data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      window.location.reload();
+      window.location.href = "/signin";
     }
-    console.log(data);
-    axios.post(`${process.env.REACT_APP_API_URL}/users/`, data)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err)
-    })
   };
   return (
     <div
@@ -61,31 +69,37 @@ const SignUp = () => {
           style={{
             display: "flex",
             flexDirection: "column",
+            alignContent: "center",
+            alignItems: "center",
           }}
         >
-          <TextInput placeholder="Email" onChange={handleChange} name='email'></TextInput>
+          <TextInput
+            placeholder="Email"
+            onChange={handleChange}
+            name="email"
+          ></TextInput>
           <TextInput
             placeholder="User Name"
             onChange={handleChange}
-            name='userName'
+            name="userName"
           ></TextInput>
           <TextInput
             type="password"
             placeholder="Password"
             onChange={handleChange}
-            name='passWord'
+            name="passWord"
           ></TextInput>
           <TextInput
             type="password"
             placeholder="Re-enter Password"
             onChange={handleChange}
-            name='rePassWord'
+            name="rePassWord"
           ></TextInput>
           <Button type="submit" size="md" variant="primary">
             Sign Up
           </Button>
         </form>
-        <Link to='/signin'>Have an Account?</Link>
+        <Link to="/signin">Have an Account?</Link>
       </ScrollContainer>
     </div>
   );
