@@ -5,9 +5,16 @@ import "./homepage.css"; // use css style
 import { useState, useEffect } from 'react';
 import axios from "axios"; // for ES6 (Browsers, Modern JavaScript)
 
+// const state = {
+//   post_id: null,
+//   username: null
+// }
 
 function Post({ content , post_image, post_date,  post_owner, post_id, username}) {
   const [userInfo, setUserInfo] = useState('');
+
+  // this.state.post_id = post_id;
+  // this.state.username = username;
 
   const getPoseOwner=() =>{
       console.log("get post owner");
@@ -35,37 +42,48 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username}
       }
     
   }
-  
-  //handle vote up 
-  const handleLikeClick=() =>{
-    // 
-    const postVote = {
-      "post": {post_id},
-      "up_vote_by": {username}
-    }
-
-    // fetch('http://localhost:8000/api/posts/', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(postVote),
-    // })
-    // .then((response) => {
-    //   if (response.status === 200) {
-    //     // Request was successful, handle the response here
-    //   } else {
-    //     // Request failed, handle the error here
-    //   }
-    // })
-    // .catch((error) => {
-    //   // Network error, handle the error here
-    // });
-  };
 
   useEffect(() => {
     getPoseOwner(); // Fetch data when the component mounts
    }, []);
+  
+  //handle vote up 
+  const handleLikeClick=() =>{
+
+    console.log(post_id);
+    console.log(username);
+
+    const postVote = {
+      post: post_id,
+      up_vote: true
+    }
+    const authToken = localStorage.getItem("authToken");
+
+    console.log(postVote);
+
+    if (authToken) {
+        axios.post('http://localhost:8000/api/votes/', postVote, {
+            headers: {
+                'Authorization': `Token ${authToken}`,
+                'Content-Type': "application/json"
+            }
+        })
+        .then((response) => {
+          // Handle the successful response here
+          console.log('POST request successful:', response.data);
+    
+          // Assuming that the response contains an updated list, you can set it in your component's state or do further processing.
+          // For example, if you have a state variable `updatedList`:
+          // this.setState({ updatedList: response.data });
+        })
+        .catch((error) => {
+          // Handle any errors here
+          console.error('POST request error:', error);
+        });
+    }
+  };
+
+
     
   return (
     <div className="postbox">
@@ -82,10 +100,7 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username}
         </button>
 
       </div>
-     
-
-
-      
+ 
       </div>
   );
 }

@@ -17,7 +17,7 @@ const Home = () => {
     setUsername(username);
 
     // console.log(authToken);
-    // console.log(username);
+    console.log(username);
 
     if (authToken) {
       axios

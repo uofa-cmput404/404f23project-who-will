@@ -46,6 +46,7 @@ const Login = () => {
         console.log(res.data);
         const authorizationToken = res.data.key;
         localStorage.setItem("authToken", authorizationToken);
+        localStorage.setItem("username", data.username);  
 
 
         if (authorizationToken) {
