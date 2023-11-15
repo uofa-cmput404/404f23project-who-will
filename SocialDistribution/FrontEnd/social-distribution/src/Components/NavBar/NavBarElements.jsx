@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { NavLink as Link } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
+import { useState } from 'react'
+import axios from "axios";
 
 export const Nav = styled.nav`
     background: #000;
@@ -107,7 +109,23 @@ export const NavBtnLink = styled(Link)`
     }
 `;
 
-export const SearchBar = ({keyword, onChange}) => {
+export const SearchBar = () => {
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const handleSearch = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            const response = await axios.get(`http://localhost:8000/api/profiles/?owner=${query}`, {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                }
+            });
+            setResults(response.data.results);
+        } catch (error) {
+            console.error('Error searching:', error);
+        }
+    };
+
     const BarStyle = 
     {
         width:"20rem",
@@ -116,17 +134,42 @@ export const SearchBar = ({keyword, onChange}) => {
         display: "flex",
         borderRadius: "10px",
         margin: "20px",
+        height: "30px",
         
     };
+    
+    const SearchDivStyle = 
+    {
+        display: "flex",
+        alignItems: "center",
+        marginTop: "5px",
+
+    };
+
+    const SearchButtonStyle = 
+    {
+        display: "flex",
+        alignItems: "center",
+        height: "30px",
+        border: "1px solid blue",
+        fontSize: "13px",
+
+    };
+
     // in the future, call a query function in Django in the onChange section
     return (
-      <input 
-       style={BarStyle}
-       key="search-bar"
-       value={keyword}
-       placeholder={"  Search Users"}
-       onChange={(e) => onChange(e.target.value)}
-      />
+    <div>
+        <div style={SearchDivStyle} className="searchBar">
+        <input 
+        style={BarStyle}
+        key="search-bar"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={"  Search Users"}
+        />
+        <button style={SearchButtonStyle} onClick={handleSearch}> Search</button>
+        </div>
+      </div>
     );
   }
   
