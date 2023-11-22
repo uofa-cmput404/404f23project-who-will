@@ -66,6 +66,22 @@ class Account extends Component {
         this.retrievePostsWithDelay();
     }
 
+    /* Follow / Friend Request code */
+    sendFollowRequest = (IDtoFollow, currentUserID) => {
+
+        const authToken = localStorage.getItem('authToken');
+        axios.post(`http://localhost:8000/api/users/${IDtoFollow}`, currentUserID, {
+            headers: {
+                'Authorization': `Token ${authToken}`,
+            }
+        })
+
+    }
+
+    sendFriendRequest = () => {
+
+    }
+
     handleDeletePost = (postId) => {
         const confirmation = window.confirm("Are you sure you want to delete this post?");
 
