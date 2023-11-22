@@ -27,6 +27,49 @@
     margin-right: 0px;
 }
 
+.send-friend-request {
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    border-color: var(--main-color);
+    padding: 20px 40px;
+    border-style: solid;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 4px;
+    font-size: medium;
+    transition: background-color 0.3s,
+        color 0.3s;
+        box-shadow: 0.3s;
+    grid-area: sidebar-left;
+    width: fit-content;
+    height: fit-content;
+    margin-left: calc(var(--left-margin-profile) + 25px);
+    margin-top: 100px;
+    margin-right: 0px;
+}
+
+
+.follow{
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    border-color: var(--main-color);
+    padding: 20px 40px;
+    border-style: solid;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 4px;
+    font-size: medium;
+    transition: background-color 0.3s,
+        color 0.3s;
+        box-shadow: 0.3s;
+    grid-area: sidebar-left;
+    width: fit-content;
+    height: fit-content;
+    margin-left: calc(var(--left-margin-profile) + 25px);
+    margin-top: 190px;
+    margin-right: 0px;
+}
+ 
 .add-post-button:hover {
     background-color: var(--main-color);
     color: var(--secondary-color);

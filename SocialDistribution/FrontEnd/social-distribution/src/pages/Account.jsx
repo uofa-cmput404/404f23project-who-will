@@ -9,6 +9,11 @@ import DeletePost from './account/DeletePost.jsx';
 import Comments from './account/Comments.jsx';
 import axios from 'axios';
 
+function isNotEmptyObject(obj) {
+    return obj !== null && typeof obj === 'object' && Object.keys(obj).length > 0;
+}
+
+
 class Account extends Component {
 
     delayTime = 100;
@@ -125,6 +130,8 @@ class Account extends Component {
         const passedData = Object.fromEntries(queryParams.entries());
         // 'passedData' is the ID we need to populate this page with
         var loggedInUsersID = localStorage.getItem("pk");
+        console.log(passedData);
+        console.log(loggedInUsersID);
 
 
         const { user } = this.state;
@@ -154,6 +161,13 @@ class Account extends Component {
                 )}
 
                 <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
+                {/* that button shoudln't show up if he is already your friend */}
+                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
+                    <button className='send-friend-request' >Send Friend Request</button>
+                )}
+                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
+                    <button className='follow' >Follow</button>
+                )}
                 
                 {this.state.isAddPostOpen && (
                     <AddPost
@@ -161,7 +175,6 @@ class Account extends Component {
                         image={this.state.image}
                     />
                 )}
-
                 {/*Posts*/}
                 {/*CODE FOR AFTER DEMO*/}
                 {/* <div className="post-content">
