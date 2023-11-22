@@ -121,6 +121,12 @@ class Account extends Component {
     }
 
     render() {
+        const queryParams = new URLSearchParams(window.location.search);
+        const passedData = Object.fromEntries(queryParams.entries());
+        // 'passedData' is the ID we need to populate this page with
+        var loggedInUsersID = localStorage.getItem("pk");
+
+
         const { user } = this.state;
 
         if (!user) {

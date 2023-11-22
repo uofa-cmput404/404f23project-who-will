@@ -59,11 +59,10 @@ const Login = () => {
                 console.log(res.data); 
                 const primaryKey = res.data["pk"];
                 localStorage.setItem("pk", primaryKey);
-
+                console.log(primaryKey);
             })
             
         }
-
 
         console.log("Successfully logged in");
         window.location.reload();

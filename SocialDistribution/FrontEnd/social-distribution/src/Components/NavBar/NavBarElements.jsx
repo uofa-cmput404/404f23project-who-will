@@ -112,17 +112,38 @@ export const NavBtnLink = styled(Link)`
 export const SearchBar = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
+
+
     const handleSearch = async () => {
+        var userExists = false;
+        var searchedID = null;
         try {
             const authToken = localStorage.getItem('authToken');
-            const response = await axios.get(`http://localhost:8000/api/profiles/?owner=${query}`, {
+            const response = await axios.get(`http://localhost:8000/api/users/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
             });
-            setResults(response.data.results);
-        } catch (error) {
+            // search through json to see if user exists
+            // there is probably a way better way to do this, but this is fine for now
+            var data = response.data;
+            data.forEach(element => {
+                if (element.username === query) {
+                    userExists = true;
+                    searchedID = element.id;
+                    window.location.href = `/account?${searchedID}`;
+                   
+                }
+            });
+            setResults(response.data.results);  
+        } 
+        catch (error) {
             console.error('Error searching:', error);
+        }
+
+        if(!userExists) {
+            // TODO: add a popup or something, and then clear the searchbar of text
+            console.log("User does not exist!");
         }
     };
 
@@ -135,7 +156,7 @@ export const SearchBar = () => {
         borderRadius: "10px",
         margin: "20px",
         height: "30px",
-        
+    
     };
     
     const SearchDivStyle = 
@@ -167,7 +188,7 @@ export const SearchBar = () => {
         onChange={(e) => setQuery(e.target.value)}
         placeholder={"  Search Users"}
         />
-        <button style={SearchButtonStyle} onClick={handleSearch}> Search</button>
+        <button style={SearchButtonStyle}  onClick={handleSearch}> Search</button>
         </div>
       </div>
     );
