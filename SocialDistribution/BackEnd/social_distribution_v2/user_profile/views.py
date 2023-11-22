@@ -13,8 +13,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
                           IsOwnerOrReadOnly]
     def get_queryset(self):
         query_params = self.request.query_params
-        
-        return UserProfile.objects.filter(owner__username__contains=query_params['owner'])
+        print(query_params)
+        if not query_params:
+            return self.queryset
+                
+        return self.queryset.filter(owner__username__contains = query_params['owner']) 
     
 
     def perform_create(self, serializer):
