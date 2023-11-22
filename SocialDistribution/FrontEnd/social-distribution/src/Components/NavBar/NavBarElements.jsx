@@ -42,12 +42,24 @@ export const NavLink = styled(Link)`
         padding: 0 10rem;
     }
 
+    @media (max-width: 1900px) {
+        padding: 0 9rem;
+    }
+
     @media (max-width: 1800px) {
         padding: 0 7rem;
     }
 
+    @media (max-width: 1600px) {
+        padding: 0 6rem;
+    }
+
     @media (max-width: 1500px) {
         padding: 0 5rem;
+    }
+
+    @media (max-width: 1450px) {
+        padding: 0 3rem;
     }
 `;
 
@@ -164,6 +176,9 @@ export const SearchBar = () => {
         display: "flex",
         alignItems: "center",
         marginTop: "5px",
+        '@media (max-width: 1600px)': {
+                margin: "-30px"
+          },
 
     };
 

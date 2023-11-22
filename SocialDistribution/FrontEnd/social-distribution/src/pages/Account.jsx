@@ -161,7 +161,7 @@ class Account extends Component {
                 )}
 
                 <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
-                {/* that button shoudln't show up if he is already your friend */}
+                {/* TODO: that button shoudln't show up if he is already your friend */}
                 {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
                     <button className='send-friend-request' >Send Friend Request</button>
                 )}
