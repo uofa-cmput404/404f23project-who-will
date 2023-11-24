@@ -74,6 +74,17 @@ const Tile = styled.div`
   }
 `;
 
+const AcceptDeclineCon = styled.div`
+  display: flex;
+  & > *{
+
+    margin: auto;
+  }
+  @media screen {
+   margin-left: 85%; 
+  }
+`
+
 const RenderRequest = ({ requests }) => {
   // function to render request list
   return (
@@ -81,16 +92,11 @@ const RenderRequest = ({ requests }) => {
       {requests.map((message, index) => (
         <Request key={index}>
           <p>{message}</p>
-          <div
-            style={{
-              marginLeft: "85%",
-            }}
-          >
+          <AcceptDeclineCon>
             <IconContext.Provider
               value={{
                 color: "green",
                 size: "2.5em",
-                style: { margin: "5px", cursor: "pointer" },
               }}
             >
               <FaCheckCircle />
@@ -99,17 +105,19 @@ const RenderRequest = ({ requests }) => {
               value={{
                 color: "red",
                 size: "2.5em",
-                style: { margin: "5px", cursor: "pointer" },
               }}
             >
               <FaCircleXmark />
             </IconContext.Provider>
-          </div>
+          </AcceptDeclineCon>
         </Request>
       ))}
     </div>
   );
 };
+
+
+
 
 const Notifications = () => {
   const requests = ["request1", "request2", "request3"];
