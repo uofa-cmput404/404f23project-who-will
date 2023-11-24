@@ -48,8 +48,8 @@ class UserProfile(models.Model):
     lives_in = models.CharField(max_length=200, null=True, blank=True)
     studies_at = models.CharField(max_length=200, null=True, blank=True)
     profile_image = models.ImageField(upload_to="profile_image", null=True, blank=True)
-    follow_requests = models.ManyToManyField(User, related_name='follow_requests_received', blank=True)
-    following = models.ManyToManyField(User, related_name='followers', blank=True)
+    follow_requests = models.ManyToManyField('self', symmetrical=False, related_name='follow_requests_received', blank=True)
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
 
     @property
     def followers_count(self):
@@ -59,12 +59,15 @@ class UserProfile(models.Model):
     def following_count(self):
         return self.following.count()
 
-    def send_follow_request(self, to_user):
-        self.follow_requests.add(to_user)
+    def send_follow_request(self, to_user_profile):
+        self.follow_requests.add(to_user_profile)
 
-    def accept_follow_request(self, from_user):
-        self.follow_requests.remove(from_user)
-        self.following.add(from_user)
+    def accept_follow_request(self, from_user_profile):
+        self.follow_requests.remove(from_user_profile)
+        self.following.add(from_user_profile)
 
-    def reject_follow_request(self, from_user):
-        self.follow_requests.remove(from_user)
+    def reject_follow_request(self, from_user_profile):
+        self.follow_requests.remove(from_user_profile)
+    
+    def __str__(self):
+        return str(self.owner)

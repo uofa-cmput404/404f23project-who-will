@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios"; // for ES6 (Browsers, Modern JavaScript)
 import "./homepage.css"; // use css style
-import Postlist from "./Postlist";
+import Postlist from "./homepage/Postlist";
 import { useEffect, useState } from 'react';
 
 

@@ -176,10 +176,6 @@ export const SearchBar = () => {
         display: "flex",
         alignItems: "center",
         marginTop: "5px",
-        '@media (max-width: 1600px)': {
-                margin: "-30px"
-          },
-
     };
 
     const SearchButtonStyle = 

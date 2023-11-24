@@ -77,6 +77,21 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'access-control-allow-origin',
+    'authorization',
+    'content-type',
+]
+
 
 CORS_ALLOW_METHODS = [
     'DELETE',
