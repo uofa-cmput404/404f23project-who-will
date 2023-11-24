@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User  # Make sure to import User
 from user_profile.models import UserProfile
 from .serializers import ProfileSerializer
+import requests
 
 class ProfileViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -33,20 +34,77 @@ class ProfileViewSet(viewsets.ViewSet):
     #         return Response(serializer.data)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def update(self, request, pk):
-        print(1,"here")
-        profile = get_object_or_404(UserProfile, pk=pk)
-        serializer = ProfileSerializer(profile, data=request.data)
-        if serializer.is_valid():
-            # Check if 'follow_request' is in the request data
-            if 'follow_request' in request.data:
-                to_user_profile_id = request.data['follow_request']
-                to_user_profile = get_object_or_404(UserProfile, pk=to_user_profile_id)
-                profile.send_follow_request(to_user_profile)
-                return Response({'message': 'Follow request sent successfully.'}, status=status.HTTP_200_OK)
+        try:
+            x=request.path.split('/')
+            if x[-1] == '':
+                x.pop()
+            to_follow=x[-1]
+            to_do=request.data
+            print(to_do)
+            response={'message': ''}
+            if to_do['add_follow_request'] != 'None':
+                follower_id=to_do['add_follow_request']
+                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower = get_object_or_404(UserProfile, pk=follower_id)
+                to_follow_profile.follow_requests.add(follower)
+                response['message'] += f"'{follower}' added to '{to_follow_profile}' follow requests."
 
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if to_do['delete_follow_request'] != 'None':
+                follower_id=to_do['delete_follow_request']
+                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower = get_object_or_404(UserProfile, pk=follower_id)
+                to_follow_profile.follow_requests.remove(follower)
+                response['message'] += f"'{follower}' removed from '{to_follow_profile}' follow requests."
+
+            if to_do['add_following'] != 'None':
+                follower_id=to_do['add_following']
+                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                # Add the follower to 'follow_requests'
+                follower = get_object_or_404(UserProfile, pk=follower_id)
+                to_follow_profile.following.add(follower)
+                response['message'] += f"'{follower}' added to '{to_follow_profile}' followers."
+
+            if to_do['delete_following'] != 'None':
+                follower_id=to_do['delete_following']
+                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower = get_object_or_404(UserProfile, pk=follower_id)
+                to_follow_profile.following.remove(follower)
+                response['message'] += f"'{follower}' removed from '{to_follow_profile}' followers."
+
+            if response['message'] == '':
+                response['message'] = 'Invalid request data.'
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Invalid request data.'}, status=status.HTTP_400_BAD_REQUEST)
+        # follower_id = request.data.get('add')
+        # # print("Request Body:", request.data)  # Added this line to print the request body
+        # # Ensure that 'to_follow' and 'follower_id' are not None
+        # if to_follow is not None and follower_id is not '':
+        #     # Get the UserProfile identified by 'to_follow'
+        #     to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+
+        #     # Add the follower to 'follow_requests'
+        #     follower = get_object_or_404(UserProfile, pk=follower_id)
+        #     to_follow_profile.follow_requests.add(follower)
+
+        #     print(to_follow, "followed by", follower_id)
+        #     return Response({'message': 'Follow request added successfully.'}, status=status.HTTP_200_OK)
+        # else:
+        #     return Response({'error': 'Invalid request data.'}, status=status.HTTP_400_BAD_REQUEST)
+        # profile = get_object_or_404(UserProfile, pk=pk)
+        # serializer = ProfileSerializer(profile, data=request.data)
+        # if serializer.is_valid():
+        #     # Check if 'follow_request' is in the request data
+        #     if 'follow_request' in request.data:
+        #         to_user_profile_id = request.data['follow_request']
+        #         to_user_profile = get_object_or_404(UserProfile, pk=to_user_profile_id)
+        #         profile.send_follow_request(to_user_profile)
+        #         return Response({'message': 'Follow request sent successfully.'}, status=status.HTTP_200_OK)
+
+        #     serializer.save()
+        #     return Response(serializer.data)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk):
         profile = get_object_or_404(UserProfile, pk=pk)
