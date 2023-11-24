@@ -74,8 +74,7 @@ body {
 
   
   .postbox:hover {
-    box-shadow: 0px 10px 20px 5px rgba(0, 0, 0, 0.5);
-    transform: translateY(-5px);
+    /*box-shadow: 0px 10px 20px 5px rgba(0, 0, 0, 0.5);*/
   }
   
   #like{
@@ -86,3 +85,30 @@ body {
     margin: 0;
     padding: 0;
   }
+
+.comments {
+    background-color: white;
+    color: black;
+    border-color: black;
+    padding: 10px 20px;
+    border-style: solid;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 4px;
+    padding: 8px;
+    transition: background-color 0.3s,
+        color 0.3s;
+        box-shadow: 0.3s;
+}
+
+.comments:hover {
+  background-color: white;
+  color: black;
+  box-shadow: var(--button-shadow);
+}
+
+.comments:active {
+    opacity: 0.8;
+}
+
+
