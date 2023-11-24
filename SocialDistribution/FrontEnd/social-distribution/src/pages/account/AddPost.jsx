@@ -126,7 +126,7 @@ class AddPost extends Component {
                         Visibility:
                         <select value={this.state.visibility} onChange={this.handleVisibilityChange}>
                             <option value="public">Public</option>
-                            <option value="friends">Friends Only</option>
+                            <option value="friends only">Friends Only</option>
                             <option value="private">Private</option>
                         </select>
                     </label>

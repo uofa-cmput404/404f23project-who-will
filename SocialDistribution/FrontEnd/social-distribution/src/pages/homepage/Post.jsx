@@ -1,22 +1,38 @@
 import React from "react";
-import Profile from "./Profile";
-import Content from "./Content";
-import "./homepage.css"; // use css style
+import Profile from "../Profile";
+import Content from "../Content";
+import "../homepage.css"; // use css style
 import { useState, useEffect } from 'react';
 import axios from "axios"; // for ES6 (Browsers, Modern JavaScript)
+import HomeComments from "./HomeComments";
 
 // const state = {
 //   post_id: null,
 //   username: null
 // }
 
-function Post({ content , post_image, post_date,  post_owner, post_id, username}) {
+
+function Post({ content , post_image, post_date,  post_owner, post_id, username, votes, comments}) {
   const [userInfo, setUserInfo] = useState('');
+  const [liked, setLiked] = useState(false);
+  const [isCommentsOpen, setCommentsPopup] = useState(false);
+
+  //console.log(comments);
+
+
+  useEffect(() => {
+    // Check if the username is in any up_vote_by in the votes array
+    const isLiked = votes.some((vote) => vote.up_vote_by === username);
+    setLiked(isLiked);
+  }, [votes, username]);
+
+
 
   // this.state.post_id = post_id;
   // this.state.username = username;
 
   const getPoseOwner=() =>{
+
       console.log("get post owner");
       const authToken = localStorage.getItem("authToken");
   
@@ -47,8 +63,20 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username}
     getPoseOwner(); // Fetch data when the component mounts
    }, []);
   
+
+  const handleCommentsClick=() => {
+    console.log("comments button clicked!!!"); 
+    setCommentsPopup(true);
+  };
+
+  const handleCloseComments = () => {
+    setCommentsPopup(false);
+}
+
+  
   //handle vote up 
   const handleLikeClick=() =>{
+    setLiked(true);
 
     console.log(post_id);
     console.log(username);
@@ -101,12 +129,17 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username}
       {/* <p id="postdate">{post_date}</p> */}
       
       <div className="bottombar">
-        <button onClick={handleLikeClick} id="like">       
-          <span role="img" aria-label="Heart">❤️</span>
+        <button onClick={handleLikeClick} id="like"> 
+        <span role="img" className="heart" aria-label="Heart">{liked ? '❤️' : '🤍'}</span>
         </button>
+        <button className="comments" onClick={handleCommentsClick}>Comments</button>
 
       </div>
- 
+        {isCommentsOpen && (
+          <HomeComments onClose={handleCloseComments} 
+          comments={comments}
+          post_id={post_id} />
+        )}
       </div>
   );
 }
