@@ -8,6 +8,7 @@ import EditPost from './account/EditPost.jsx';
 import DeletePost from './account/DeletePost.jsx';
 import Comments from './account/Comments.jsx';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function isNotEmptyObject(obj) {
     return obj !== null && typeof obj === 'object' && Object.keys(obj).length > 0;
@@ -68,17 +69,53 @@ class Account extends Component {
 
     /* Follow / Friend Request code */
     sendFollowRequest = (IDtoFollow, currentUserID) => {
+        const authToken = localStorage.getItem("authToken");
+        if (authToken) {
+            var actualID = Object.keys(IDtoFollow)[0];
+            
+            axios.get(`http://localhost:8000/api/users/${actualID}/`, {
+                headers: {
 
-        const authToken = localStorage.getItem('authToken');
-        axios.post(`http://localhost:8000/api/users/${IDtoFollow}`, currentUserID, {
-            headers: {
-                'Authorization': `Token ${authToken}`,
-            }
-        })
+                    'Authorization': `Token ${authToken}`,
+                    'Content-Type': 'application/json',
+
+                }
+            }) 
+            .then((res) => {
+                
+                const profileData = res.data.profile_data;
+                profileData.follow_requests.push(currentUserID);
+                const postData = {
+                    profile_data: profileData
+                };
+                
+                axios.patch(`http://localhost:8000/api/users/${actualID}/`, postData, {
+                    headers: {
+                        'Authorization': `Token ${authToken}`,
+                        'Content-Type': "application/json"
+                    }
+                })
+                .then((res) => {
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("ERRRRRROR")
+                    toast.error("Error sending follow request");
+                });
+
+            })
+           
+            .catch((err) => {
+                console.log(err);
+                console.log("ERRRRRROR")
+                toast.error("Error sending follow request");
+            });
+        }
 
     }
 
-    sendFriendRequest = () => {
+    sendFriendRequest = (IDtoFollow, currentUserID) => {
 
     }
 
@@ -179,10 +216,10 @@ class Account extends Component {
                 <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
                 {/* TODO: that button shoudln't show up if he is already your friend */}
                 {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
-                    <button className='send-friend-request' >Send Friend Request</button>
+                    <button onClick={this.sendFriendRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' >Send Friend Request</button>
                 )}
                 {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
-                    <button className='follow' >Follow</button>
+                    <button onClick={this.sendFollowRequest.bind(this, passedData, loggedInUsersID)} className='follow'> Follow</button>
                 )}
                 
                 {this.state.isAddPostOpen && (

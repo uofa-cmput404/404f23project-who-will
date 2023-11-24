@@ -58,16 +58,20 @@ const Login = () => {
             .then((res) => {
                 console.log(res.data); 
                 const primaryKey = res.data["pk"];
-                localStorage.setItem("pk", primaryKey);
+                localStorage.setItem("pk", primaryKey); 
                 console.log(primaryKey);
+                if(localStorage.getItem("pk") != null) {
+                  console.log("Successfully logged in")
+                  window.location.reload();
+                  window.location.href = "/";
+                }
             })
             
         }
 
-        console.log("Successfully logged in");
-        window.location.reload();
-        window.location.href = "/";
-      
+       
+        
+
         setKey(res.data);
       })
       .catch((err) => {

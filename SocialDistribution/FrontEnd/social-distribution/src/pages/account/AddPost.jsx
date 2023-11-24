@@ -78,7 +78,6 @@ class AddPost extends Component {
 
     sendPostData = (postData) => {
         const authToken = localStorage.getItem("authToken");
-
         console.log(postData);
 
         if (authToken) {
