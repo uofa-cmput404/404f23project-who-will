@@ -73,7 +73,7 @@ class Account extends Component {
         if (authToken) {
             var actualID = Object.keys(IDtoFollow)[0];
             
-            axios.get(`http://localhost:8000/api/users/${actualID}/`, {
+            axios.get(`http://localhost:8000/api/profiles/${actualID}/`, {
                 headers: {
 
                     'Authorization': `Token ${authToken}`,
@@ -82,17 +82,23 @@ class Account extends Component {
                 }
             }) 
             .then((res) => {
+
                 
-                const profileData = res.data.profile_data;
-                profileData.follow_requests.push(currentUserID);
+                var profileData = res.data;
+                var profileID = profileData.id;
+            
+                // request payload
                 const postData = {
-                    profile_data: profileData
+                    "add_follow_request": profileID,
+                    "delete_follow_request": "None",
+                    "add_following": "None",
+                    "delete_following": "None"
                 };
-                
-                axios.patch(`http://localhost:8000/api/users/${actualID}/`, postData, {
+
+                // use admin testcase to search not admin2
+                axios.put(`http://localhost:8000/api/profiles/${actualID}/`, postData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
-                        'Content-Type': "application/json"
                     }
                 })
                 .then((res) => {
@@ -100,7 +106,6 @@ class Account extends Component {
                 })
                 .catch((err) => {
                     console.log(err);
-                    console.log("ERRRRRROR")
                     toast.error("Error sending follow request");
                 });
 
@@ -108,7 +113,6 @@ class Account extends Component {
            
             .catch((err) => {
                 console.log(err);
-                console.log("ERRRRRROR")
                 toast.error("Error sending follow request");
             });
         }
@@ -116,7 +120,7 @@ class Account extends Component {
     }
 
     sendFriendRequest = (IDtoFollow, currentUserID) => {
-
+            // mutual following.
     }
 
     handleDeletePost = (postId) => {
