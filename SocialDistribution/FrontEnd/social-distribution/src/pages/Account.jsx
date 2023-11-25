@@ -9,6 +9,7 @@ import DeletePost from './account/DeletePost.jsx';
 import Comments from './account/Comments.jsx';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import GetAllFriends from '../utils/GetAllFriends.jsx';
 
 function isNotEmptyObject(obj) {
     return obj !== null && typeof obj === 'object' && Object.keys(obj).length > 0;
@@ -29,11 +30,15 @@ class Account extends Component {
         isCommentsOpen: false,
         postToEdit: null,
         ownerID: null,
+        isFriend: false,
+        viewedProfileUserID: null,
+        isMyAccount: false,
+        currentPostVisibility: null,
+        currentPasedData: null,
     };
 
     handleCommentsClick = () => {
         this.setState({ isCommentsOpen: true });
-        console.log("Click registered")
     }
 
     handleCloseComments = () => {
@@ -59,7 +64,7 @@ class Account extends Component {
     }
 
     handleEditPost = (post) => {
-        this.setState({ isEditPostOpen: true, postToEdit: post });
+        this.setState({ isEditPostOpen: true, postToEdit: post , currentPostVisibility: post.visibility});
     }
 
     handleCloseEditPost = () => {
@@ -69,11 +74,13 @@ class Account extends Component {
 
     /* Follow / Friend Request code */
     sendFollowRequest = (IDtoFollow, currentUserID) => {
+
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
+            // this is the ID of the user we WANT TO FOLLOW
             var actualID = Object.keys(IDtoFollow)[0];
             
-            axios.get(`http://localhost:8000/api/users/${actualID}/`, {
+            axios.get(`http://localhost:8000/api/profiles/${actualID}/`, {
                 headers: {
 
                     'Authorization': `Token ${authToken}`,
@@ -82,25 +89,53 @@ class Account extends Component {
                 }
             }) 
             .then((res) => {
-                
-                const profileData = res.data.profile_data;
-                profileData.follow_requests.push(currentUserID);
+
+                var profileData = res.data;
+                var profileID = profileData.id;
+            
+                // request payload
                 const postData = {
-                    profile_data: profileData
+                    "add_follow_request": currentUserID,
+                    "delete_follow_request": "None",
+                    "add_following": "None",
+                    "delete_following": "None"
                 };
-                
-                axios.patch(`http://localhost:8000/api/users/${actualID}/`, postData, {
+
+               
+                axios.put(`http://localhost:8000/api/profiles/${profileID}/`, postData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
-                        'Content-Type': "application/json"
                     }
                 })
                 .then((res) => {
+                    toast.success("Successfully Followed!")
+                    this.isFollowing = true;
+                    console.log(profileID)
+                    console.log("followed")
 
+                    // now we need to update the LOGGED IN user's "following field"
+                    const newPostData = {
+                        "add_follow_request": "None",
+                        "delete_follow_request": "None",
+                        "add_following": profileID,
+                        "delete_following": "None"
+                    };
+
+                    axios.put(`http://localhost:8000/api/profiles/${currentUserID}/`, newPostData, {
+                        headers: {
+                            'Authorization': `Token ${authToken}`,
+                        }
+                    })
+                    .then((res) => {
+                    })
+
+                    .catch((err) => {
+                        console.log(err);
+                    })
+                    
                 })
                 .catch((err) => {
                     console.log(err);
-                    console.log("ERRRRRROR")
                     toast.error("Error sending follow request");
                 });
 
@@ -108,14 +143,65 @@ class Account extends Component {
            
             .catch((err) => {
                 console.log(err);
-                console.log("ERRRRRROR")
                 toast.error("Error sending follow request");
             });
         }
 
     }
 
-    sendFriendRequest = (IDtoFollow, currentUserID) => {
+    sendUnfollowRequest = (viewedProfileUserID, loggedInUsersID) => {
+        const authToken = localStorage.getItem("authToken");
+        viewedProfileUserID = Object.keys(viewedProfileUserID)[0];
+
+        // We want to remove loggedInUsersID from the "follow_requests" field in /profiles/viewedProfileUserID
+        // And we want to remove viewedProfileUserID from the "following" field in /profiles/loggedInUsersID
+
+        // IMPRORTANT: profileID NEEDS to equal userID or else everything will break
+        
+        // works, but is very slow changing the buttons, w/e
+
+        if(authToken) {
+            const putData = {
+                "add_follow_request": "None",
+                "delete_follow_request": loggedInUsersID,
+                "add_following": "None",
+                "delete_following": "None"
+            };
+
+            axios.put(`http://localhost:8000/api/profiles/${viewedProfileUserID}/`, putData, {
+            headers: {
+                'Authorization': `Token ${authToken}`,
+            }
+            })
+            .then((res) => {
+                const secondPutData = {
+                    "add_follow_request": "None",
+                    "delete_follow_request": "None",
+                    "add_following": "None",
+                    "delete_following": viewedProfileUserID
+                };
+                axios.put(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, secondPutData, {
+                    headers: {
+                        'Authorization': `Token ${authToken}`,
+                    }
+                })
+                .then((res) => {
+                    toast.success("You have successfully unfollowed");
+                    this.isFollowing = false;
+                })
+
+                .catch((err) => {
+                    toast.error("Error trying to unfollow (R2)")
+                    console.log(err);
+                })
+
+            })
+
+            .catch((err) => {
+                toast.error("Error trying to unfollow (R1)");
+                console.log(err);
+            });
+        }
 
     }
 
@@ -138,7 +224,6 @@ class Account extends Component {
       }
 
     retrievePosts = () => {
-        console.log("Fetching data");
         const authToken = localStorage.getItem("authToken");
     
         axios.get(`http://localhost:8000/api/posts/`, {
@@ -147,7 +232,7 @@ class Account extends Component {
             }
         })
         .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             const user = { posts: res.data };
             this.setState({ user: user })
         })
@@ -157,6 +242,36 @@ class Account extends Component {
         });
     }
       
+    checkParams(){
+        const queryParams = new URLSearchParams(window.location.search);
+        const passedData = Object.fromEntries(queryParams.entries());
+        this.state.viewedProfileUserID = Object.keys(passedData)[0];
+
+        if (this.state.viewedProfileUserID === undefined) {
+            this.state.isMyAccount = true;
+        }
+        else{
+            this.state.isMyAccount = false;
+        }
+
+        const getAllFriendsInstance = new GetAllFriends(this.state.ownerID);
+        
+        if (this.state.viewedProfileUserID !== this.ownerID){
+            getAllFriendsInstance.GetAllFriends(this.state.ownerID)
+                .then(friendsList => {
+                    if (friendsList.includes(parseInt(this.state.viewedProfileUserID))) {
+                        this.state.isFriend = true;
+                    } 
+                    else{
+                        this.state.isFriend = false;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching friends:", error);
+                });
+            }
+        
+    }
 
     componentDidMount() {
         this.retrievePosts();
@@ -165,6 +280,7 @@ class Account extends Component {
         this.interval = setInterval(() => {
             this.retrievePosts();
         }, 5000);
+
         
     }
 
@@ -179,14 +295,54 @@ class Account extends Component {
     }
 
     render() {
+
         const queryParams = new URLSearchParams(window.location.search);
+
+        console.log("query params!!!!! ========= " + queryParams);
+
         const passedData = Object.fromEntries(queryParams.entries());
+
+        if (passedData !== this.state.currentPassedData) {
+            this.state.currentPassedData = passedData;
+            this.checkParams();
+        } 
+
+
         // 'passedData' is the ID we need to populate this page with
+
+        // ID OF THE CURRENT USER THAT IS LOGGED IN
         var loggedInUsersID = localStorage.getItem("pk");
-        console.log(passedData);
-        console.log(loggedInUsersID);
+        const authToken = localStorage.getItem("authToken");
 
+         // Check if we are currently following the viewed page
+        // ID OF THE ACCOUNT WE WANT TO FOLLOW
 
+        var actualID = Object.keys(passedData)[0];
+
+        if (this.isFollowing !== true && this.isFollowing !== false) {
+            if(authToken) {
+                axios.get(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                }
+                })
+                .then((res) => {
+                    var following = res.data.following;
+                    following.forEach(element => {
+                        if (String(element) === String(actualID)) {
+                            this.isFollowing = true;
+                        
+                        }
+                    });
+                    
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
+        }
+       
+    
         const { user } = this.state;
 
         if (!user) {
@@ -194,8 +350,6 @@ class Account extends Component {
                 <div>Could Not Load User Data</div>
             );
         }
-
-        
 
         return (
             <div className="grid">
@@ -213,13 +367,18 @@ class Account extends Component {
                     <Settings onClose={this.handleCloseSettings} />
                 )}
 
-                <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
-                {/* TODO: that button shoudln't show up if he is already your friend */}
-                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
-                    <button onClick={this.sendFriendRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' >Send Friend Request</button>
+                {this.state.isMyAccount && (
+                    <>
+                        <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
+                    </>
                 )}
-                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
-                    <button onClick={this.sendFollowRequest.bind(this, passedData, loggedInUsersID)} className='follow'> Follow</button>
+
+                {/*button shoudln't show up if you are already following */}
+                {isNotEmptyObject(passedData) && actualID !== loggedInUsersID && this.isFollowing === true && (
+                    <button onClick={this.sendUnfollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' > Unfollow</button>
+                )}
+                {isNotEmptyObject(passedData) && actualID !== loggedInUsersID && this.isFollowing !== true && (
+                    <button onClick={this.sendFollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request'> Follow</button>
                 )}
                 
                 {this.state.isAddPostOpen && (
@@ -229,26 +388,20 @@ class Account extends Component {
                     />
                 )}
                 {/*Posts*/}
-                {/*CODE FOR AFTER DEMO*/}
-                {/* <div className="post-content">
-                    {user.posts.map(post => (   //map method iterates over posts, current post is passed to arrow function
-                        <div className="post-box" key={post.id}>
-                            <p id="visibility">Visibility: {post.visibility}</p>
-                            <p>{post.content}</p>
-                            {post.post_image && <img className="post-image"src={post.post_image} alt="Post Image" />}
-                            <p>Posted on: {this.formatDate(post.post_date_time)}</p>
-                            <p className="likes">likes: {post.votes.length}</p>
-                            <div>
-                                <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
-                                <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
-                                <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
-                            </div>
-                        </div>
-                    ))}
-                </div> */}
                 <div className="post-content">
                 {user.posts
-                    .filter(post => post.owner === Number(this.state.ownerID))
+                    //.filter(post => post.owner === Number(this.state.ownerID))
+                    .filter(post => {
+                        if (this.state.isMyAccount === true) {
+                            return this.state.ownerID ? post.owner === Number(this.state.ownerID) : true;
+                        } 
+                        else if (this.state.isFriend === true) {
+                            return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
+                        } 
+                        else {
+                            return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
+                        }
+                      })
                     .sort((a, b) => new Date(b.post_date_time) - new Date(a.post_date_time))
                     .map(post => (
                     <div className="post-box" key={post.id}>
@@ -259,8 +412,12 @@ class Account extends Component {
                         <p className="likes">likes: {post.votes.length}</p>
                         <div>
                         <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
-                        <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
-                        <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
+                        {this.state.isMyAccount && (
+                            <>
+                                <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
+                                <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
+                            </>
+                        )}
                         </div>
                     </div>
                     ))}
@@ -273,6 +430,7 @@ class Account extends Component {
                         onClose={this.handleCloseEditPost}
                         image={this.state.image}
                         postToEdit={this.state.postToEdit}
+                        currentVisibility={this.state.currentPostVisibility}
                     />
                 )}
 

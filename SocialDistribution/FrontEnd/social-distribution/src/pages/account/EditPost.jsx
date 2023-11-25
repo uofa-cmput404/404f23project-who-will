@@ -9,6 +9,7 @@ class EditPost extends Component {
         content: '',
         visibility: 'public',
         image: null,
+        currentVisibility: null,
     };
 
     handleContentChange = (e) => {
@@ -30,11 +31,14 @@ class EditPost extends Component {
     handleSubmit = () => {
         const { content, visibility, image } = this.state;
 
+        this.setState({ initialVisibility: this.props.currentVisibility });
+
         const postToEdit = this.props.postToEdit;
 
         const primaryKey = localStorage.getItem("pk");
 
-        if (content === '' && image === null){
+        //TODO: This allows for empty posts! Just take the old content and image and overwrite them if new stuff, leave if no new
+        if (content === '' && image === null && this.props.currentVisibility === this.state.visibility){
             //empty post
             this.closeModal();
             return;
@@ -50,7 +54,7 @@ class EditPost extends Component {
                     owner: primaryKey,
                     content: content,
                     post_image: base64Image,
-                    visibility: visibility,
+                    visibility: this.state.visibility,
                 };
                 this.sendEditPostData(postToEdit.id, editedPost);
             };
@@ -63,10 +67,9 @@ class EditPost extends Component {
                 owner: primaryKey,
                 content: content,
                 post_image: null,
-                visibility: visibility,
+                visibility: this.state.visibility,
             };
 
-            console.log("-21-2-1-22-1-2-12-12-12-21-12-21-12");
             console.log(editedPost);
             this.sendEditPostData(postToEdit.id, editedPost);
         }
@@ -121,7 +124,7 @@ class EditPost extends Component {
                         Visibility:
                         <select value={this.state.visibility} onChange={this.handleVisibilityChange}>
                             <option value="public">Public</option>
-                            <option value="friends">Friends Only</option>
+                            <option value="friends only">Friends Only</option>
                             <option value="private">Private</option>
                         </select>
                     </label>

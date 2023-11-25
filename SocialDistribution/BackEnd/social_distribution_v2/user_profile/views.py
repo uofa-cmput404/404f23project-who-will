@@ -35,6 +35,7 @@ class ProfileViewSet(viewsets.ViewSet):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def update(self, request, pk):
         try:
+            print(request)
             x=request.path.split('/')
             if x[-1] == '':
                 x.pop()
