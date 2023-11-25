@@ -9,6 +9,7 @@ import DeletePost from './account/DeletePost.jsx';
 import Comments from './account/Comments.jsx';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import GetAllFriends from '../utils/GetAllFriends.jsx';
 
 function isNotEmptyObject(obj) {
     return obj !== null && typeof obj === 'object' && Object.keys(obj).length > 0;
@@ -29,11 +30,15 @@ class Account extends Component {
         isCommentsOpen: false,
         postToEdit: null,
         ownerID: null,
+        isFriend: false,
+        viewedProfileUserID: null,
+        isMyAccount: false,
+        currentPostVisibility: null,
+        currentPasedData: null,
     };
 
     handleCommentsClick = () => {
         this.setState({ isCommentsOpen: true });
-        console.log("Click registered")
     }
 
     handleCloseComments = () => {
@@ -59,7 +64,7 @@ class Account extends Component {
     }
 
     handleEditPost = (post) => {
-        this.setState({ isEditPostOpen: true, postToEdit: post });
+        this.setState({ isEditPostOpen: true, postToEdit: post , currentPostVisibility: post.visibility});
     }
 
     handleCloseEditPost = () => {
@@ -69,6 +74,7 @@ class Account extends Component {
 
     /* Follow / Friend Request code */
     sendFollowRequest = (IDtoFollow, currentUserID) => {
+
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
             // this is the ID of the user we WANT TO FOLLOW
@@ -218,7 +224,6 @@ class Account extends Component {
       }
 
     retrievePosts = () => {
-        console.log("Fetching data");
         const authToken = localStorage.getItem("authToken");
     
         axios.get(`http://localhost:8000/api/posts/`, {
@@ -227,7 +232,7 @@ class Account extends Component {
             }
         })
         .then((res) => {
-            console.log(res.data);
+            //console.log(res.data);
             const user = { posts: res.data };
             this.setState({ user: user })
         })
@@ -237,6 +242,36 @@ class Account extends Component {
         });
     }
       
+    checkParams(){
+        const queryParams = new URLSearchParams(window.location.search);
+        const passedData = Object.fromEntries(queryParams.entries());
+        this.state.viewedProfileUserID = Object.keys(passedData)[0];
+
+        if (this.state.viewedProfileUserID === undefined) {
+            this.state.isMyAccount = true;
+        }
+        else{
+            this.state.isMyAccount = false;
+        }
+
+        const getAllFriendsInstance = new GetAllFriends(this.state.ownerID);
+        
+        if (this.state.viewedProfileUserID !== this.ownerID){
+            getAllFriendsInstance.GetAllFriends(this.state.ownerID)
+                .then(friendsList => {
+                    if (friendsList.includes(parseInt(this.state.viewedProfileUserID))) {
+                        this.state.isFriend = true;
+                    } 
+                    else{
+                        this.state.isFriend = false;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching friends:", error);
+                });
+            }
+        
+    }
 
     componentDidMount() {
         this.retrievePosts();
@@ -245,6 +280,7 @@ class Account extends Component {
         this.interval = setInterval(() => {
             this.retrievePosts();
         }, 5000);
+
         
     }
 
@@ -259,8 +295,19 @@ class Account extends Component {
     }
 
     render() {
+
         const queryParams = new URLSearchParams(window.location.search);
+
+        console.log("query params!!!!! ========= " + queryParams);
+
         const passedData = Object.fromEntries(queryParams.entries());
+
+        if (passedData !== this.state.currentPassedData) {
+            this.state.currentPassedData = passedData;
+            this.checkParams();
+        } 
+
+
         // 'passedData' is the ID we need to populate this page with
 
         // ID OF THE CURRENT USER THAT IS LOGGED IN
@@ -269,7 +316,9 @@ class Account extends Component {
 
          // Check if we are currently following the viewed page
         // ID OF THE ACCOUNT WE WANT TO FOLLOW
+
         var actualID = Object.keys(passedData)[0];
+
         if (this.isFollowing !== true && this.isFollowing !== false) {
             if(authToken) {
                 axios.get(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, {
@@ -318,7 +367,12 @@ class Account extends Component {
                     <Settings onClose={this.handleCloseSettings} />
                 )}
 
-                <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
+                {this.state.isMyAccount && (
+                    <>
+                        <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
+                    </>
+                )}
+
                 {/*button shoudln't show up if you are already following */}
                 {isNotEmptyObject(passedData) && actualID !== loggedInUsersID && this.isFollowing === true && (
                     <button onClick={this.sendUnfollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' > Unfollow</button>
@@ -334,26 +388,20 @@ class Account extends Component {
                     />
                 )}
                 {/*Posts*/}
-                {/*CODE FOR AFTER DEMO*/}
-                {/* <div className="post-content">
-                    {user.posts.map(post => (   //map method iterates over posts, current post is passed to arrow function
-                        <div className="post-box" key={post.id}>
-                            <p id="visibility">Visibility: {post.visibility}</p>
-                            <p>{post.content}</p>
-                            {post.post_image && <img className="post-image"src={post.post_image} alt="Post Image" />}
-                            <p>Posted on: {this.formatDate(post.post_date_time)}</p>
-                            <p className="likes">likes: {post.votes.length}</p>
-                            <div>
-                                <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
-                                <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
-                                <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
-                            </div>
-                        </div>
-                    ))}
-                </div> */}
                 <div className="post-content">
                 {user.posts
-                    .filter(post => post.owner === Number(this.state.ownerID))
+                    //.filter(post => post.owner === Number(this.state.ownerID))
+                    .filter(post => {
+                        if (this.state.isMyAccount === true) {
+                            return this.state.ownerID ? post.owner === Number(this.state.ownerID) : true;
+                        } 
+                        else if (this.state.isFriend === true) {
+                            return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
+                        } 
+                        else {
+                            return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
+                        }
+                      })
                     .sort((a, b) => new Date(b.post_date_time) - new Date(a.post_date_time))
                     .map(post => (
                     <div className="post-box" key={post.id}>
@@ -364,8 +412,12 @@ class Account extends Component {
                         <p className="likes">likes: {post.votes.length}</p>
                         <div>
                         <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
-                        <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
-                        <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
+                        {this.state.isMyAccount && (
+                            <>
+                                <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
+                                <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
+                            </>
+                        )}
                         </div>
                     </div>
                     ))}
@@ -378,6 +430,7 @@ class Account extends Component {
                         onClose={this.handleCloseEditPost}
                         image={this.state.image}
                         postToEdit={this.state.postToEdit}
+                        currentVisibility={this.state.currentPostVisibility}
                     />
                 )}
 

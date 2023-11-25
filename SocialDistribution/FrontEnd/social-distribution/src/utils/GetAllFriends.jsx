@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
 import axios from 'axios';
 
-class allFriends {
+class GetAllFriends {
     
     constructor(currentUserID){
         this.currentID = currentUserID;
@@ -9,37 +8,46 @@ class allFriends {
 
     // This function will return an array of all your friends 
 
-    getAllFriends = () => {
+    GetAllFriends = (userID) => {
         const authToken = localStorage.getItem("authToken");
-        const friendsList = [];
+    
+        return new Promise((resolve, reject) => {
+            if (authToken) {
+                axios.get(`http://localhost:8000/api/profiles/${userID}/`, {
+                    headers: {
+                        'Authorization': `Token ${authToken}`,
+                    }
+                })
+                .then((res) => {
+                    const friendsList = [];
+                    const data = res.data;
+                    const following = data.following;
+                    const follow_requests = data.follow_requests;
 
-        // store the ID in a list 
-
-        if (authToken) {
-            axios.get(`http://localhost:8000/api/profiles/${this.currentID}`, {
-                headers: {
-                    'Authorization': `Token ${authToken}`,
-                }
-            })
-            .then((res) => {
-                var data = res.data;
-                var following = data.following;
-                var follow_requests = data.follow_requests;
-                following.forEach(userIFollow => {
-                    follow_requests.forEach(userWhoFollowsMe => {
-                        if(String(userIFollow) === String(userWhoFollowsMe)) {
-                            friendsList.push(userWhoFollowsMe);
-                        } 
+                    console.log("following = " + following);
+                    console.log("followers = " + follow_requests);
+    
+                    following.forEach(userIFollow => {
+                        follow_requests.forEach(userWhoFollowsMe => {
+                            if (String(userIFollow) === String(userWhoFollowsMe)) {
+                                friendsList.push(userWhoFollowsMe);
+                            }
+                        });
                     });
+    
+                    resolve(friendsList);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log("THIS IS THE ERROR ");
+                    reject(err); 
                 });
-
-               return friendsList;
-            })
-            .catch((err) => {
-                console.log(err);
-                
-            });
-        }
-    }
+            } else {
+                reject(new Error("No authToken available"));
+            }
+        });
+    };
 
 }
+
+export default GetAllFriends;
