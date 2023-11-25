@@ -270,7 +270,7 @@ class Account extends Component {
          // Check if we are currently following the viewed page
         // ID OF THE ACCOUNT WE WANT TO FOLLOW
         var actualID = Object.keys(passedData)[0];
-        if (this.isFollowing !== true || this.isFollowing !== false) {
+        if (this.isFollowing !== true && this.isFollowing !== false) {
             if(authToken) {
                 axios.get(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, {
                 headers: {
@@ -320,10 +320,10 @@ class Account extends Component {
 
                 <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
                 {/*button shoudln't show up if you are already following */}
-                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && this.isFollowing === true && (
+                {isNotEmptyObject(passedData) && actualID !== loggedInUsersID && this.isFollowing === true && (
                     <button onClick={this.sendUnfollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' > Unfollow</button>
                 )}
-                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && this.isFollowing !== true && (
+                {isNotEmptyObject(passedData) && actualID !== loggedInUsersID && this.isFollowing !== true && (
                     <button onClick={this.sendFollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request'> Follow</button>
                 )}
                 
