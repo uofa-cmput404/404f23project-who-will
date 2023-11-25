@@ -28,14 +28,17 @@
 }
 
 .send-friend-request {
+    /* comment back in padding / margin and commment out width/height iff broken */
+    width: 144px !important;
+    height: 60px !important;
     background-color: var(--secondary-color);
     color: var(--main-color);
     border-color: var(--main-color);
-    padding: 20px 40px;
+    /* padding: 20px 40px; */
     border-style: solid;
     border-radius: 3px;
     cursor: pointer;
-    margin: 4px;
+    /* margin: 4px; */
     font-size: medium;
     transition: background-color 0.3s,
         color 0.3s;

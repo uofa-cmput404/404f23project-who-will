@@ -71,6 +71,7 @@ class Account extends Component {
     sendFollowRequest = (IDtoFollow, currentUserID) => {
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
+            // this is the ID of the user we WANT TO FOLLOW
             var actualID = Object.keys(IDtoFollow)[0];
             
             axios.get(`http://localhost:8000/api/profiles/${actualID}/`, {
@@ -83,26 +84,49 @@ class Account extends Component {
             }) 
             .then((res) => {
 
-                
                 var profileData = res.data;
                 var profileID = profileData.id;
             
                 // request payload
                 const postData = {
-                    "add_follow_request": profileID,
+                    "add_follow_request": currentUserID,
                     "delete_follow_request": "None",
                     "add_following": "None",
                     "delete_following": "None"
                 };
 
-                // use admin testcase to search not admin2
-                axios.put(`http://localhost:8000/api/profiles/${actualID}/`, postData, {
+               
+                axios.put(`http://localhost:8000/api/profiles/${profileID}/`, postData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
                     }
                 })
                 .then((res) => {
+                    toast.success("Successfully Followed!")
+                    this.isFollowing = true;
+                    console.log(profileID)
+                    console.log("followed")
 
+                    // now we need to update the LOGGED IN user's "following field"
+                    const newPostData = {
+                        "add_follow_request": "None",
+                        "delete_follow_request": "None",
+                        "add_following": profileID,
+                        "delete_following": "None"
+                    };
+
+                    axios.put(`http://localhost:8000/api/profiles/${currentUserID}/`, newPostData, {
+                        headers: {
+                            'Authorization': `Token ${authToken}`,
+                        }
+                    })
+                    .then((res) => {
+                    })
+
+                    .catch((err) => {
+                        console.log(err);
+                    })
+                    
                 })
                 .catch((err) => {
                     console.log(err);
@@ -119,8 +143,60 @@ class Account extends Component {
 
     }
 
-    sendFriendRequest = (IDtoFollow, currentUserID) => {
-            // mutual following.
+    sendUnfollowRequest = (viewedProfileUserID, loggedInUsersID) => {
+        const authToken = localStorage.getItem("authToken");
+        viewedProfileUserID = Object.keys(viewedProfileUserID)[0];
+
+        // We want to remove loggedInUsersID from the "follow_requests" field in /profiles/viewedProfileUserID
+        // And we want to remove viewedProfileUserID from the "following" field in /profiles/loggedInUsersID
+
+        // IMPRORTANT: profileID NEEDS to equal userID or else everything will break
+        
+        // works, but is very slow changing the buttons, w/e
+
+        if(authToken) {
+            const putData = {
+                "add_follow_request": "None",
+                "delete_follow_request": loggedInUsersID,
+                "add_following": "None",
+                "delete_following": "None"
+            };
+
+            axios.put(`http://localhost:8000/api/profiles/${viewedProfileUserID}/`, putData, {
+            headers: {
+                'Authorization': `Token ${authToken}`,
+            }
+            })
+            .then((res) => {
+                const secondPutData = {
+                    "add_follow_request": "None",
+                    "delete_follow_request": "None",
+                    "add_following": "None",
+                    "delete_following": viewedProfileUserID
+                };
+                axios.put(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, secondPutData, {
+                    headers: {
+                        'Authorization': `Token ${authToken}`,
+                    }
+                })
+                .then((res) => {
+                    toast.success("You have successfully unfollowed");
+                    this.isFollowing = false;
+                })
+
+                .catch((err) => {
+                    toast.error("Error trying to unfollow (R2)")
+                    console.log(err);
+                })
+
+            })
+
+            .catch((err) => {
+                toast.error("Error trying to unfollow (R1)");
+                console.log(err);
+            });
+        }
+
     }
 
     handleDeletePost = (postId) => {
@@ -186,11 +262,38 @@ class Account extends Component {
         const queryParams = new URLSearchParams(window.location.search);
         const passedData = Object.fromEntries(queryParams.entries());
         // 'passedData' is the ID we need to populate this page with
+
+        // ID OF THE CURRENT USER THAT IS LOGGED IN
         var loggedInUsersID = localStorage.getItem("pk");
-        console.log(passedData);
-        console.log(loggedInUsersID);
+        const authToken = localStorage.getItem("authToken");
 
-
+         // Check if we are currently following the viewed page
+        // ID OF THE ACCOUNT WE WANT TO FOLLOW
+        var actualID = Object.keys(passedData)[0];
+        if (this.isFollowing !== true || this.isFollowing !== false) {
+            if(authToken) {
+                axios.get(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                }
+                })
+                .then((res) => {
+                    var following = res.data.following;
+                    following.forEach(element => {
+                        if (String(element) === String(actualID)) {
+                            this.isFollowing = true;
+                        
+                        }
+                    });
+                    
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
+        }
+       
+    
         const { user } = this.state;
 
         if (!user) {
@@ -198,8 +301,6 @@ class Account extends Component {
                 <div>Could Not Load User Data</div>
             );
         }
-
-        
 
         return (
             <div className="grid">
@@ -218,12 +319,12 @@ class Account extends Component {
                 )}
 
                 <button className="add-post-button" onClick={this.handleAddPost}>Add Post</button> 
-                {/* TODO: that button shoudln't show up if he is already your friend */}
-                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
-                    <button onClick={this.sendFriendRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' >Send Friend Request</button>
+                {/*button shoudln't show up if you are already following */}
+                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && this.isFollowing === true && (
+                    <button onClick={this.sendUnfollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' > Unfollow</button>
                 )}
-                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && (
-                    <button onClick={this.sendFollowRequest.bind(this, passedData, loggedInUsersID)} className='follow'> Follow</button>
+                {isNotEmptyObject(passedData) && passedData !== loggedInUsersID && this.isFollowing !== true && (
+                    <button onClick={this.sendFollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request'> Follow</button>
                 )}
                 
                 {this.state.isAddPostOpen && (
