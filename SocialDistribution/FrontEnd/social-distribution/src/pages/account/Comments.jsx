@@ -8,13 +8,11 @@ class Comments extends Component {
     };
 
     componentDidMount(){
-        console.log("RUnning");
         this.getData();
     }
 
 
     getData = () => {
-        console.log("Fetching data");
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
             axios.get('http://localhost:8000/api/posts/', {

@@ -3,6 +3,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import { useState } from 'react'
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 export const Nav = styled.nav`
     background: #000;
@@ -154,8 +155,7 @@ export const SearchBar = () => {
         }
 
         if(!userExists) {
-            // TODO: add a popup or something, and then clear the searchbar of text
-            console.log("User does not exist!");
+            toast.error("That user does not exist!");
         }
     };
 
