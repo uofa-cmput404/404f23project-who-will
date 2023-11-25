@@ -10,8 +10,9 @@ import {
 import { FaCircleXmark } from "react-icons/fa6";
 import { IconContext } from "react-icons/lib";
 import { BsSend } from "react-icons/bs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ComposeModal from "../Components/Compose";
+import axios from "axios";
 
 const Container = styled.div`
   width: 100%;
@@ -76,14 +77,14 @@ const Tile = styled.div`
 
 const AcceptDeclineCon = styled.div`
   display: flex;
-  & > *{
-
-    margin: auto;
+  & > * {
+    cursor: pointer;
+    margin: 5px;
   }
   @media screen {
-   margin-left: 85%; 
+    margin-left: 85%;
   }
-`
+`;
 
 const RenderRequest = ({ requests }) => {
   // function to render request list
@@ -116,14 +117,30 @@ const RenderRequest = ({ requests }) => {
   );
 };
 
-
-
-
 const Notifications = () => {
   const requests = ["request1", "request2", "request3"];
   const [activeSection, setActiveSection] = useState("inbox");
   const [showComposeModal, setShowComposeModal] = useState(false);
+  const [requestList, setRequestList] = useState([]);
 
+  useEffect(() => {
+    const currentId = localStorage.getItem("pk");
+    const authToken = localStorage.getItem("authToken");
+    // get requests list
+    axios
+      .get(`http://127.0.0.1:8000/api/profiles/${currentId}/`, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      })
+      .then((res) => {
+        // console.log(res);
+        setRequestList(res.data["follow_requests"]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   const handleComposeClick = () => {
     setShowComposeModal(true);
   };
@@ -150,7 +167,8 @@ const Notifications = () => {
           </IconContext.Provider>
           <p style={{ color: "white", margin: "5px" }}>Inbox</p>
         </Tile>
-        <Tile
+        {/* for sent messages */}
+        {/* <Tile
           onClick={() => handleSectionClick("sent")}
           active={activeSection === "sent"}
         >
@@ -158,7 +176,7 @@ const Notifications = () => {
             <BsSend />
           </IconContext.Provider>
           <p style={{ color: "white", margin: "5px" }}>Sent</p>
-        </Tile>
+        </Tile> */}
         <Tile
           onClick={() => handleSectionClick("request")}
           active={activeSection === "request"}
@@ -173,8 +191,8 @@ const Notifications = () => {
       {activeSection === "inbox" && <MessageList>inbox message</MessageList>}
       {activeSection === "inbox" && <Message>inbox message</Message>}
       {/* for sent */}
-      {activeSection === "sent" && <MessageList>sent message</MessageList>}
-      {activeSection === "sent" && <Message>sent message</Message>}
+      {/* {activeSection === "sent" && <MessageList>sent message</MessageList>}
+      {activeSection === "sent" && <Message>sent message</Message>} */}
       {/* for friend request */}
       {activeSection === "request" && <RenderRequest requests={requests} />}
       {/* render compose modal */}
