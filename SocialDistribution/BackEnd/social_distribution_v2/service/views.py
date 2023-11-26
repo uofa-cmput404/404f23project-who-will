@@ -74,13 +74,14 @@ def check_follower(author, follower):
     return {'following': 'False'}
 
 def comment_to_json(comment):
+    id_string="http://127.0.0.1:8000/service/author/"+str(comment.owner)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
     response = {
         "type":"comment",
         "author":author_to_json(comment.owner, UserProfile.objects.get(owner=comment.owner)),
         "comment":comment.comment,
         "contentType":"text/markdown",
         "published":comment.post_date_time,
-        "id": "not done yet" #TODO: fix this
+        "id": id_string
     }
     return response
 
@@ -89,7 +90,7 @@ def get_comments(post):
     response = { 
         "type":"comments",
         "page":1,
-        "size":5, #TODO: fix this
+        "size":0,
         "post":id_string,
         "id":id_string,
         "comments":[],
@@ -97,6 +98,7 @@ def get_comments(post):
     for comment in Comment.objects.all():
         if str(comment.post) == str(post.id):
             response['comments'].append(comment_to_json(comment))
+    response['size'] = len(response['comments'])
     return response
 
 def post_to_json(post): 
@@ -114,9 +116,9 @@ def post_to_json(post):
         "content":post.content,
         "author":author_to_json(post.owner, UserProfile.objects.get(owner=post.owner)),
         # "categories": [category.category for category in post.category_part.all()]
-        "count": 0, #TODO: fix this
+        "count": 0, 
         "comments":comment_string,
-        "commentsSrc": get_comments(post), #TODO: fix this
+        "commentsSrc": get_comments(post),
         "published":post.post_date_time,
         "visibility":post.visibility,
         "unlisted": post.post_image
@@ -124,19 +126,27 @@ def post_to_json(post):
     response['count'] = len(response['commentsSrc']['comments'])
     return response
 
+def get_specific_post(requested_author, requested_post):
+    post = Post.objects.get(id=requested_post)
+    if str(post.owner) == str(requested_author):
+        response = {'type': 'single post', 'post': post_to_json(post)}
 
+    return response
 
 def all_posts(requested_author):
     all_posts = Post.objects.all()
-
     response = {'type': 'all posts', 'items': []}
     for post in all_posts:
         if str(post.owner) == str(requested_author):
             response['items'].append(post_to_json(post))
-    
     return response
     
-
+def get_image(requested_author, requested_post):
+    post = Post.objects.get(id=requested_post)
+    if str(post.owner) == str(requested_author):
+        if post.post_image == None:
+            return {'image': 'no image'}
+        return {'image': post.post_image}
 
 def GET_request(request):
     # print(request.path)
@@ -157,6 +167,14 @@ def GET_request(request):
         response = check_follower(path[-3],path[-1])
     elif path[-1] == 'posts':
         response = all_posts(path[-2])
+    elif path[-2] == 'posts':
+        response = get_specific_post(path[-3], path[-1])
+    elif path[-3] == 'posts' and path[-1] == 'comments':
+        response = get_comments(Post.objects.get(id=path[-2]))
+    elif path[-4] == 'posts' and path[-2] == 'comments':
+        response = comment_to_json(Comment.objects.get(id=path[-1]))
+    elif path[-3] == 'posts' and path[-1] == 'image':
+        response = get_image(path[-4], path[-2])
 
     return JsonResponse(response)
 
