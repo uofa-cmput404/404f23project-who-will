@@ -9,6 +9,7 @@ from user_profile.models import *
 from comments.models import *
 from votes.models import *
 import requests
+
 # Create your views here.
 def works(request):
     # return hello world
@@ -218,30 +219,43 @@ def GET_request(request):
         if i == '':
             path.remove(i)
     print(path)
-    if path[-1] == 'authors': #done
+    # http://127.0.0.1:8000/service/author
+    if path[-1] == 'authors':
         response = all_authors()
-    elif path[-2] == 'authors': #done
+    # http://127.0.0.1:8000/service/author/{author_id}/
+    elif path[-2] == 'authors': 
         response = specific_author(path[-1])
+    # http://127.0.0.1:8000/service/author/{author_id}/followers
     elif path[-1] == 'followers': #done
         response = all_followers(path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
     elif path[-2] == 'followers': #done
         response = check_follower(path[-3],path[-1])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts
     elif path[-1] == 'posts':
         response = all_posts(path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
     elif path[-2] == 'posts':
         response = get_specific_post(path[-3], path[-1])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
     elif path[-3] == 'posts' and path[-1] == 'comments':
         response = get_comments(Post.objects.get(id=path[-2]))
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
     elif path[-4] == 'posts' and path[-2] == 'comments':
         response = comment_to_json(Comment.objects.get(id=path[-1]))
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
     elif path[-3] == 'posts' and path[-1] == 'image':
         response = get_image(path[-4], path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
     elif path[-3] == 'posts' and path[-1] == 'likes':
         response = get_likes(Post.objects.get(id=path[-2]))
+    # http://127.0.0.1:8000/service/author/{author_id}/liked
     elif path[-1] == 'liked':
         response = get_likes_post(path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
     elif path[-3] == 'comments' and path[-1] == 'likes':
         response = get_likes_comments(Comment.objects.get(id=path[-2]))
+    # http://127.0.0.1:8000/service/author/{author_id}/inbox
     elif path[-1] == 'inbox':
         response = get_inbox(path[-2])
 
