@@ -14,14 +14,17 @@ import requests
 def works(request):
     # return hello world
     print(request)
-    if request.method == 'GET':
-        x = GET_request(request)
-    if request.method == 'POST':
-        x = POST_request(request)
-    if request.method == 'PUT':
-        x = PUT_request(request)
-    if request.method == 'DELETE':
-        x = DELETE_request(request)
+    try:    
+        if request.method == 'GET':
+            x = GET_request(request)
+        if request.method == 'POST':
+            x = POST_request(request)
+        if request.method == 'PUT':
+            x = PUT_request(request)
+        if request.method == 'DELETE':
+            x = DELETE_request(request)
+    except:
+        x = {'status': 'error'} 
     return x
     # return HttpResponse("Hello, world. You're at the polls index.")
 
