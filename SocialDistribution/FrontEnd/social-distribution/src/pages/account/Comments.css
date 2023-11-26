@@ -34,7 +34,7 @@
     background-color: var(--secondary-color);
     border: 1px solid var(--main-color);
     border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
     margin-bottom: 10px;
     text-align: left;
 }
@@ -62,4 +62,18 @@ button:hover {
 
 button:active {
     opacity: 0.8;
+}
+
+#commenter {
+    margin-top: 5px;
+    text-align: center;
+}
+
+#comment-comment {
+    margin-top: 20px;
+}
+
+#comment-date {
+    font-size: small;
+    margin-bottom: 0px;
 }

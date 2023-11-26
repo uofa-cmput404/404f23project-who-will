@@ -35,10 +35,12 @@ class Account extends Component {
         isMyAccount: false,
         currentPostVisibility: null,
         currentPasedData: null,
+        postID: null,
     };
 
-    handleCommentsClick = () => {
-        this.setState({ isCommentsOpen: true });
+    handleCommentsClick = (id) => {
+        this.setState({ isCommentsOpen: true, });
+        this.postID = id;
     }
 
     handleCloseComments = () => {
@@ -298,8 +300,6 @@ class Account extends Component {
 
         const queryParams = new URLSearchParams(window.location.search);
 
-        console.log("query params!!!!! ========= " + queryParams);
-
         const passedData = Object.fromEntries(queryParams.entries());
 
         if (passedData !== this.state.currentPassedData) {
@@ -406,30 +406,38 @@ class Account extends Component {
                     .map(post => (
                     <div className="post-box" key={post.id}>
                         <p id="visibility">Visibility: {post.visibility}</p>
+                        {post.title && <p id="title-account">{post.title}</p>}
+                        {post.description && <p>Description: {post.description}</p>}
                         <p>{post.content}</p>
                         {post.post_image && <img className="post-image" src={post.post_image} alt="Post Image" />}
-                        <p>Posted on: {this.formatDate(post.post_date_time)}</p>
+                        {post.source && <p id = "source-account">Image Source: {post.source}</p>}
+                        {post.origin && <p id = "origin-account">Image Origin: {post.origin}</p>}
+                        {post.categories && (<p>Categories: {post.categories.join(', ')}</p>)}
                         <p className="likes">likes: {post.votes.length}</p>
+                        <p id="date-posted">Posted on: {this.formatDate(post.post_date_time)}</p>
                         <div>
-                        <button className="comments-button" onClick={() => this.handleCommentsClick()}>Comments</button>
+                        <button className="comments-button" onClick={() => this.handleCommentsClick(post.id)}>Comments</button>
                         {this.state.isMyAccount && (
                             <>
                                 <button className="edit-post-button" onClick={() => this.handleEditPost(post)}>Edit</button>
                                 <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
                             </>
                         )}
+                        
                         </div>
                     </div>
                     ))}
                 </div>
                 {this.state.isCommentsOpen && (
-                    <Comments onClose={this.handleCloseComments} />
+                    <Comments onClose={this.handleCloseComments} 
+                    postID={this.postID}
+                    />
                 )}
                 {this.state.isEditPostOpen && (
                     <EditPost
                         onClose={this.handleCloseEditPost}
                         image={this.state.image}
-                        postToEdit={this.state.postToEdit}
+                        postToEdit={this.state.postToEdit.id}
                         currentVisibility={this.state.currentPostVisibility}
                     />
                 )}
