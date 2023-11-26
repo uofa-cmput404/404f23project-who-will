@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone 
+from user_profile.models import UserProfile
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
@@ -14,6 +15,7 @@ class Post(models.Model):
     categories = models.ManyToManyField('Categories', blank=True)  # Fix here
     visibility_choices = (("public", "public"), ("private", "private"), ("friends only", "friends only"))
     visibility = models.CharField(choices=visibility_choices, max_length=30)
+    message_to = models.ForeignKey(UserProfile, related_name='message_to', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.id)

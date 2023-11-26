@@ -195,6 +195,20 @@ def get_liked(requested_author):
             response['items'].append(post_to_json(like.post))
     return response
 
+def get_inbox(requested_author):
+    user_with_username = User.objects.get(username=requested_author)
+    author_profile = UserProfile.objects.get(owner=user_with_username)
+    response = {
+        "type": "inbox",
+        "author": f"http://127.0.0.1:8000/service/author/{requested_author}",
+        "items": []
+    }
+    posts = Post.objects.filter(message_to=author_profile)
+    for post in posts:
+        response['items'].append(post_to_json(post))
+    return response
+
+
 def GET_request(request):
     # print(request.path)
     print("split: ", request.path.split('/'))
@@ -228,6 +242,8 @@ def GET_request(request):
         response = get_likes_post(path[-2])
     elif path[-3] == 'comments' and path[-1] == 'likes':
         response = get_likes_comments(Comment.objects.get(id=path[-2]))
+    elif path[-1] == 'inbox':
+        response = get_inbox(path[-2])
 
 
     return JsonResponse(response)
