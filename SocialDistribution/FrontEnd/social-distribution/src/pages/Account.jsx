@@ -227,14 +227,16 @@ class Account extends Component {
 
     retrievePosts = () => {
         const authToken = localStorage.getItem("authToken");
+
+        console.log("TYPE OF -----> " + this.state.ownerID);
     
-        axios.get(`http://localhost:8000/api/posts/`, {
+        axios.get(`http://localhost:8000/api/posts/?owner=${this.state.ownerID}`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }
         })
         .then((res) => {
-            //console.log(res.data);
+            console.log("DATA ======= " + res.data);
             const user = { posts: res.data };
             this.setState({ user: user })
         })

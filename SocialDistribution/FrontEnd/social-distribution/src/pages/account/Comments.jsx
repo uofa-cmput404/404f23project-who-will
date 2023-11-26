@@ -6,12 +6,9 @@ import FormatDate from '../../utils/FormatDate.jsx';
 class Comments extends Component {
     state = {
         comments: null,
-        postID: null,
     };
 
     componentDidMount(){
-        this.postID = this.props.postID
-        console.log("POST ID ==== " + this.postID);
         this.getData();
     }
 
@@ -19,7 +16,7 @@ class Comments extends Component {
     getData = () => {
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
-            axios.get(`http://localhost:8000/api/comments/`, {
+            axios.get(`http://localhost:8000/api/comments/?post=${this.props.postID}`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
@@ -27,7 +24,7 @@ class Comments extends Component {
             .then((res) => {
                 const comments = res.data;
 
-                //TODO: Make it so that comments are on proper posts
+                console.log(comments);
 
                 this.setState({ comments });
             })
