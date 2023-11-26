@@ -148,6 +148,53 @@ def get_image(requested_author, requested_post):
             return {'image': 'no image'}
         return {'image': post.post_image}
 
+def get_likes_post(post):
+    print(post)
+    all_likes = Vote.objects.all()
+    post_name = post.title
+    post_owner = post.owner
+    summary = "Likes for " + str(post_name) + " by " + str(post_owner)
+    object_string= "http://127.0.0.1:8000/service/author/"+str(post.owner)+"/posts/"+str(post.id)
+    response = {
+        'type': 'likes',
+        'summary': summary,
+        'count': 0,
+        'items': [],
+        'object': object_string
+    }
+    for like in all_likes:
+        if like.post == post:
+            response['items'].append(author_to_json(like.up_vote_by, UserProfile.objects.get(owner=like.up_vote_by)))
+    response['count'] = len(response['items'])
+    return response
+
+def get_likes_comments(comment):
+    all_likes = Vote.objects.all()
+    comment_name = comment.comment
+    comment_owner = comment.owner
+    summary = "Likes for " + str(comment_name) + " by " + str(comment_owner)
+    object_string= "http://127.0.0.1:8000/service/author/"+str(comment.owner)+"/posts/"+str(comment.id)
+    response = {
+        'type': 'likes',
+        'summary': summary,
+        'count': 0,
+        'items': [],
+        'object': object_string
+    }
+    for like in all_likes:
+        if like.comment == comment:
+            response['items'].append(author_to_json(like.up_vote_by, UserProfile.objects.get(owner=like.up_vote_by)))
+    response['count'] = len(response['items'])
+    return response
+
+def get_liked(requested_author):
+    response = {'type': 'liked', 'items': []}
+    all_likes = Vote.objects.all()
+    for like in all_likes:
+        if like.up_vote_by.username == requested_author:
+            response['items'].append(post_to_json(like.post))
+    return response
+
 def GET_request(request):
     # print(request.path)
     print("split: ", request.path.split('/'))
@@ -175,6 +222,13 @@ def GET_request(request):
         response = comment_to_json(Comment.objects.get(id=path[-1]))
     elif path[-3] == 'posts' and path[-1] == 'image':
         response = get_image(path[-4], path[-2])
+    elif path[-3] == 'posts' and path[-1] == 'likes':
+        response = get_likes(Post.objects.get(id=path[-2]))
+    elif path[-1] == 'liked':
+        response = get_likes_post(path[-2])
+    elif path[-3] == 'comments' and path[-1] == 'likes':
+        response = get_likes_comments(Comment.objects.get(id=path[-2]))
+
 
     return JsonResponse(response)
 
