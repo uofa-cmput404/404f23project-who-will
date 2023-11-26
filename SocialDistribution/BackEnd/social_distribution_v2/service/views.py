@@ -216,7 +216,7 @@ def get_inbox(requested_author):
 def GET_request(request):
     # print(request.path)
     print("split: ", request.path.split('/'))
-    response = {'status': '1'}  # Set a default value for response
+    response = {'status': 'error'}  # Set a default value for response
     path = request.path.split('/')
     for i in path:
         if i == '':
