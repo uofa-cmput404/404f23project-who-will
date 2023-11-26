@@ -1,5 +1,5 @@
-from .serializers import PostSerializer
-from .models import Post
+from .serializers import PostSerializer, CategoriesSerializer
+from .models import Post, Categories
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import permissions
@@ -16,3 +16,10 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    '''
+    categories
+    '''
+    queryset = Categories.objects.all()
+    serializer_class =  CategoriesSerializer
