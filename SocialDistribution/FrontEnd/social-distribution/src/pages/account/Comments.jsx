@@ -40,7 +40,6 @@ class Comments extends Component {
     render() {
 
         const { comments } = this.state;
-        const formattedDate = FormatDate.formatDate('2023-11-26T09:11:08Z');
 
         return (
             <div className="comments-popup">
@@ -50,9 +49,9 @@ class Comments extends Component {
                     {comments && comments.map((comment, index) => (
                         <div key={index} className="comment">
                             {console.log(comment)}
-                            <p id="commenter">user {comment.commented_by} commented:</p>
+                            <p id="commenter">{comment.commented_by}:</p>
                             <p id="comment-comment">{comment.comment}</p>
-                            <p id="comment-date">Comment date: {formattedDate}</p>
+                            <p id="comment-date">{FormatDate.formatDate(comment.post_date_time)}</p>
                         </div>
                     ))}
                 <button onClick={this.props.onClose}>Close</button>

@@ -227,8 +227,6 @@ class Account extends Component {
 
     retrievePosts = () => {
         const authToken = localStorage.getItem("authToken");
-
-        console.log("TYPE OF -----> " + this.state.ownerID);
     
         axios.get(`http://localhost:8000/api/posts/?owner=${this.state.ownerID}`, {
             headers: {
@@ -392,7 +390,6 @@ class Account extends Component {
                 {/*Posts*/}
                 <div className="post-content">
                 {user.posts
-                    //.filter(post => post.owner === Number(this.state.ownerID))
                     .filter(post => {
                         if (this.state.isMyAccount === true) {
                             return this.state.ownerID ? post.owner === Number(this.state.ownerID) : true;

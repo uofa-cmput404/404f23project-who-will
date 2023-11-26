@@ -65,7 +65,8 @@ button:active {
 }
 
 #commenter {
-    margin-top: 5px;
+    margin-top: 0px;
+    font-weight: bold;
     text-align: center;
 }
 
