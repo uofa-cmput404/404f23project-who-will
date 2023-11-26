@@ -86,13 +86,31 @@ const AcceptDeclineCon = styled.div`
   }
 `;
 
+const ProfileImg = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  & > img {
+    width: auto;
+    height: 100%;
+  }
+`;
+
 const RenderRequest = ({ requests }) => {
   // function to render request list
   return (
     <div>
       {requests.map((message, index) => (
         <Request key={index}>
-          <p>{message}</p>
+          <ProfileImg>
+            <img src="https://reactjs.org/logo-og.png" alt="Profile" />
+          </ProfileImg>
+          <p>{message["owner"]}</p>
           <AcceptDeclineCon>
             <IconContext.Provider
               value={{
@@ -118,11 +136,10 @@ const RenderRequest = ({ requests }) => {
 };
 
 const Notifications = () => {
-  const requests = ["request1", "request2", "request3"];
   const [activeSection, setActiveSection] = useState("inbox");
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [requestList, setRequestList] = useState([]);
-
+  const [pendingUser, setPendingUser] = useState([]);
   useEffect(() => {
     const currentId = localStorage.getItem("pk");
     const authToken = localStorage.getItem("authToken");
@@ -140,7 +157,21 @@ const Notifications = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+    // get all requesting users
+    axios
+      .get(`http://127.0.0.1:8000/api/get_requesters/`, {
+        params: {
+          ids: `[${requestList}]`,
+        },
+      })
+      .then((res) => {
+        // console.log(res.data);
+        setPendingUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [activeSection]);
   const handleComposeClick = () => {
     setShowComposeModal(true);
   };
@@ -194,7 +225,7 @@ const Notifications = () => {
       {/* {activeSection === "sent" && <MessageList>sent message</MessageList>}
       {activeSection === "sent" && <Message>sent message</Message>} */}
       {/* for friend request */}
-      {activeSection === "request" && <RenderRequest requests={requests} />}
+      {activeSection === "request" && <RenderRequest requests={pendingUser} />}
       {/* render compose modal */}
       {showComposeModal && <ComposeModal onClose={handleCloseCompos} />}
     </Container>
