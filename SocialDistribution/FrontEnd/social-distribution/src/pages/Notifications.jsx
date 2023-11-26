@@ -101,10 +101,15 @@ const ProfileImg = styled.div`
   }
 `;
 
-const RenderRequest = ({ requests }) => {
+const RenderRequest = ({ requests, onClick }) => {
+  const [pendingStatus, setPendingStatus] = useState("");
+  const handleClickPending = (event, choice) => {
+    event.preventDefault();
+    setPendingStatus(choice)
+  };
   // function to render request list
   return (
-    <div>
+    <div onClick={(e) => onClick(e)}>
       {requests.map((message, index) => (
         <Request key={index}>
           <ProfileImg>
@@ -118,7 +123,9 @@ const RenderRequest = ({ requests }) => {
                 size: "2.5em",
               }}
             >
-              <FaCheckCircle />
+              <button onClick={(e) => handleClickPending(e, "accept")} style={{ border: "transparent" }}>
+                <FaCheckCircle />
+              </button>
             </IconContext.Provider>
             <IconContext.Provider
               value={{
@@ -126,7 +133,9 @@ const RenderRequest = ({ requests }) => {
                 size: "2.5em",
               }}
             >
-              <FaCircleXmark />
+              <button onClick={(e) => handleClickPending(e,"deny")} style={{border: "transparent"}}>
+                <FaCircleXmark />
+              </button>
             </IconContext.Provider>
           </AcceptDeclineCon>
         </Request>
@@ -140,6 +149,7 @@ const Notifications = () => {
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [requestList, setRequestList] = useState([]);
   const [pendingUser, setPendingUser] = useState([]);
+  const [clickStatus, setClickStatus] = useState(false);
   useEffect(() => {
     const currentId = localStorage.getItem("pk");
     const authToken = localStorage.getItem("authToken");
@@ -171,7 +181,7 @@ const Notifications = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [activeSection]);
+  }, [activeSection, clickStatus]);
   const handleComposeClick = () => {
     setShowComposeModal(true);
   };
@@ -181,7 +191,10 @@ const Notifications = () => {
   const handleSectionClick = (section) => {
     setActiveSection(section);
   };
-
+  const handleClickChoice = (event) => {
+    event.preventDefault();
+    setClickStatus(!clickStatus);
+  };
   return (
     <Container>
       <SideBar>
@@ -225,7 +238,9 @@ const Notifications = () => {
       {/* {activeSection === "sent" && <MessageList>sent message</MessageList>}
       {activeSection === "sent" && <Message>sent message</Message>} */}
       {/* for friend request */}
-      {activeSection === "request" && <RenderRequest requests={pendingUser} />}
+      {activeSection === "request" && (
+        <RenderRequest requests={pendingUser} onClick={handleClickChoice} />
+      )}
       {/* render compose modal */}
       {showComposeModal && <ComposeModal onClose={handleCloseCompos} />}
     </Container>
