@@ -86,12 +86,30 @@ const AcceptDeclineCon = styled.div`
   }
 `;
 
+const ProfileImg = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  & > img {
+    width: auto;
+    height: 100%;
+  }
+`;
+
 const RenderRequest = ({ requests }) => {
   // function to render request list
   return (
     <div>
       {requests.map((message, index) => (
         <Request key={index}>
+          <ProfileImg>
+            <img src="https://reactjs.org/logo-og.png" alt="Profile" />
+          </ProfileImg>
           <p>{message["owner"]}</p>
           <AcceptDeclineCon>
             <IconContext.Provider
