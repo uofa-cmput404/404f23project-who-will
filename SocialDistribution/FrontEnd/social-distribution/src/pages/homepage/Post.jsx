@@ -6,12 +6,6 @@ import { useState, useEffect } from 'react';
 import axios from "axios"; // for ES6 (Browsers, Modern JavaScript)
 import HomeComments from "./HomeComments";
 
-// const state = {
-//   post_id: null,
-//   username: null
-// }
-
-
 function Post({ content , post_image, post_date,  post_owner, post_id, username, votes, comments}) {
   const [userInfo, setUserInfo] = useState('');
   const [liked, setLiked] = useState(false);
@@ -120,6 +114,7 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username,
 
     
   return (
+    
     <div className="postbox">
       <div>
         <Profile username={userInfo.username} post_date = {formatDate(post_date)} />
