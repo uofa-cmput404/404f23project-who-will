@@ -47,6 +47,7 @@ urlpatterns = [
     # path('swagger/', get_swagger_view),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema_swagger_ui'),
     path('api/auth/', include('authentication.urls')),
+    path('service/', include('service.urls')),
     path('api/get_requesters/', GetRequestersView.as_view(), name='get_requesters'),
 ]
 urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
