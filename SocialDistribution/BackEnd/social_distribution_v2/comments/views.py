@@ -22,4 +22,5 @@ class CommentViewSet(viewsets.ModelViewSet):
         if not query_parameter:
             return Comment.objects.all()
         
+
         return qs.filter(post=query_parameter["post"])

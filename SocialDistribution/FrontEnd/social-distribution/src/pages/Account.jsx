@@ -240,7 +240,6 @@ class Account extends Component {
             }
         })
         .then((res) => {
-            console.log("DATA ======= " + res.data);
             const user = { posts: res.data };
             this.setState({ user: user })
         })

@@ -148,3 +148,11 @@
     margin-top: 5px;
     margin-bottom: 10px;
 }
+
+#categories {
+    text-align: left;
+}
+
+#visibility-label{
+    margin-top: 100px;
+}
