@@ -45,7 +45,7 @@ def author_to_json(user, user_profile):
         "id": f"http://127.0.0.1:/service/author/{user.username}",
         "url": f"http://127.0.0.1:/service/author/{user.username}",
         "host": "http://127.0.0.1:8000/",
-        "displayName": f"{user.first_name} {user.last_name}",
+        "displayName": f"{user.username}",
         "github": user_profile.github,
         "profileImage": "image"
     }

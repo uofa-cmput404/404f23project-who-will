@@ -8,6 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import GetAllFriends from "../utils/GetAllFriends";
 
+// styled components
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -51,13 +52,18 @@ const StyledLabel = styled.label`
 `;
 
 const ComposeModal = ({ onClose }) => {
+  // get all friends
   const friendGetter = new GetAllFriends(localStorage.getItem("pk"));
-  const [categories, setCategories] = useState([]);
   const [friends, setFriends] = useState([]);
+  // get all categories
+  const [categories, setCategories] = useState([]);
+  // for selecting categories
   const [selectedOptions, setSelectedOptioins] = useState([]);
+  // for selecting who the message is sent to
   const [messageTo, setMessageTo] = useState(0);
+  // get data
   const [inputs, setInputs] = useState({});
-
+  // get friends and categories at the init render
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/categories/")
@@ -80,15 +86,16 @@ const ComposeModal = ({ onClose }) => {
   }, []);
 
   console.log(friends);
-
-  
+  // handle funtions
   const handleSendTo = (event) => {
+    // for message receiver selection
     const selectedValue = event.target.value;
     console.log(selectedValue);
     setMessageTo(selectedValue);
-  }
+  };
 
   const handleSelectChange = (event) => {
+    // for category selection
     const selectedValue = Array.from(
       event.target.selectedOptions,
       (option) => option.value
@@ -97,6 +104,7 @@ const ComposeModal = ({ onClose }) => {
   };
   const currentID = localStorage.getItem("pk");
 
+  // for update category selection
   useEffect(() => {
     setInputs((values) => ({ ...values, categories: selectedOptions }));
     setInputs((values) => ({
@@ -107,6 +115,7 @@ const ComposeModal = ({ onClose }) => {
   }, [selectedOptions]);
 
   const handleChange = (event) => {
+    // for data input change
     const name = event.target.name;
     const value = event.target.value;
     // setInputs((values) => ({ ...values, [name]: value }));
@@ -141,7 +150,7 @@ const ComposeModal = ({ onClose }) => {
   const handleSentToAndChange = (event) => {
     handleSendTo(event);
     handleChange(event);
-  }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -169,7 +178,6 @@ const ComposeModal = ({ onClose }) => {
   };
   console.log(inputs);
   console.log(messageTo);
-  const testFriend = [1,2];
   return (
     <Overlay>
       <ModalContainer>
@@ -181,18 +189,13 @@ const ComposeModal = ({ onClose }) => {
           value={messageTo}
           onChange={handleSentToAndChange}
         >
-          <option value="null" >Select an option</option>
+          <option value="null">Select an option</option>
           {friends.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
           ))}
         </select>
-        {/* <TextInput
-          onChange={handleChange}
-          name="message_to"
-          placeholder={"To: "}
-        ></TextInput> */}
         <TextInput
           onChange={handleChange}
           name="title"
