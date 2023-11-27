@@ -31,7 +31,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
   // this.state.post_id = post_id;
   // this.state.username = username;
 
-  const getPoseOwner=() =>{
+  const getPostOwner=() =>{
 
       console.log("get post owner");
       const authToken = localStorage.getItem("authToken");
@@ -60,7 +60,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
   }
 
   useEffect(() => {
-    getPoseOwner(); // Fetch data when the component mounts
+    getPostOwner(); // Fetch data when the component mounts
    }, []);
   
 
@@ -139,7 +139,9 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
         {isCommentsOpen && (
           <HomeComments onClose={handleCloseComments} 
           comments={comments}
-          post_id={post_id} />
+          post_id={post_id} 
+          owner={post.owner}
+          username={username}/>
         )}
       </div>
   );

@@ -2,21 +2,34 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import '../account/Comments.css'
 import FormatDate from '../../utils/FormatDate.jsx';
+import AddComment from './AddComment.jsx'
 
 class HomeComments extends Component {
     state = {
         comments: null,
+        showAddCommentPopup: false,
     };
+
+    handlePostCommentClick = () => {
+        console.log("hello");
+        this.setState({ showAddCommentPopup: true });
+    }
+
+    handleClosePostComment = () => {
+        this.setState({ showAddCommentPopup: false });
+        this.getData();
+    }
 
     componentDidMount(){
         this.getData();
     }
 
 
+    //retrieves post from db
     getData = () => {
-        console.log("POST ID -------> " + this.props.post_id);
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
+            //queries posts with correct id
             axios.get(`http://localhost:8000/api/comments/?post=${this.props.post_id}`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
@@ -38,25 +51,25 @@ class HomeComments extends Component {
 
 
     render() {
-
-        const { comments } = this.state;
+        const { comments, showAddCommentPopup } = this.state;
 
         return (
             <div className="comments-popup">
                 <div className="comments-content">
                     <h2>Comments Page</h2>
                     <div className="comment-section">
-                    {comments && comments.map((comment, index) => (
-                        <div key={index} className="comment">
-                            {console.log(comment)}
-                            <p id="commenter">{comment.commented_by}:</p>
-                            <p id="comment-comment">{comment.comment}</p>
-                            <p id="comment-date">{FormatDate.formatDate(comment.post_date_time)}</p>
-                        </div>
-                    ))}
-                <button onClick={this.props.onClose}>Close</button>
+                        {comments && comments.map((comment, index) => (
+                            <div key={index} className="comment">
+                                <p id="commenter">{comment.commented_by}:</p>
+                                <p id="comment-comment">{comment.comment}</p>
+                                <p id="comment-date">{FormatDate.formatDate(comment.post_date_time)}</p>
+                            </div>
+                        ))}
+                        <button onClick={this.handlePostCommentClick}>Comment</button>
+                        <button onClick={this.props.onClose}>Close</button>
+                    </div>
                 </div>
-                </div>
+                {showAddCommentPopup && <AddComment onClose={this.handleClosePostComment} postID={this.props.post_id} owner={this.props.owner} />}
             </div>
         );
     }
