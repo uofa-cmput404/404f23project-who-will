@@ -3,12 +3,66 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
+import requests
+from requests.auth import HTTPBasicAuth
+from rest_framework.views import APIView
+
 
 class UserViewSet(viewsets.ViewSet):
     def list(self, request):
-        queryset = User.objects.all()
-        serializer = UserSerializer(queryset, many=True)
-        return Response(serializer.data)
+
+
+        # team === good start
+        external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/"
+        external_api_response = requests.get(
+            external_api_url,
+            auth=HTTPBasicAuth('whoiswill', 'cmput404')
+        )
+
+        # Check if the external API call was successful (status code 200)
+        if external_api_response.status_code == 200:
+            # Deserialize the external API response
+            external_api_data = external_api_response.json()
+
+            # Fetch internal data
+            local_users = User.objects.all()
+            local_serializer = UserSerializer(local_users, many=True)
+            print("-------------------")
+            print(external_api_data['results'])
+            refactored_external_api_data = []
+            for i in external_api_data['results']:
+                refactored_external_api_data.append(
+                    {
+                        "id": i['key'],
+                        "username": i['key'],
+                        "is_active": 'true',
+                        "profile_data": {
+                            "id": i['user'],
+                            "owner": i['key'],
+                            "gender": None,
+                            "dob": None,
+                            "phone": None,
+                            "github": i['github'],
+                            "profile_image": None,
+                            "follow_requests": [],
+                            "following": []
+                        }
+                    }
+                )
+            # team === good send
+
+
+
+            # Combine external and internal data
+            combined_data = refactored_external_api_data + local_serializer.data
+
+            return Response(combined_data)
+        else:
+            # Handle the case when the external API call fails
+            return Response(
+                {"error": "Failed to fetch external data"},
+                status=external_api_response.status_code
+            )
 
     def create(self, request):
         serializer = UserSerializer(data=request.data)
