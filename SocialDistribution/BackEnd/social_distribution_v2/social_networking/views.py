@@ -60,14 +60,12 @@ class UserViewSet(viewsets.ViewSet):
             auth=HTTPBasicAuth('whoiswill', 'cmput404')
         )
         following_master_list = self.follower_to_following()
+        local_users = User.objects.all()
+        local_serializer = UserSerializer(local_users, many=True)
         # Check if the external API call was successful (status code 200)
         if external_api_response.status_code == 200:
             # Deserialize the external API response
             external_api_data = external_api_response.json()
-
-            # Fetch internal data
-            local_users = User.objects.all()
-            local_serializer = UserSerializer(local_users, many=True)
             # print(external_api_data['results'])
             refactored_external_api_data = []
             for i in external_api_data['items']:
@@ -97,6 +95,8 @@ class UserViewSet(viewsets.ViewSet):
             combined_data = refactored_external_api_data + local_serializer.data
 
             return Response(combined_data)
+        elif local_serializer.data:
+            return Response(local_serializer.data)
         else:
             # Handle the case when the external API call fails
             return Response(
