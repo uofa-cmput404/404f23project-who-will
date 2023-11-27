@@ -10,6 +10,48 @@ from rest_framework.views import APIView
 
 class UserViewSet(viewsets.ViewSet):
     basename='users'
+
+    def follower_to_following(self):
+        external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
+        external_api_response = requests.get(
+            external_api_url,
+            auth=HTTPBasicAuth('whoiswill', 'cmput404')
+        )
+        external_api_data = external_api_response.json()
+        follower={}
+        following={}
+        for i in external_api_data['items']:
+            follower[i['key']] = []
+            following[i['key']] = []
+        for i in follower.keys():
+            # print(i)
+            external_api_url = f"https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/{i}/followers/"
+            external_api_response = requests.get(
+                external_api_url,
+                auth=HTTPBasicAuth('whoiswill', 'cmput404')
+            )
+            external_api_data = external_api_response.json()
+            for j in external_api_data['items']:
+                path = (j['id']).split('/')
+                path = [i for i in path if i != '']
+                # print(path)
+                pk = path[-1]
+                follower[i].append(pk)
+
+            for j in follower.keys():
+                follower[j] = list(set(follower[j]))
+                for x in follower[j]:
+                    following[x].append(j)
+
+        # print("printing follower")
+        # print(follower)
+        # print("printing following")
+        # print(following)
+        print(following['53829888-346a-47ef-a7cf-f5dd82d3b598'])
+        return following
+
+
+
     def list(self, request):
         # team === good start
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
@@ -17,7 +59,7 @@ class UserViewSet(viewsets.ViewSet):
             external_api_url,
             auth=HTTPBasicAuth('whoiswill', 'cmput404')
         )
-
+        following_master_list = self.follower_to_following()
         # Check if the external API call was successful (status code 200)
         if external_api_response.status_code == 200:
             # Deserialize the external API response
@@ -43,7 +85,7 @@ class UserViewSet(viewsets.ViewSet):
                             "github": i['github'],
                             "profile_image": None,
                             "follow_requests": [],
-                            "following": []
+                            "following": following_master_list[i['key']]
                         }
                     }
                 )
@@ -70,7 +112,9 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk):
+        # todo followers
         print("1herere")
+        following_master_list = self.follower_to_following()
         try:
             # Try to get the user from the local database using pk
             user = User.objects.get(pk=pk)
@@ -87,6 +131,7 @@ class UserViewSet(viewsets.ViewSet):
             try:
                 # Try to get the user from the external API using the adjusted pk
                 external_api_url = f"https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/{pk}/"
+                print(external_api_url)
                 external_api_response = requests.get(
                     external_api_url,
                     auth=HTTPBasicAuth('whoiswill', 'cmput404')
@@ -99,18 +144,18 @@ class UserViewSet(viewsets.ViewSet):
                     # Transform external API data into the desired format
                     transformed_data = {
                         'id': external_user_data['key'],
-                        'username': external_user_data['key'],
+                        'username': external_user_data['displayName'],
                         'is_active': 'true',
                         'profile_data': {
-                            'id': external_user_data['user'],
-                            'owner': external_user_data['key'],
+                            'id': external_user_data['key'],
+                            'owner': external_user_data['displayName'],
                             'gender': None,
                             'dob': None,
                             'phone': None,
-                            'github': external_user_data.get('github', None),
+                            'github': external_user_data.get('github'),
                             'profile_image': None,
                             'follow_requests': [],
-                            'following': []
+                            'following': following_master_list[external_user_data['key']]
                         }
                     }
 
@@ -126,6 +171,7 @@ class UserViewSet(viewsets.ViewSet):
                     {"error": f"Failed to fetch external data for user {pk}: {str(e)}"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
+   
     def update(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         serializer = UserSerializer(user, data=request.data)
