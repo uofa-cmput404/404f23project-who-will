@@ -13,6 +13,7 @@ import { BsSend } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import ComposeModal from "../Components/Compose";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Container = styled.div`
   width: 100%;
@@ -112,7 +113,7 @@ const RenderRequest = ({ requests, onClick }) => {
     if (choice === "accept") {
       data = {
         add_follow_request: "None",
-        delete_follow_request: handleUser["profile_id"] + "",
+        delete_follow_request: "None",
         add_following: handleUser["profile_id"] + "",
         delete_following: "None",
       };
@@ -203,6 +204,7 @@ const Notifications = () => {
   const [activeSection, setActiveSection] = useState("inbox");
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [requestList, setRequestList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
   const [pendingUser, setPendingUser] = useState([]);
   const [clickStatus, setClickStatus] = useState(false);
   useEffect(() => {
@@ -218,15 +220,18 @@ const Notifications = () => {
       .then((res) => {
         // console.log(res);
         setRequestList(res.data["follow_requests"]);
+        setFollowingList(res.data["following"]);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    var difference = requestList.filter(item => !followingList.includes(item));
     // get all requesting users
     axios
       .get(`http://127.0.0.1:8000/api/get_requesters/`, {
         params: {
-          ids: `[${requestList}]`,
+          ids: `[${difference}]`,
         },
       })
       .then((res) => {

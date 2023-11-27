@@ -6,6 +6,7 @@ import { FaFileImage } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import GetAllFriends from "../utils/GetAllFriends";
 
 const Overlay = styled.div`
   position: fixed;
@@ -50,8 +51,11 @@ const StyledLabel = styled.label`
 `;
 
 const ComposeModal = ({ onClose }) => {
+  const friendGetter = new GetAllFriends(localStorage.getItem("pk"));
   const [categories, setCategories] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [selectedOptions, setSelectedOptioins] = useState([]);
+  const [messageTo, setMessageTo] = useState(0);
   const [inputs, setInputs] = useState({});
 
   useEffect(() => {
@@ -64,7 +68,26 @@ const ComposeModal = ({ onClose }) => {
       .catch((err) => {
         console.log(err);
       });
+    friendGetter
+      .GetAllFriends(localStorage.getItem("pk"))
+      .then((res) => {
+        console.log(res);
+        setFriends(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
+
+  console.log(friends);
+
+  
+  const handleSendTo = (event) => {
+    const selectedValue = event.target.value;
+    console.log(selectedValue);
+    setMessageTo(selectedValue);
+  }
+
   const handleSelectChange = (event) => {
     const selectedValue = Array.from(
       event.target.selectedOptions,
@@ -72,15 +95,15 @@ const ComposeModal = ({ onClose }) => {
     );
     setSelectedOptioins(selectedValue);
   };
-  const currentID = localStorage.getItem('pk')
-  useEffect(() => {
+  const currentID = localStorage.getItem("pk");
 
+  useEffect(() => {
     setInputs((values) => ({ ...values, categories: selectedOptions }));
     setInputs((values) => ({
       ...values,
       visibility: "friends only",
     }));
-    setInputs((values) => ({...values, owner: currentID }))
+    setInputs((values) => ({ ...values, owner: currentID }));
   }, [selectedOptions]);
 
   const handleChange = (event) => {
@@ -115,6 +138,11 @@ const ComposeModal = ({ onClose }) => {
     handleChange(event);
   };
 
+  const handleSentToAndChange = (event) => {
+    handleSendTo(event);
+    handleChange(event);
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const authToken = localStorage.getItem("authToken");
@@ -124,8 +152,8 @@ const ComposeModal = ({ onClose }) => {
       axios
         .post("http://127.0.0.1:8000/api/posts/", inputs, {
           headers: {
-            'Authorization': `Token ${authToken}`,
-            'Content-Type': "application/json"
+            Authorization: `Token ${authToken}`,
+            "Content-Type": "application/json",
           },
         })
         .then((res) => {
@@ -139,16 +167,32 @@ const ComposeModal = ({ onClose }) => {
         });
     }
   };
-
+  console.log(inputs);
+  console.log(messageTo);
+  const testFriend = [1,2];
   return (
     <Overlay>
       <ModalContainer>
         <h2>Send Post to A Friend</h2>
-        <TextInput
+        <label htmlFor="messageTo">Send the Post to:</label>
+        <select
+          name="message_to"
+          id="messageTo"
+          value={messageTo}
+          onChange={handleSentToAndChange}
+        >
+          <option value="null" >Select an option</option>
+          {friends.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        {/* <TextInput
           onChange={handleChange}
           name="message_to"
           placeholder={"To: "}
-        ></TextInput>
+        ></TextInput> */}
         <TextInput
           onChange={handleChange}
           name="title"
