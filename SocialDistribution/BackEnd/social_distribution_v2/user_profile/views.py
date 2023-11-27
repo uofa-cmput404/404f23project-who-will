@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User  # Make sure to import User
 from user_profile.models import UserProfile
 from .serializers import ProfileSerializer
 import requests
+import json
 
 class ProfileViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -122,3 +124,14 @@ class ProfileViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetRequestersView(APIView):
+     profiles = UserProfile.objects.all()
+
+     def get(self, request):
+        pk_lst = request.GET.get('ids', [])
+        pk_lst = json.loads(pk_lst)
+        profiles = UserProfile.objects.filter(pk__in=pk_lst)
+        serialized_users = [{'profile_id':profile.id, 'owner':profile.owner.username} for profile in profiles]
+        return Response(serialized_users)

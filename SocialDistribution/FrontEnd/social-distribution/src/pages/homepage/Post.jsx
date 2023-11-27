@@ -12,7 +12,7 @@ import HomeComments from "./HomeComments";
 // }
 
 
-function Post({ content , post_image, post_date,  post_owner, post_id, username, votes, comments}) {
+function Post({ post, content , post_image, post_date,  post_owner, post_id, username, votes, comments}) {
   const [userInfo, setUserInfo] = useState('');
   const [liked, setLiked] = useState(false);
   const [isCommentsOpen, setCommentsPopup] = useState(false);
@@ -125,7 +125,7 @@ function Post({ content , post_image, post_date,  post_owner, post_id, username,
         <Profile username={userInfo.username} post_date = {formatDate(post_date)} />
       </div>
      
-      <Content content={content} post_image={post_image}   />
+      <Content title={post.title} content={post.content} post_image={post_image}   />
       {/* <p id="postdate">{post_date}</p> */}
       
       <div className="bottombar">
