@@ -14,6 +14,7 @@ class AddPost extends Component {
     categories: [],
     title: "",
     description: "",
+    categoryOptions: null,
   };
 
   handleContentChange = (e) => {
@@ -40,8 +41,20 @@ class AddPost extends Component {
     this.setState({ origin: e.target.value });
   };
 
-  handleCategoriesChange = (e) => {
-    this.setState({ categories: e.target.value });
+  handleCategoryCheckboxChange = (e) => {
+    const categoryId = parseInt(e.target.value, 10);
+    const updatedCategories = [...this.state.categories];
+  
+    if (e.target.checked) {
+      updatedCategories.push(categoryId);
+    } else {
+      const index = updatedCategories.indexOf(categoryId);
+      if (index !== -1) {
+        updatedCategories.splice(index, 1);
+      }
+    }
+  
+    this.setState({ categories: updatedCategories });
   };
 
   handleImageUpload = (e) => {
@@ -106,6 +119,7 @@ class AddPost extends Component {
       newPost.origin = origin;
     }
 
+    console.log("SELECTED CATEGORYYYYY ======= " + this.state.categories) 
     //TODO: Fix this
     // if (categories !== '') {
     //     newPost.categories = categories.split(',').map(category => category.trim());
@@ -149,6 +163,35 @@ class AddPost extends Component {
           console.log(err);
           toast.error("Failed to upload post. Please try again.");
         });
+    }
+  };
+
+  componentDidMount() {
+    this.getCategories();
+  }
+
+  getCategories = () => {
+    const authToken = localStorage.getItem("authToken");
+  
+    if (authToken) {
+      axios
+        .get(`http://localhost:8000/api/categories/`, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        })
+        .then((res) => {
+          const categoryOptions = res.data;
+          console.log("Categories ===", categoryOptions);
+  
+          // Set the availableCategories in the state
+          this.setState({ availableCategories: categoryOptions });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      console.log("Error: No auth token provided.");
     }
   };
 
@@ -210,12 +253,22 @@ class AddPost extends Component {
 
             <label>
               Categories:
-              <textarea
-                rows="2"
-                placeholder="Add categories separated by commas..."
-                value={this.state.categories}
-                onChange={this.handleCategoriesChange}
-              />
+              {this.state.availableCategories ? (
+                this.state.availableCategories.map((category) => (
+                  <div id="categories" key={category.id}>
+                    <input
+                      type="checkbox"
+                      id={`category-${category.id}`}
+                      value={category.id}
+                      checked={this.state.categories.includes(category.id)}
+                      onChange={this.handleCategoryCheckboxChange}
+                    />
+                    <label htmlFor={`category-${category.id}`}>{category.category}</label>
+                  </div>
+                ))
+              ) : (
+                <p>Loading categories...</p>
+              )}
             </label>
 
             <label>
