@@ -13,8 +13,8 @@ import { BsSend } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import ComposeModal from "../Components/Compose";
 import axios from "axios";
-import { toast } from "react-toastify";
 
+// styled components
 const Container = styled.div`
   width: 100%;
   height: 100vh;
@@ -62,6 +62,15 @@ const Request = styled.div`
   }
 `;
 
+const InboxMessage = styled.div`
+  /* display: flex;
+  height: 9%;
+  border: 1px solid black;
+  margin: 5px;
+  border-radius: 5px;
+  align-items: center; */
+`;
+
 const Tile = styled.div`
   height: 5%;
   position: relative;
@@ -105,6 +114,7 @@ const ProfileImg = styled.div`
 `;
 
 const RenderRequest = ({ requests, onClick }) => {
+  // function to render request list
   const handleClickPending = (event, choice, index) => {
     event.preventDefault();
     const currentID = localStorage.getItem("pk");
@@ -153,7 +163,6 @@ const RenderRequest = ({ requests, onClick }) => {
     },
     [hover]
   );
-  // function to render request list
   return (
     <div onClick={(e) => onClick(e)}>
       {requests.map((message, index) => (
@@ -200,6 +209,21 @@ const RenderRequest = ({ requests, onClick }) => {
   );
 };
 
+
+const RenderInBox = ({ inbox, onClick }) => {
+  console.log(typeof inbox);
+  return (
+    <MessageList>
+      {inbox.map((message, index) => (
+        <InboxMessage key={index}>
+          <p>{message["content"]}</p>
+        </InboxMessage>
+      ))}
+    </MessageList>
+  );
+};
+
+
 const Notifications = () => {
   const [activeSection, setActiveSection] = useState("inbox");
   const [showComposeModal, setShowComposeModal] = useState(false);
@@ -207,6 +231,8 @@ const Notifications = () => {
   const [followingList, setFollowingList] = useState([]);
   const [pendingUser, setPendingUser] = useState([]);
   const [clickStatus, setClickStatus] = useState(false);
+  const [inbox, setInbox] = useState([]);
+  // updating requesting list
   useEffect(() => {
     const currentId = localStorage.getItem("pk");
     const authToken = localStorage.getItem("authToken");
@@ -226,8 +252,10 @@ const Notifications = () => {
         console.log(err);
       });
 
-    var difference = requestList.filter(item => !followingList.includes(item));
     // get all requesting users
+    var difference = requestList.filter(
+      (item) => !followingList.includes(item)
+    );
     axios
       .get(`http://127.0.0.1:8000/api/get_requesters/`, {
         params: {
@@ -241,7 +269,20 @@ const Notifications = () => {
       .catch((err) => {
         console.log(err);
       });
+    // get inbox messages
+    const userName = localStorage.getItem("username");
+    console.log(userName);
+    axios
+      .get(`http://127.0.0.1:8000/service/authors/${userName}/inbox`)
+      .then((res) => {
+        console.log(res.data["items"]);
+        setInbox(res.data["items"]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [activeSection, clickStatus]);
+  // handle functions
   const handleComposeClick = () => {
     setShowComposeModal(true);
   };
@@ -255,6 +296,8 @@ const Notifications = () => {
     event.preventDefault();
     setClickStatus(!clickStatus);
   };
+
+  console.log(inbox);
   return (
     <Container>
       <SideBar>
@@ -271,7 +314,7 @@ const Notifications = () => {
           </IconContext.Provider>
           <p style={{ color: "white", margin: "5px" }}>Inbox</p>
         </Tile>
-        {/* for sent messages */}
+        {/* TODO: for sent messages */}
         {/* <Tile
           onClick={() => handleSectionClick("sent")}
           active={activeSection === "sent"}
@@ -292,7 +335,9 @@ const Notifications = () => {
         </Tile>
       </SideBar>
       {/* for inbox */}
-      {activeSection === "inbox" && <MessageList>inbox message</MessageList>}
+      {activeSection === "inbox" && <MessageList>
+        <RenderInBox inbox={inbox}/>
+      </MessageList> }
       {activeSection === "inbox" && <Message>inbox message</Message>}
       {/* for sent */}
       {/* {activeSection === "sent" && <MessageList>sent message</MessageList>}
@@ -301,7 +346,7 @@ const Notifications = () => {
       {activeSection === "request" && (
         <RenderRequest requests={pendingUser} onClick={handleClickChoice} />
       )}
-      {/* render compose modal */}
+      {/* render compose modal for private posts */}
       {showComposeModal && <ComposeModal onClose={handleCloseCompos} />}
     </Container>
   );
