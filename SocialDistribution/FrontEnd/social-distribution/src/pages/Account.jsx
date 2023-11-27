@@ -344,7 +344,6 @@ class Account extends Component {
        
     
         const { user } = this.state;
-
         if (!user) {
             return (
                 <div>Could Not Load User Data</div>
