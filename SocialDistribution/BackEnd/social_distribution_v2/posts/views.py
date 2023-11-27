@@ -7,7 +7,9 @@ from user_profile.permissions import IsOwnerOrReadOnly
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from .serializers import PostSerializer, CategoriesSerializer
-
+import requests
+from requests.auth import HTTPBasicAuth
+from rest_framework.views import APIView
 
 class PostViewSet(viewsets.ModelViewSet):
     """
@@ -29,6 +31,7 @@ class PostViewSet(viewsets.ModelViewSet):
         # Implement your logic for retrieving a list of posts
         queryset = self.get_queryset()
         local_serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
         print(local_serializer.data)
 
 
@@ -44,24 +47,7 @@ class PostViewSet(viewsets.ModelViewSet):
             # print(external_api_data['results'])
             refactored_external_api_data = []
             for i in external_api_data['items']:
-                refactored_external_api_data.append(
-                    {
-                        "id": i['key'],
-                        "username": i['key'],
-                        "is_active": 'true',
-                        "profile_data": {
-                            "id": i['user'],
-                            "owner": i['key'],
-                            "gender": None,
-                            "dob": None,
-                            "phone": None,
-                            "github": i['github'],
-                            "profile_image": None,
-                            "follow_requests": [],
-                            "following": following_master_list[i['key']]
-                        }
-                    }
-                )
+                pass
             # team === good send
 
 
