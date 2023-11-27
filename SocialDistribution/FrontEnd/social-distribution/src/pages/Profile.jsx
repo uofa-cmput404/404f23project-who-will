@@ -1,6 +1,7 @@
 import React from "react";
 import "./homepage.css"; // use css style
 
+// this returns the username and post date
 function Profile({username, post_date}) {
 
   return (<div className="profile">

@@ -33,8 +33,8 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
 
   const getPostOwner=() =>{
 
-      console.log("get post owner");
-      const authToken = localStorage.getItem("authToken");
+      console.log("get post owner"); // get the owner
+      const authToken = localStorage.getItem("authToken"); // get the token
   
       if (authToken) {
         console.log(`http://localhost:8000/api/users/${post_owner}/`);
@@ -64,7 +64,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
    }, []);
   
 
-  const handleCommentsClick=() => {
+  const handleCommentsClick=() => { // click comments button
     console.log("comments button clicked!!!"); 
     setCommentsPopup(true);
   };
@@ -75,13 +75,13 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
 
   
   //handle vote up 
-  const handleLikeClick=() =>{
+  const handleLikeClick=() =>{ 
     setLiked(true);
 
     console.log(post_id);
     console.log(username);
 
-    const postVote = {
+    const postVote = { // create like post
       post: post_id,
       up_vote: true
     }
@@ -110,15 +110,14 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
         });
     }
   };
-
+  
+  // format the date 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
 
-
-    
   return (
     
     <div className="postbox">
@@ -134,7 +133,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
         <span role="img" className="heart" aria-label="Heart">{liked ? '❤️' : '🤍'}</span>
         </button>
         <button className="comments" onClick={handleCommentsClick}>Comments</button>
-
+    
       </div>
         {isCommentsOpen && (
           <HomeComments onClose={handleCloseComments} 

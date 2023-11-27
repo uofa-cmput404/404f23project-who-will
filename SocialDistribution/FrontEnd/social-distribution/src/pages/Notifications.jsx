@@ -200,7 +200,7 @@ const RenderRequest = ({ requests, onClick }) => {
         console.log(err);
       });
   };
-
+  // these are some UI design 
   const [hover, setHover] = useState(new Array(requests.length).fill(false));
   const onHover = useCallback(
     (index) => {
@@ -236,7 +236,7 @@ const RenderRequest = ({ requests, onClick }) => {
               <button
                 onMouseEnter={() => onHover(index)}
                 onMouseLeave={() => onLeave(index)}
-                onClick={(e) => handleClickPending(e, "accept", index)}
+                onClick={(e) => handleClickPending(e, "accept", index)}  // Accept the friend request 
                 style={{ border: "transparent" }}
               >
                 {hover[index] ? "Follow Back" : <FaCheckCircle />}
@@ -251,7 +251,7 @@ const RenderRequest = ({ requests, onClick }) => {
               <button
                 onMouseEnter={() => onHover(index)}
                 onMouseLeave={() => onLeave(index)}
-                onClick={(e) => handleClickPending(e, "deny", index)}
+                onClick={(e) => handleClickPending(e, "deny", index)}  // deny the friend request 
                 style={{ border: "transparent" }}
               >
                 {hover[index] ? "Block Follow" : <FaCircleXmark />}
@@ -270,6 +270,7 @@ const RenderInBox = ({ inbox, onClick }) => {
     event.preventDefault();
     setSelectedMessage(message);
   };
+  // show author and title
   return (
     <MessageContainer>
       <MessageList>
@@ -278,7 +279,7 @@ const RenderInBox = ({ inbox, onClick }) => {
             key={index}
             onClick={(e) => handleItemClick(e, message)}
           >
-            <p>From: {message["author"]["displayName"]}</p>
+            <p>From: {message["author"]["displayName"]}</p> 
             <p className="title">{message["title"]}</p>
           </InboxMessage>
         ))}
@@ -292,6 +293,7 @@ const RenderInBox = ({ inbox, onClick }) => {
   );
 };
 
+// render messages ( title and content )
 const RenderMessage = ({ message }) => {
   console.log(message);
   return (
@@ -306,7 +308,7 @@ const RenderMessage = ({ message }) => {
 
 const Notifications = () => {
   const [activeSection, setActiveSection] = useState("inbox");
-  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [showComposeModal, setShowComposeModal] = useState(false); 
   const [requestList, setRequestList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
   const [pendingUser, setPendingUser] = useState([]);

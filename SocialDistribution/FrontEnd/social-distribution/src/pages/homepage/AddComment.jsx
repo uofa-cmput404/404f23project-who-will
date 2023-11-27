@@ -59,7 +59,7 @@ class AddComment extends Component {
       };
 
 
-
+    // this consist the sumbit button and cancle button of the comment
     render() {
         const { comments, showAddCommentPopup } = this.state;
 

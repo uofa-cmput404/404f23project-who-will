@@ -8,7 +8,7 @@ import Github from "../github";
 
 function Postlist({ posts, username}) {
   const [selectedFilter, setSelectedFilter] = useState('all');
-
+  
   const handleFilterChange = event => {
     setSelectedFilter(event.target.value);
   };
@@ -22,9 +22,11 @@ function Postlist({ posts, username}) {
     }
   });
  
-    
+  // this returns a post-list, sort according to data time order
+  // recent one come first
+  // has a filter that filter based on the post
   return (
-    <div className="post-list">
+    <div className="post-list">   
       <div className='filter'>
         <select name="filter" className="custom-filter"  onChange={handleFilterChange}>  
           <option value="all">Select field</option>

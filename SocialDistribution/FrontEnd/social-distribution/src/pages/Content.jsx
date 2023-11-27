@@ -1,6 +1,7 @@
 import React from "react";
 import "./homepage.css"; // use css style
 
+// this is the content that consist each post content
 function Content({ title, description, content, post_image, source, origin, categories }) {
   return (
   <div className="content">
