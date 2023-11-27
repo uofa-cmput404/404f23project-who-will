@@ -25,6 +25,7 @@ const TextInput = ({ type, placeholder, id, name, onChange, box }) => {
         id={id}
         name={name}
         placeholder={placeholder}
+        onChange={onChange}
         rows="50"
         col="100"
       ></TextAreaComponent>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import Button from "../Components/Button";
 import {
@@ -56,9 +56,11 @@ const Request = styled.div`
   border-radius: 5px;
   align-items: center;
   & > * {
-    margin: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
   }
 `;
+
 const Tile = styled.div`
   height: 5%;
   position: relative;
@@ -92,8 +94,8 @@ const ProfileImg = styled.div`
   justify-content: center;
   overflow: hidden;
   position: relative;
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   & > img {
     width: auto;
@@ -101,10 +103,58 @@ const ProfileImg = styled.div`
   }
 `;
 
-const RenderRequest = ({ requests }) => {
+const RenderRequest = ({ requests, onClick }) => {
+  const handleClickPending = (event, choice, index) => {
+    event.preventDefault();
+    const currentID = localStorage.getItem("pk");
+    const handleUser = requests[index];
+    var data = {};
+    if (choice === "accept") {
+      data = {
+        add_follow_request: "None",
+        delete_follow_request: handleUser["profile_id"] + "",
+        add_following: handleUser["profile_id"] + "",
+        delete_following: "None",
+      };
+    } else if (choice === "deny") {
+      data = {
+        add_follow_request: "None",
+        delete_follow_request: handleUser["profile_id"] + "",
+        add_following: "None",
+        delete_following: handleUser["profile_id"] + "",
+      };
+    }
+    // console.log(data);
+    axios
+      .put(`http://127.0.0.1:8000/api/profiles/${currentID}/`, data)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const [hover, setHover] = useState(new Array(requests.length).fill(false));
+  const onHover = useCallback(
+    (index) => {
+      const updatedHoverStates = [...hover];
+      updatedHoverStates[index] = true;
+      setHover(updatedHoverStates);
+    },
+    [hover]
+  );
+  const onLeave = useCallback(
+    (index) => {
+      const updatedHoverStates = [...hover];
+      updatedHoverStates[index] = false;
+      setHover(updatedHoverStates);
+    },
+    [hover]
+  );
   // function to render request list
   return (
-    <div>
+    <div onClick={(e) => onClick(e)}>
       {requests.map((message, index) => (
         <Request key={index}>
           <ProfileImg>
@@ -118,7 +168,14 @@ const RenderRequest = ({ requests }) => {
                 size: "2.5em",
               }}
             >
-              <FaCheckCircle />
+              <button
+                onMouseEnter={() => onHover(index)}
+                onMouseLeave={() => onLeave(index)}
+                onClick={(e) => handleClickPending(e, "accept", index)}
+                style={{ border: "transparent" }}
+              >
+                {hover[index] ? "Follow Back" : <FaCheckCircle />}
+              </button>
             </IconContext.Provider>
             <IconContext.Provider
               value={{
@@ -126,7 +183,14 @@ const RenderRequest = ({ requests }) => {
                 size: "2.5em",
               }}
             >
-              <FaCircleXmark />
+              <button
+                onMouseEnter={() => onHover(index)}
+                onMouseLeave={() => onLeave(index)}
+                onClick={(e) => handleClickPending(e, "deny", index)}
+                style={{ border: "transparent" }}
+              >
+                {hover[index] ? "Block Follow" : <FaCircleXmark />}
+              </button>
             </IconContext.Provider>
           </AcceptDeclineCon>
         </Request>
@@ -140,6 +204,7 @@ const Notifications = () => {
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [requestList, setRequestList] = useState([]);
   const [pendingUser, setPendingUser] = useState([]);
+  const [clickStatus, setClickStatus] = useState(false);
   useEffect(() => {
     const currentId = localStorage.getItem("pk");
     const authToken = localStorage.getItem("authToken");
@@ -171,7 +236,7 @@ const Notifications = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [activeSection]);
+  }, [activeSection, clickStatus]);
   const handleComposeClick = () => {
     setShowComposeModal(true);
   };
@@ -181,7 +246,10 @@ const Notifications = () => {
   const handleSectionClick = (section) => {
     setActiveSection(section);
   };
-
+  const handleClickChoice = (event) => {
+    event.preventDefault();
+    setClickStatus(!clickStatus);
+  };
   return (
     <Container>
       <SideBar>
@@ -225,7 +293,9 @@ const Notifications = () => {
       {/* {activeSection === "sent" && <MessageList>sent message</MessageList>}
       {activeSection === "sent" && <Message>sent message</Message>} */}
       {/* for friend request */}
-      {activeSection === "request" && <RenderRequest requests={pendingUser} />}
+      {activeSection === "request" && (
+        <RenderRequest requests={pendingUser} onClick={handleClickChoice} />
+      )}
       {/* render compose modal */}
       {showComposeModal && <ComposeModal onClose={handleCloseCompos} />}
     </Container>
