@@ -16,6 +16,7 @@ body {
     padding-bottom: 10px;
   }
 
+
   #profileimage{
     width: 50px;
     height: 50px;
@@ -52,26 +53,53 @@ body {
 
   }
 
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Other styles for the page content */
+  }
+  .post-list .filter{
+    width: 100%;
+    /* align-self: flex-end; */
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+    margin-left: 80px;
+  }
+
+  .post-list .filter .custom-filter{
+    border-color: grey;
+    border-radius: 10%;
+    border-width: 3px;
+    height: 40px;
+    font-weight: 50px;
+  }
+
+  .github_activity {
+    /* align-self: flex-start; */
+    margin-right: 80px;
+    border-radius: 10%;
+
+  }
+
   .postbox {
     display: flex;
     flex-direction: column;
     justify-content: center;
-  
     /* align-content: flex-start; */
   
     gap: 1em;
     padding: 10px;
-    margin-top: 90px;
     border: 2px solid black ;
     /* border: 4px solid darkolivegreen; */
     width: 60%; /* Set the desired width of the centered box */
     margin: 0 auto;
-    margin-top: 90px;
+    margin-top: 40px;
     border-radius: 20px;
     background-color: #fff;
     box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
   }
-
   
   .postbox:hover {
     /*box-shadow: 0px 10px 20px 5px rgba(0, 0, 0, 0.5);*/
@@ -110,5 +138,51 @@ body {
 .comments:active {
     opacity: 0.8;
 }
+
+/* Style for overlay */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+}
+
+.github_close_button {
+  text-align: center; /* Center text horizontally */
+  height: 30px;
+  width: 80px;
+}
+
+#github_activity {
+  display: inline-block;
+  width: 100px; /* Set button width */
+  height: 50px; /* Set button height */
+  padding: 0; /* Reset padding */
+  cursor: pointer;
+  background-image: url('../images/github.jpeg');
+  background-size: 50px 50px; /* Fixed size for the background image */
+  background-repeat: no-repeat;
+  background-position: left; /* Center the image */
+  border: 1px solid gray;
+}
+
+#github {
+  display: inline;
+  margin-left: 40px;
+
+}
+
 
 

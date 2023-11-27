@@ -11,7 +11,6 @@ function Profile({username, post_date}) {
     <div className="name_date">
         <div id='username'>{username}</div>
         <div id = "post_date"> {post_date}</div>
-
     </div>
     
   </div>);

@@ -120,6 +120,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
 
     
   return (
+    
     <div className="postbox">
       <div>
         <Profile username={userInfo.username} post_date = {formatDate(post_date)} />
