@@ -9,11 +9,10 @@ from rest_framework.views import APIView
 
 
 class UserViewSet(viewsets.ViewSet):
+    basename='users'
     def list(self, request):
-
-
         # team === good start
-        external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/"
+        external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
         external_api_response = requests.get(
             external_api_url,
             auth=HTTPBasicAuth('whoiswill', 'cmput404')
@@ -27,10 +26,9 @@ class UserViewSet(viewsets.ViewSet):
             # Fetch internal data
             local_users = User.objects.all()
             local_serializer = UserSerializer(local_users, many=True)
-            print("-------------------")
-            print(external_api_data['results'])
+            # print(external_api_data['results'])
             refactored_external_api_data = []
-            for i in external_api_data['results']:
+            for i in external_api_data['items']:
                 refactored_external_api_data.append(
                     {
                         "id": i['key'],
@@ -72,11 +70,62 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+        print("1herere")
+        try:
+            # Try to get the user from the local database using pk
+            user = User.objects.get(pk=pk)
+            serializer = UserSerializer(user)
+            print(1, serializer.data)
+            return Response(serializer.data)
+        except (User.DoesNotExist, ValueError):
+            print(request.path)
+            path = request.path.split('/')
+            path = [i for i in path if i != '']
+            print(path)
+            pk = path[-1]
+            print("pk is", pk)
+            try:
+                # Try to get the user from the external API using the adjusted pk
+                external_api_url = f"https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/{pk}/"
+                external_api_response = requests.get(
+                    external_api_url,
+                    auth=HTTPBasicAuth('whoiswill', 'cmput404')
+                )
 
+                if external_api_response.status_code == 200:
+                    # Deserialize the external API response
+                    external_user_data = external_api_response.json()
+                    
+                    # Transform external API data into the desired format
+                    transformed_data = {
+                        'id': external_user_data['key'],
+                        'username': external_user_data['key'],
+                        'is_active': 'true',
+                        'profile_data': {
+                            'id': external_user_data['user'],
+                            'owner': external_user_data['key'],
+                            'gender': None,
+                            'dob': None,
+                            'phone': None,
+                            'github': external_user_data.get('github', None),
+                            'profile_image': None,
+                            'follow_requests': [],
+                            'following': []
+                        }
+                    }
+
+                    return Response(transformed_data)
+                else:
+                    return Response(
+                        {"error": f"Failed to fetch external data for user {pk}"},
+                        status=external_api_response.status_code
+                    )
+            except Exception as e:
+                # Handle other exceptions that might occur during the external API call
+                return Response(
+                    {"error": f"Failed to fetch external data for user {pk}: {str(e)}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
     def update(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         serializer = UserSerializer(user, data=request.data)

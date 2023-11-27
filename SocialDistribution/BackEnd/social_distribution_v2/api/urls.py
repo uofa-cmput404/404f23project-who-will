@@ -5,9 +5,11 @@ from user_profile.views import ProfileViewSet
 from posts.views import PostViewSet, CategoryViewSet
 from comments.views import CommentViewSet
 from votes.views import VoteViewSet
+from django.urls import re_path
 
 router=DefaultRouter()
 router.register(r'users',UserViewSet,basename='users')
+re_path(r'^users/.*$', UserViewSet)
 router.register(r'profiles',ProfileViewSet,basename='profiles')
 router.register(r'posts',PostViewSet)
 router.register(r'categories', CategoryViewSet)
