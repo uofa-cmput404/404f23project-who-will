@@ -19,8 +19,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
+        qs = self.queryset
         query_parameter = self.request.query_params
         if not query_parameter:
-            return self.queryset
-        
-        return self.queryset.filter(post=query_parameter["post"])
+            return Comment.objects.all()
+
+        return qs.filter(post=query_parameter["post"])

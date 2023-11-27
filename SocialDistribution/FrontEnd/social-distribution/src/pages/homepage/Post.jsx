@@ -139,7 +139,9 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
         {isCommentsOpen && (
           <HomeComments onClose={handleCloseComments} 
           comments={comments}
-          post_id={post_id} />
+          post_id={post_id} 
+          owner={post.owner}
+          username={username}/>
         )}
       </div>
   );

@@ -77,10 +77,13 @@ class AddPost extends Component {
     }
 
     const primaryKey = localStorage.getItem("pk");
+    //initialize new post with required field
     const newPost = {
       owner: primaryKey,
     };
 
+
+    //add optional elements 1 by 1
     if (title !== "") {
       newPost.title = title;
     }
@@ -108,8 +111,8 @@ class AddPost extends Component {
     //     newPost.categories = categories.split(',').map(category => category.trim());
     // }
 
-    // console.log(categories)
-
+   
+    //image should be last thing added
     if (image) {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -120,7 +123,8 @@ class AddPost extends Component {
       };
 
       reader.readAsDataURL(image);
-    } else {
+    } 
+    else {
       this.sendPostData(newPost);
       this.closeModal();
     }
