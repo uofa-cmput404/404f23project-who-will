@@ -10,6 +10,8 @@ class HomeComments extends Component {
         showAddCommentPopup: false,
     };
 
+    delayTime = 100;
+
     handlePostCommentClick = () => {
         console.log("hello");
         this.setState({ showAddCommentPopup: true });
@@ -18,11 +20,20 @@ class HomeComments extends Component {
     handleClosePostComment = () => {
         this.setState({ showAddCommentPopup: false });
         this.getData();
+        this.getDataDelay();
     }
 
     componentDidMount(){
         this.getData();
     }
+
+    async getDataDelay() {
+        await new Promise((resolve) => {
+          setTimeout(resolve, this.delayTime);
+        });
+    
+        this.getData();
+      }
 
 
     //retrieves post from db
