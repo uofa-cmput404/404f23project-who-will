@@ -9,11 +9,22 @@ from user_profile.models import *
 from comments.models import *
 from votes.models import *
 import requests
+import json
+
+
+
+# for the token
+from django.middleware.csrf import get_token
+
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    return JsonResponse({"csrf_token": csrf_token})
 
 # Create your views here.
+@csrf_exempt
 def works(request):
     # return hello world
-    print(request)
+    # print(1,request)
     try:    
         if request.method == 'GET':
             x = GET_request(request)
@@ -212,7 +223,6 @@ def get_inbox(requested_author):
         response['items'].append(post_to_json(post))
     return response
 
-
 def GET_request(request):
     # print(request.path)
     print("split: ", request.path.split('/'))
@@ -265,9 +275,131 @@ def GET_request(request):
 
     return JsonResponse(response)
 
+def post_user(username, request):
+    all_users = User.objects.all()
+    found = False
+
+    for user in all_users:
+        if user.username == username:
+            found = True
+
+            user_profile = UserProfile.objects.get(owner=user.id)
+            data = json.loads(request.body.decode('utf-8'))
+            user.first_name = data['displayName'].split()[0]
+            user.last_name = data['displayName'].split()[-1]
+            user_profile.github = data['github']
+            user_profile.profile_image = data['profileImage']
+            user.save()
+            user_profile.save()
+            return {'status': 'Done'}
+
+    if not found:
+        try:
+            # Decode the JSON data from the request body
+            data = json.loads(request.body.decode('utf-8'))
+            print(data)
+
+            # Splitting the displayName using spaces
+            name = data['displayName'].split()
+
+            # Make a new user object
+            new_user = User.objects.create_user(username=username, password="password", first_name=name[0], last_name=name[-1])
+            new_user.save()
+
+            new_user_profile = UserProfile(
+                owner=new_user,
+                github=data['github'],
+                profile_image=data['profileImage'],
+            )
+            new_user_profile.save()
+
+            return {'status': '1'}
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+            return {'status': 'error'}
+# Your existing POST_request function
+
+def Post_post(request,path):
+    print(5,request)
+    # get all post
+    # get a specific post
+    try:
+        post=Post.objects.get(id=path[-1])
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        post.title = data['title']
+        post.source = data['source']
+        post.origin = data['origin']
+        post.description = data['description']
+        post.categories = data['categories']
+        post.visibility = data['visibility']
+        post.content = data['content']
+        post.post_image = data['unlisted']
+        post.message_to = data['message_to']
+        post.save()
+        return {'status': 'worked'}
+    except:
+        print("no post")
+    # if Post.objects.get(id=path[-1]):
+    #     print("post exists")
+    # else:
+    #     print("post does not exist")
+
+
+    return {'status': '1'}
+
+
+def post_new_post(request,path):
+    author=User.objects.get(username=path[-2])
+    # make new post
+    post=Post.objects.create(owner=author)
+    data = json.loads(request.body.decode('utf-8'))
+    print(data)
+    post.title = data['title']
+    post.source = data['source']
+    post.origin = data['origin']
+    post.description = data['description']
+    post.categories = data['categories']
+    post.visibility = data['visibility']
+    post.content = data['content']
+    post.post_image = data['unlisted']
+    post.message_to = data['message_to']
+    post.save()
+    return {'status': '2'}
+
+def post_new_comment(request,path):
+    author=User.objects.get(username=path[-4])
+    post=Post.objects.get(id=path[-2])
+    comment=Comment.objects.create(owner=author,post=post)
+    data = json.loads(request.body.decode('utf-8'))
+    print(data)
+    comment.comment = data['comment']
+    comment.save()
+    return {'status': '2'}
+
 def POST_request(request):
-    print(request)
-    return JsonResponse({'status': '2'})
+    print(2, request)
+    print("split: ", request.path.split('/'))
+    response = {'status': 'error'}  # Set a default value for response
+    path = request.path.split('/')
+    for i in path:
+        if i == '':
+            path.remove(i)
+    print(path)
+    # http://127.0.0.1:8000/service/author/{author_id}/
+    if path[-2] == 'authors':
+        x = post_user(path[-1], request)
+    elif path[-2] == 'posts':
+        x = Post_post(request,path)
+    elif path[-1] == 'posts':
+        x = Post_post(request,path)
+    elif path[-1] == 'new_post':
+        x = post_new_comment(request,path)
+    # like to author/{}/inbox... TODO!
+    
+
+
+    return JsonResponse(x)
 
 def PUT_request(request):
     print(request)

@@ -5,4 +5,5 @@ from django.urls import re_path
 
 urlpatterns = [
     re_path(r'^authors/.*$', works),
+    path('get-csrf-token/', get_csrf_token, name='get_csrf_token')
 ]
