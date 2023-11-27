@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './Comments.css'
+import FormatDate from '../../utils/FormatDate.jsx';
 
 class Comments extends Component {
     state = {
@@ -15,14 +16,15 @@ class Comments extends Component {
     getData = () => {
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
-            axios.get('http://localhost:8000/api/posts/', {
+            axios.get(`http://localhost:8000/api/comments/?post=${this.props.postID}`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
             })
             .then((res) => {
-                console.log(res.data);
-                const comments = res.data.map(post => post.comments);
+                const comments = res.data;
+
+                console.log(comments);
 
                 this.setState({ comments });
             })
@@ -34,6 +36,7 @@ class Comments extends Component {
 
 
 
+
     render() {
 
         const { comments } = this.state;
@@ -42,14 +45,16 @@ class Comments extends Component {
             <div className="comments-popup">
                 <div className="comments-content">
                     <h2>Comments Page</h2>
-                    <button onClick={this.props.onClose}>Close</button>
                     <div className="comment-section">
                     {comments && comments.map((comment, index) => (
                         <div key={index} className="comment">
-                            <p>{comment}</p>
-                            <p>Author: </p> 
+                            {console.log(comment)}
+                            <p id="commenter">{comment.commented_by}:</p>
+                            <p id="comment-comment">{comment.comment}</p>
+                            <p id="comment-date">{FormatDate.formatDate(comment.post_date_time)}</p>
                         </div>
                     ))}
+                <button onClick={this.props.onClose}>Close</button>
                 </div>
                 </div>
             </div>

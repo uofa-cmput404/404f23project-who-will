@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import '../account/Comments.css'
+import FormatDate from '../../utils/FormatDate.jsx';
 
 class HomeComments extends Component {
     state = {
@@ -8,28 +9,23 @@ class HomeComments extends Component {
     };
 
     componentDidMount(){
-        console.log("Running");
-        this.setup();
-       // this.getData();
-    }
-
-    setup = () => {
-        this.state.comments = this.props.comments;
+        this.getData();
     }
 
 
     getData = () => {
-        console.log("Fetching data");
+        console.log("POST ID -------> " + this.props.post_id);
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
-            axios.get('http://localhost:8000/api/posts/', {
+            axios.get(`http://localhost:8000/api/comments/?post=${this.props.post_id}`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
             })
             .then((res) => {
-                console.log(res.data);
-                const comments = res.data.map(post => post.comments);
+                const comments = res.data;
+
+                console.log(comments);
 
                 this.setState({ comments });
             })
@@ -49,14 +45,16 @@ class HomeComments extends Component {
             <div className="comments-popup">
                 <div className="comments-content">
                     <h2>Comments Page</h2>
-                    <button onClick={this.props.onClose}>Close</button>
                     <div className="comment-section">
                     {comments && comments.map((comment, index) => (
                         <div key={index} className="comment">
-                            <p>{comment}</p>
-                            <p>Author: </p> 
+                            {console.log(comment)}
+                            <p id="commenter">{comment.commented_by}:</p>
+                            <p id="comment-comment">{comment.comment}</p>
+                            <p id="comment-date">{FormatDate.formatDate(comment.post_date_time)}</p>
                         </div>
                     ))}
+                <button onClick={this.props.onClose}>Close</button>
                 </div>
                 </div>
             </div>

@@ -262,3 +262,27 @@
     margin-top: 0px;
 }
 
+
+#title-account {
+    font-weight: bold;
+    font-size: 1.3em; 
+    align-self: center;
+}
+
+#source-account {
+    margin-top: 3px;
+    margin-bottom: 0px;
+    font-size: small;
+}
+
+#origin-account {
+    margin-top: 3px;
+    margin-bottom: 0px;
+    font-size: small;
+}
+
+#date-posted {
+    font-size: small;
+    margin-top: 0px;
+    margin-bottom: 2px;
+}
