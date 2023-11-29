@@ -10,6 +10,7 @@ from .serializers import PostSerializer, CategoriesSerializer
 import requests
 from requests.auth import HTTPBasicAuth
 from rest_framework.views import APIView
+import json
 
 class PostViewSet(viewsets.ModelViewSet):
     """
@@ -24,15 +25,16 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         # TODO NOT DONE
-        print("list")
-        print(request.path)
+        print("Grabbing all posts from everyone")
+        # print(request.path)
         ending= request.path.split('/')[-1]
-        print(ending)
+        # print(ending)
         # Implement your logic for retrieving a list of posts
         queryset = self.get_queryset()
         local_serializer = self.get_serializer(queryset, many=True)
         serializer = self.get_serializer(queryset, many=True)
-        print(local_serializer.data)
+        # print(local_serializer.data)
+        # print(json.dumps(local_serializer.data, indent = 4))
 
 
 
@@ -41,39 +43,68 @@ class PostViewSet(viewsets.ModelViewSet):
             external_api_url,
             auth=HTTPBasicAuth('whoiswill', 'cmput404')
         )
+
         if external_api_response.status_code == 200:
             # Deserialize the external API response
             external_api_data = external_api_response.json()
-            # print(external_api_data['results'])
-            refactored_external_api_data = []
+            # print(1,external_api_data['items'])
+            all_authors = []
+            master_posts = []
             for i in external_api_data['items']:
-                pass
+                all_authors.append(i['key'])
+            # print(2,all_authors)
+            for i in all_authors:
+                # print("----------------------------- author -----------------------------")
+                # print(i)
+                # print("----------------------------- author -----------------------------")
+                all_post_external_api_url = f"https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/{i}/posts/"
+                all_post_external_api_response = requests.get(
+                    all_post_external_api_url,
+                    auth=HTTPBasicAuth('whoiswill', 'cmput404')
+                )
+                all_authors_external_api_data = all_post_external_api_response.json()
+                # for j in all_authors_external_api_data['items']:
+                #     master_posts.append(j)
+                # print("-----------------------------")
+                if all_authors_external_api_data['items'] == []:
+                    pass
+                else:
+                    for j in all_authors_external_api_data['items']:
+                        master_posts.append(j)
+                    # print(json.dumps(all_authors_external_api_data, indent = 4))
+                # print("-----------------------------")
+            # print()
+            # print(3,master_posts)
+            # print()
+            # print(f"the lens of master_posts is {len(master_posts)}")
+            # print(json.dumps(master_posts[0], indent = 4))
+
+            refactored_external_api_data = []
+            for i in master_posts:
+                refactored_external_api_data.append(    
+                {
+                    "id": i['key'],
+                    "comments": [],
+                    "votes": [],
+                    "content": i['content'],
+                    "description": i['description'],
+                    "post_image": None,
+                    "post_date_time": "2023-11-27T16:32:25Z",
+                    "title": i['title'],
+                    "source": i['source'],
+                    "origin": i['origin'],
+                    "visibility": i['visibility'].lower(),
+                    "owner": i['author']['key'],
+                    "message_to": None,
+                    "categories": []
+                })
             # team === good send
 
 
 
             # Combine external and internal data
             combined_data = refactored_external_api_data + local_serializer.data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return Response(serializer.data)
+        return Response(combined_data)
 
     def retrieve(self, request, pk):
         print("retrieve")

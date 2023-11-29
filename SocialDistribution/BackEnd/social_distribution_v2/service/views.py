@@ -324,7 +324,7 @@ def Post_post(request,path):
     # get all post
     # get a specific post
     try:
-        post=Post.objects.get(id=path[-1])
+        post=Post.objects.get(id=path[-1]) 
         data = json.loads(request.body.decode('utf-8'))
         print(data)
         post.title = data['title']
@@ -335,7 +335,7 @@ def Post_post(request,path):
         post.visibility = data['visibility']
         post.content = data['content']
         post.post_image = data['unlisted']
-        post.message_to = data['message_to']
+        # post.message_to = data['message_to']
         post.save()
         return {'status': 'worked'}
     except:
