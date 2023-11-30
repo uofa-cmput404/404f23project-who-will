@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
     host = models.URLField(blank=True, default=DEFAULT_HOST, null=True)
     def __str__(self) -> str:
         return self.username 
-    def create_url(self):
+    def create_url(self):  
         if not self.host.endswith('/'):
             self.host += "/"
         return f"{self.host}authors/{self.user_id}"
