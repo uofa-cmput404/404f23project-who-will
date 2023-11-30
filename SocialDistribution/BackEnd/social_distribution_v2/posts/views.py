@@ -23,21 +23,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def list(self, request):
-        # TODO NOT DONE
-        print("Grabbing all posts from everyone")
-        # print(request.path)
-        ending= request.path.split('/')[-1]
-        # print(ending)
-        # Implement your logic for retrieving a list of posts
-        queryset = self.get_queryset()
-        local_serializer = self.get_serializer(queryset, many=True)
-        serializer = self.get_serializer(queryset, many=True)
-        # print(local_serializer.data)
-        # print(json.dumps(local_serializer.data, indent = 4))
-
-
-
+    def get_post_team_good(self):
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
         external_api_response = requests.get(
             external_api_url,
@@ -77,7 +63,7 @@ class PostViewSet(viewsets.ModelViewSet):
             # print(3,master_posts)
             # print()
             # print(f"the lens of master_posts is {len(master_posts)}")
-            # print(json.dumps(master_posts[0], indent = 4))
+            print(json.dumps(master_posts[0], indent = 4))
 
             refactored_external_api_data = []
             for i in master_posts:
@@ -98,12 +84,31 @@ class PostViewSet(viewsets.ModelViewSet):
                     "message_to": None,
                     "categories": []
                 })
-            # team === good send
+        return refactored_external_api_data
 
+    def httpacademy(self):
+        refactored_external_api_data=[]
+        return refactored_external_api_data    
 
-
-            # Combine external and internal data
+    def list(self, request):
+        # TODO NOT DONE
+        print("Grabbing all posts from everyone")
+        # print(request.path)
+        ending= request.path.split('/')[-1]
+        # print(ending)
+        # Implement your logic for retrieving a list of posts
+        queryset = self.get_queryset()
+        local_serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
+        # print(local_serializer.data)
+        # print(json.dumps(local_serializer.data, indent = 4))
+        refactored_external_api_data = self.get_post_team_good()
+        if refactored_external_api_data != []:
             combined_data = refactored_external_api_data + local_serializer.data
+        else:
+            combined_data = local_serializer.data
+        
+    
         return Response(combined_data)
 
     def retrieve(self, request, pk):
