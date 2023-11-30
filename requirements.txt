@@ -6,7 +6,7 @@ cryptography==41.0.5
 defusedxml==0.7.1
 dj-database-url==2.1.0
 dj-rest-auth==5.0.1
-Django==4.2.7
+Django==4.2.6
 django-allauth==0.58.2
 django-cors-headers==4.3.0
 django-on-heroku==1.1.2
