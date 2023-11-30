@@ -1,1 +1,1 @@
-web: gunicorn SocialDistribution.BackEnd.social_distribution_v2.manage:runserver
+web: gunicorn SocialDistribution.BackEnd.social_distribution_v2.wsgi
