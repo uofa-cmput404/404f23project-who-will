@@ -4,10 +4,16 @@ from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User  # Make sure to import User
-from user_profile.models import UserProfile
-from .serializers import ProfileSerializer
+from user_profile.models import UserProfile, CustomUser
+from .serializers import ProfileSerializer, CustomUserSerializer
 import requests
 import json
+
+
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer 
+
 
 class ProfileViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -135,3 +141,5 @@ class GetRequestersView(APIView):
         profiles = UserProfile.objects.filter(pk__in=pk_lst)
         serialized_users = [{'profile_id':profile.id, 'owner':profile.owner.username} for profile in profiles]
         return Response(serialized_users)
+     
+

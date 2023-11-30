@@ -36,11 +36,12 @@ const SignUp = () => {
       data = {
         username: inputs["userName"],
         email: inputs["email"],
-        password: inputs["passWord"],
+        password1: inputs["passWord"],
+        password2: inputs["passWord"]
       };
       console.log(data);
       axios
-        .post("http://localhost:8000/api/users/", data)
+        .post("http://localhost:8000/api/auth/register/", data)
         .then((res) => {
           console.log(res);
         })

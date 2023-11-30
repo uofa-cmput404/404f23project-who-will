@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from user_profile.models import CustomUser
+from user_profile.serializers import *
 from .serializers import UserSerializer
 import requests
 from requests.auth import HTTPBasicAuth
@@ -60,8 +62,10 @@ class UserViewSet(viewsets.ViewSet):
             auth=HTTPBasicAuth('whoiswill', 'cmput404')
         )
         following_master_list = self.follower_to_following()
-        local_users = User.objects.all()
-        local_serializer = UserSerializer(local_users, many=True)
+        # local_users = User.objects.all()
+        local_users = CustomUser.objects.all()
+        # local_serializer = UserSerializer(local_users, many=True)
+        local_serializer = CustomUserSerializer(local_users, many=True)
         # Check if the external API call was successful (status code 200)
         if external_api_response.status_code == 200:
             # Deserialize the external API response
@@ -117,11 +121,14 @@ class UserViewSet(viewsets.ViewSet):
         following_master_list = self.follower_to_following()
         try:
             # Try to get the user from the local database using pk
-            user = User.objects.get(pk=pk)
-            serializer = UserSerializer(user)
+            # user = User.objects.get(pk=pk)
+            user = CustomUser.objects.get(pk=pk)
+            # serializer = UserSerializer(user)
+            serializer = CustomUserSerializer(user)
             print(1, serializer.data)
             return Response(serializer.data)
-        except (User.DoesNotExist, ValueError):
+        # except (User.DoesNotExist, ValueError):
+        except (CustomUserSerializer.DoesNotExist, ValueError):
             print(request.path)
             path = request.path.split('/')
             path = [i for i in path if i != '']

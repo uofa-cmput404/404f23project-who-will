@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils import timezone 
-from user_profile.models import UserProfile
+from user_profile.models import UserProfile, CustomUser
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    owner = models.ForeignKey('auth.User', related_name='posts', on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name='posts', on_delete=models.CASCADE)
     content = models.CharField(max_length=4000, blank=True)
     description = models.CharField(max_length=4000, blank=True)
     post_image = models.CharField(max_length=1000000, null=True)
