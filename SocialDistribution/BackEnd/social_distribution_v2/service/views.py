@@ -359,12 +359,14 @@ def post_new_post(request,path):
     post.source = data['source']
     post.origin = data['origin']
     post.description = data['description']
-    post.categories = data['categories']
     post.visibility = data['visibility']
     post.content = data['content']
     post.post_image = data['unlisted']
-    post.message_to = data['message_to']
+    #NOTE: Update required to make these work
+    # post.message_to = data['message_to']
+    # post.categories = data['categories']
     post.save()
+    print("-------------- POST ADDED?? -----------")
     return {'status': '2'}
 
 def post_new_comment(request,path):
@@ -390,9 +392,11 @@ def POST_request(request):
     if path[-2] == 'authors':
         x = post_user(path[-1], request)
     elif path[-2] == 'posts':
+        #NOTE: This is used to update the posts user (who posted it)
         x = Post_post(request,path)
     elif path[-1] == 'posts':
-        x = Post_post(request,path)
+        #This is for creating completely new posts
+        x = post_new_post(request,path)
     elif path[-1] == 'new_post':
         x = post_new_comment(request,path)
     # like to author/{}/inbox... TODO!
@@ -406,6 +410,40 @@ def PUT_request(request):
     return JsonResponse({'status': '3'})
 
 def DELETE_request(request):
+
+    # delete_post(request)
     print(request)
-    return JsonResponse({'status': '4'})
+    path = request.path.split('/')
+    for i in path:
+        if i == '':
+            path.remove(i)
+    if path[-2] == 'posts':
+        x = delete_post(path)
+    print(f" PATH ----> {path}")
+
+    return JsonResponse(x)
+
+
+def delete_post(path):
+    #NOTE: POST id will most likely be sent in the url
+
+    print("--------------------------delete_post----------------------------")
+
+    print(f"The path given = {path} ")
+    post_id = path[-1]
+    print(f"postid = {post_id}")
+
+    try:
+        post = Post.objects.get(id=post_id)
+        print("Successfully retrieved post")
+        try:
+            post.delete()
+            print("Successfully deleted post")
+            return JsonResponse({'status': 'Post deleted successfully'})
+        except:
+            print("Failed to delete post")
+            return JsonResponse({'status': 'Error deleting post'})
+    except:
+        print("Failed to retrieve database")
+        return JsonResponse({'status': 'Error retrieving post'})
 
