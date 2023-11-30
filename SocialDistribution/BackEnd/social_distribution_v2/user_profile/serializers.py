@@ -12,6 +12,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields=('id','user_id', 'username','email','password', 'profile')
+        # extra_kwargs = {'password': {'write_only': True}}  # Hide password field in GET requests
+
     def create(self, validated_data):
         user = CustomUser(
             email = validated_data['email'],
@@ -19,4 +21,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
+
         return user
