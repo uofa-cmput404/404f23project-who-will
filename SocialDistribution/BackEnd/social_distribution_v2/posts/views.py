@@ -10,6 +10,14 @@ from .serializers import PostSerializer, CategoriesSerializer
 import requests
 from requests.auth import HTTPBasicAuth
 from rest_framework.views import APIView
+from django.contrib.auth.models import User
+
+from django.core.serializers import serialize
+from django.http import JsonResponse
+# from ..user_profile import UserProfile
+
+# from social_distribution_v2.user_profile.serializers import ProfileSerializer
+
 import json
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -21,6 +29,75 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
+        # post 
+        print(serializer.validated_data)
+        data_dict = serializer.validated_data
+
+        transformed_data = {
+            "type":"post"
+        }
+        transformed_data["title"] = data_dict["title"] if "title" in data_dict else None
+        # TODO: id
+        # postId = data_dict["id"]
+        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else None
+        transformed_data["source"] = data_dict["source"] if "source" in data_dict else None
+        transformed_data["description"] = data_dict["description"] if "description" in data_dict else None
+        transformed_data["contentType"] = data_dict["contentType"] if "contentType" in data_dict else "text/plain"
+        transformed_data["content"] = data_dict["content"] if "content" in data_dict else None
+
+        # TODO: author
+        #         {
+        #     "id": 1,
+        #     "username": "rayna",
+        #     "is_active": true,
+        #     "profile_data": {
+        #         "id": 1,
+        #         "owner": "rayna",
+        #         "gender": "male",
+        #         "dob": null,
+        #         "phone": null,
+        #         "github": null,
+        #         "profile_image": null,
+        #         "follow_requests": [
+        #             2
+        #         ],
+        #         "following": [
+        #             2
+        #         ]
+        #     }
+        # },
+        author_val = {
+             "type":"author"
+        }
+        if "owner" in data_dict: 
+            username = data_dict["owner"]  # display name: admin 
+            user_data = User.objects.all().filter(username=username)#<QuerySet [<User: admin>]>
+
+            serialized_users = serialize('json', user_data) 
+            user_dict_list = json.loads(serialized_users)
+            user_json_data = user_dict_list[0]  # this is the json format of user information 
+
+            pk=user_json_data["pk"]
+            # TODO: user the pk to get the profile 
+
+
+            
+            # user_profile = ProfileSerializer.objects.get(owner=user)  # Get the UserProfile associated with the user
+
+            # # Serialize the UserProfile instance to JSON
+            # profile_serializer = ProfileSerializer(user_profile)
+            # serialized_profile_data = profile_serializer.data
+
+            # print(serialized_profile_data)
+
+            # TODO: get user(author) id 
+
+        # TODO: categories
+        transformed_data["count"] = len(data_dict["comments"]) if "comments" in data_dict else 0
+
+        # comments
+        # comment_url = "http://127.0.0.1:5454/authors/"+userId+"/posts/"+postId+"/comments"
+
         serializer.save(owner=self.request.user)
 
     def list(self, request):
