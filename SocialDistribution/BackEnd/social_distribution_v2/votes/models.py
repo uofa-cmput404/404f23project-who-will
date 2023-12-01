@@ -2,9 +2,11 @@ from django.db import models
 from posts.models import Post
 from comments.models import Comment
 from user_profile.models import UserProfile, CustomUser
+from django.urls import reverse
+import uuid
 # Create your models here.
 class Vote(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     post=models.ForeignKey(Post,related_name='votes',on_delete=models.CASCADE,default=None,blank=True,null=True)
     comment=models.ForeignKey(Comment,related_name='votes',on_delete=models.CASCADE,default=None,blank=True,null=True)
     up_vote_by = models.ForeignKey(CustomUser,related_name='up_vote_user',on_delete=models.CASCADE,default=None,blank=True,null=True)
@@ -12,3 +14,6 @@ class Vote(models.Model):
 
     def __str__(self):
         return self.post.content
+    
+    # def get_absolute_url(self):
+    #     return reverse('vote_detail', args=[str(self.id)])

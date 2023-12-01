@@ -7,7 +7,8 @@ DEFAULT_HOST = "http://127.0.0.1:8000/"
 class CustomUser(AbstractUser):
 
     user_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    id = models.URLField(max_length=2048, null=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False) 
+    url = models.URLField(max_length=2048, null=True)
     host = models.URLField(blank=True, default=DEFAULT_HOST, null=True)
     def __str__(self) -> str:
         return self.username 
@@ -17,12 +18,13 @@ class CustomUser(AbstractUser):
         return f"{self.host}authors/{self.user_id}"
     def save(self, *args, **kwargs):
         self.url = self.create_url()
-        self.id = self.url
+        self.id = self.user_id
         super().save(*args, **kwargs)
     def get_absolute_url(self):
         return reverse('user_detail', args=[str(self.user_id)])
 
 class UserProfile(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False)
     options = (
         ('male', 'Male'),
         ('female', 'Female'),
@@ -66,3 +68,7 @@ class UserProfile(models.Model):
         return str(self.owner)
     def get_absolute_url(self):
         return reverse('profile_detail', args=[str(self.owner.user_id)])
+
+    def save(self, *args, **kwargs):
+        self.id = self.owner.user_id
+        super().save(*args, **kwargs)
