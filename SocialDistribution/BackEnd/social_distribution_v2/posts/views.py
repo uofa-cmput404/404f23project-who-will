@@ -63,10 +63,11 @@ class PostViewSet(viewsets.ModelViewSet):
             profile_data = UserProfile.objects.filter(owner=owner) #<QuerySet [<UserProfile: rayna>]>
             serialized_profile = serialize('json', profile_data) 
             profile_json= json.loads(serialized_profile)[0]
+            
             info = profile_json["fields"]  # json
             author_val["id"] = "http://127.0.0.1:8000/authors/"+info["id"]
             author_val["host"] = "http://127.0.0.1:8000/"
-            author_val["displayName"] = ''  # this does not work
+            author_val["displayName"] = owner.username  # this does not work
             author_val["url"] = "http://127.0.0.1:8000/authors/"+info["id"]
             author_val["github"] =info["github"]
             author_val["profileImage"] = info["profile_image"]
@@ -97,11 +98,8 @@ class PostViewSet(viewsets.ModelViewSet):
         # unlisted
         transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else None # not sure
 
-        print(transformed_data)
         print("after create")
         
-
-
     def get_post_team_good(self):
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
         external_api_response = requests.get(
