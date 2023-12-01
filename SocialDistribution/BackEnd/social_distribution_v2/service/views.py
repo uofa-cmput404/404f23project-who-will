@@ -34,6 +34,8 @@ def works(request):
             x = PUT_request(request)
         if request.method == 'DELETE':
             x = DELETE_request(request)
+        if request.method == "PATCH":
+            x = PATCH_request(request)
     except:
         x = {'status': 'error'} 
     return x
@@ -331,7 +333,7 @@ def Post_post(request,path):
         post.source = data['source']
         post.origin = data['origin']
         post.description = data['description']
-        post.categories = data['categories']
+        #post.categories = data['categories']
         post.visibility = data['visibility']
         post.content = data['content']
         post.post_image = data['unlisted']
@@ -355,6 +357,11 @@ def post_new_post(request,path):
     post=Post.objects.create(owner=author)
     data = json.loads(request.body.decode('utf-8'))
     print(data)
+    #NOTE: this makes it so that our database has the same id as their database
+    #However, it won't work while our id system is still integer based
+    #post.id = data["id"]
+
+
     post.title = data['title']
     post.source = data['source']
     post.origin = data['origin']
@@ -396,6 +403,7 @@ def POST_request(request):
         x = Post_post(request,path)
     elif path[-1] == 'posts':
         #This is for creating completely new posts
+        print("Sending to post_new_post")
         x = post_new_post(request,path)
     elif path[-1] == 'new_post':
         x = post_new_comment(request,path)
@@ -425,7 +433,8 @@ def DELETE_request(request):
 
 
 def delete_post(path):
-    #NOTE: POST id will most likely be sent in the url
+    #NOTE: When a post is deleted, so is are the comments and likes.
+    #TODO: account for comments and likes
 
     print("--------------------------delete_post----------------------------")
 
@@ -439,11 +448,52 @@ def delete_post(path):
         try:
             post.delete()
             print("Successfully deleted post")
-            return JsonResponse({'status': 'Post deleted successfully'})
+            return {'status': 'Post deleted successfully'}
         except:
             print("Failed to delete post")
-            return JsonResponse({'status': 'Error deleting post'})
+            return {'status': 'Error deleting post'}
     except:
         print("Failed to retrieve database")
-        return JsonResponse({'status': 'Error retrieving post'})
+        return {'status': 'Could not find post in database'}
+
+
+def PATCH_request(request):
+    print("PATCH REQUEST REGISTERED")
+    print(request)
+    path = request.path.split('/')
+    for i in path:
+        if i == '':
+            path.remove(i)
+    print(path)
+    if path[-2] == "posts":
+        x = patch_post(request, path)
+    else:
+        x = {'status': 'incorrect patch format'}
+    return JsonResponse(x)
+
+
+def patch_post(request, path):
+    print(request)
+    print(path)
+    print("PATCHING POST!!!!")
+
+    try:
+        post=Post.objects.get(id=path[-1]) 
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        post.title = data['title']
+        post.source = data['source']
+        post.origin = data['origin']
+        post.description = data['description']
+        post.visibility = data['visibility']
+        post.content = data['content']
+        post.post_image = data['unlisted']
+        #post.message_to = data['message_to']
+        #post.categories = data['categories']
+        post.save()
+        return {'status': 'worked'}
+    except:
+        print("post could not be found")
+        return {'status': 'post could not be found'}
+
 
