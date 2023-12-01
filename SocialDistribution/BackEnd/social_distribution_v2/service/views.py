@@ -446,7 +446,11 @@ def delete_post(path):
         post = Post.objects.get(id=post_id)
         print("Successfully retrieved post")
         try:
-            post.delete()
+            comment_ids = [comment.id for comment in post.comments.all()]
+        
+            print("Comment IDs:", comment_ids)
+            #post.delete()
+            cascade_comments(comment_ids)
             print("Successfully deleted post")
             return {'status': 'Post deleted successfully'}
         except:
@@ -455,6 +459,15 @@ def delete_post(path):
     except:
         print("Failed to retrieve database")
         return {'status': 'Could not find post in database'}
+    
+def cascade_comments(comment_ids):
+    try:
+        for c in comment_ids:
+            comments = Comment.objects.get(id=c)
+            comments.delete()
+    except:
+        print("could not delete comments")
+
 
 
 def PATCH_request(request):
