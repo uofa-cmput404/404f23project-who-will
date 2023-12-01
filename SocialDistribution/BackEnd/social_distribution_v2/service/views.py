@@ -8,6 +8,7 @@ from posts.models import *
 from user_profile.models import *
 from comments.models import *
 from votes.models import *
+from user_profile.models import CustomUser
 import requests
 import json
 
@@ -275,12 +276,19 @@ def GET_request(request):
 
     return JsonResponse(response)
 
-def post_user(username, request):
-    all_users = User.objects.all()
+def post_user(user_id, request):
+    try:
+        #all_users = User.objects.all()
+        all_users = CustomUser.objects.all()
+    except:
+        return {'status': 'error retrieving users'}
     found = False
-
+    print("-------------------------------------")
+    
     for user in all_users:
-        if user.username == username:
+        print("-------------------------------------")
+        print(f" username -------> {user.username}")
+        if user.username == user_id:
             found = True
 
             user_profile = UserProfile.objects.get(owner=user.id)
@@ -291,20 +299,30 @@ def post_user(username, request):
             user_profile.profile_image = data['profileImage']
             user.save()
             user_profile.save()
-            return {'status': 'Done'}
+            return {'status': 'UPDATED USER'}
 
     if not found:
+        print("-------------------------------------")
         try:
+            print("-----------first here-------------")
             # Decode the JSON data from the request body
             data = json.loads(request.body.decode('utf-8'))
+            print("----------here----------------")
             print(data)
 
             # Splitting the displayName using spaces
-            name = data['displayName'].split()
+            name = data['displayName']
+
+            print(f"display name ---> {name}")
 
             # Make a new user object
-            new_user = User.objects.create_user(username=username, password="password", first_name=name[0], last_name=name[-1])
-            new_user.save()
+            try:
+                print(f"All the inputs ---> {user_id}, {name}")
+                new_user = CustomUser.objects.create_user(user_id=user_id, username=name, password="password")
+                new_user.save()
+                print("USER CREATED?!?")
+            except:
+                return {'status': 'failed to create new user'}
 
             new_user_profile = UserProfile(
                 owner=new_user,
@@ -313,7 +331,7 @@ def post_user(username, request):
             )
             new_user_profile.save()
 
-            return {'status': '1'}
+            return {'status': 'New User Created!'}
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
             return {'status': 'error'}
@@ -350,24 +368,31 @@ def Post_post(request,path):
 
 
 def post_new_post(request,path):
-    author=User.objects.get(username=path[-2])
-    # make new post
-    post=Post.objects.create(owner=author)
-    data = json.loads(request.body.decode('utf-8'))
-    print(data)
-    post.title = data['title']
-    post.source = data['source']
-    post.origin = data['origin']
-    post.description = data['description']
-    post.visibility = data['visibility']
-    post.content = data['content']
-    post.post_image = data['unlisted']
-    #NOTE: Update required to make these work
-    # post.message_to = data['message_to']
-    # post.categories = data['categories']
-    post.save()
-    print("-------------- POST ADDED?? -----------")
-    return {'status': '2'}
+    print(path[-2])
+    try:
+        author=CustomUser.objects.get(user_id=path[-2])
+    except:
+        return {'status': 'failed to find user'}
+    try:
+        # make new post
+        post=Post.objects.create(owner=author)
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        post.title = data['title']
+        post.source = data['source']
+        post.origin = data['origin']
+        post.description = data['description']
+        post.visibility = data['visibility']
+        post.content = data['content']
+        post.post_image = data['unlisted']
+        #NOTE: Update required to make these work
+        # post.message_to = data['message_to']
+        # post.categories = data['categories']
+        post.save()
+        print("-------------- POST ADDED?? -----------")
+        return {'status': 'Post Added Successfully'}
+    except:
+        return {'status': 'Error in creating post'}
 
 def post_new_comment(request,path):
     author=User.objects.get(username=path[-4])
@@ -390,11 +415,13 @@ def POST_request(request):
     print(path)
     # http://127.0.0.1:8000/service/author/{author_id}/
     if path[-2] == 'authors':
+        print("sending to post_user")
         x = post_user(path[-1], request)
     elif path[-2] == 'posts':
         #NOTE: This is used to update the posts user (who posted it)
         x = Post_post(request,path)
     elif path[-1] == 'posts':
+        print("sending to post_new_post")
         #This is for creating completely new posts
         x = post_new_post(request,path)
     elif path[-1] == 'new_post':
