@@ -58,6 +58,7 @@ const Login = () => {
             .then((res) => {
                 console.log(res.data); 
                 const primaryKey = res.data["pk"];
+                localStorage.setItem("username", res.data["username"]);
                 localStorage.setItem("pk", primaryKey); 
                 console.log(primaryKey);
                 if(localStorage.getItem("pk") != null) {

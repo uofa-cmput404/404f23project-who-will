@@ -13,7 +13,9 @@ import { BsSend } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import ComposeModal from "../Components/Compose";
 import axios from "axios";
+import { toast } from "react-toastify";
 
+// styled components
 const Container = styled.div`
   width: 100%;
   height: 100vh;
@@ -39,12 +41,36 @@ const MessageList = styled.div`
   width: 30%;
   height: 100vh;
   display: flex;
+  flex-direction: column;
 `;
 
 const Message = styled.div`
-  width: 55%;
+  width: 55vw;
   height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  border: 1px solid black;
+  margin: 5px;
+  border-radius: 5px;
+
+  h3.messageTitle {
+    text-align: center; 
+    margin-bottom: 10px; 
+  }
+  p.messageContent {
+    margin-left: 10px; 
+    margin-right: 10px;
+  }
+`;
+
+const MessageContainer = styled.div`
   display: flex;
+  width: 85%;
+  flex-direction: row;
+  & > .message {
+    margin: auto;
+  }
 `;
 
 const Request = styled.div`
@@ -58,6 +84,22 @@ const Request = styled.div`
   & > * {
     margin-left: 5px;
     margin-right: 5px;
+  }
+`;
+
+const InboxMessage = styled.div`
+  width: 25vw;
+  height: 9%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  margin: 5px;
+  border-radius: 5px;
+  & > * {
+    margin-left: 5px;
+  }
+  & > .title {
+    margin-top: -5px;
   }
 `;
 
@@ -104,16 +146,24 @@ const ProfileImg = styled.div`
 `;
 
 const RenderRequest = ({ requests, onClick }) => {
+  // function to render request list
   const handleClickPending = (event, choice, index) => {
     event.preventDefault();
     const currentID = localStorage.getItem("pk");
     const handleUser = requests[index];
     var data = {};
+    var otherData = {};
     if (choice === "accept") {
       data = {
         add_follow_request: "None",
-        delete_follow_request: handleUser["profile_id"] + "",
+        delete_follow_request: "None",
         add_following: handleUser["profile_id"] + "",
+        delete_following: "None",
+      };
+      otherData = {
+        add_follow_request: currentID + "",
+        delete_follow_request: "None",
+        add_following: "None",
         delete_following: "None",
       };
     } else if (choice === "deny") {
@@ -127,6 +177,22 @@ const RenderRequest = ({ requests, onClick }) => {
     // console.log(data);
     axios
       .put(`http://127.0.0.1:8000/api/profiles/${currentID}/`, data)
+      .then((res) => {
+        console.log(res);
+        if (choice === "accept") {
+          toast.success("You have followed back");
+        } else if (choice === "deny") {
+          toast.done("You have blocked the Follow");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    axios
+      .put(
+        `http://127.0.0.1:8000/api/profiles/${handleUser["profile_id"]}/`,
+        otherData
+      )
       .then((res) => {
         console.log(res);
       })
@@ -152,7 +218,6 @@ const RenderRequest = ({ requests, onClick }) => {
     },
     [hover]
   );
-  // function to render request list
   return (
     <div onClick={(e) => onClick(e)}>
       {requests.map((message, index) => (
@@ -199,44 +264,109 @@ const RenderRequest = ({ requests, onClick }) => {
   );
 };
 
+const RenderInBox = ({ inbox, onClick }) => {
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const handleItemClick = (event, message) => {
+    event.preventDefault();
+    setSelectedMessage(message);
+  };
+  return (
+    <MessageContainer>
+      <MessageList>
+        {inbox.map((message, index) => (
+          <InboxMessage
+            key={index}
+            onClick={(e) => handleItemClick(e, message)}
+          >
+            <p>From: {message["author"]["displayName"]}</p>
+            <p className="title">{message["title"]}</p>
+          </InboxMessage>
+        ))}
+      </MessageList>
+      {selectedMessage && (
+        <div className="message">
+          <RenderMessage message={selectedMessage}></RenderMessage>
+        </div>
+      )}
+    </MessageContainer>
+  );
+};
+
+const RenderMessage = ({ message }) => {
+  console.log(message);
+  return (
+    <Message>
+      <h3 className="messageTitle">{message["title"]}</h3>
+      <hr />
+      <p className="messageContent" >{message["content"]}</p>
+      {message['unlisted'] && <img className="postImage" src={message['unlisted']} alt="image" />}
+    </Message>
+  );
+};
+
 const Notifications = () => {
   const [activeSection, setActiveSection] = useState("inbox");
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [requestList, setRequestList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
   const [pendingUser, setPendingUser] = useState([]);
   const [clickStatus, setClickStatus] = useState(false);
+  const [inbox, setInbox] = useState([]);
+  // updating requesting list
+
   useEffect(() => {
-    const currentId = localStorage.getItem("pk");
-    const authToken = localStorage.getItem("authToken");
-    // get requests list
-    axios
-      .get(`http://127.0.0.1:8000/api/profiles/${currentId}/`, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      })
-      .then((res) => {
-        // console.log(res);
-        setRequestList(res.data["follow_requests"]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // get all requesting users
-    axios
-      .get(`http://127.0.0.1:8000/api/get_requesters/`, {
-        params: {
-          ids: `[${requestList}]`,
-        },
-      })
-      .then((res) => {
-        // console.log(res.data);
-        setPendingUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    async function update() {
+      const currentId = localStorage.getItem("pk");
+      const authToken = localStorage.getItem("authToken");
+      // get requests list
+      await axios
+        .get(`http://127.0.0.1:8000/api/profiles/${currentId}/`, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        })
+        .then((res) => {
+          // console.log(res);
+          setRequestList(res.data["follow_requests"]);
+          setFollowingList(res.data["following"]);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      // get all requesting users
+      var difference = requestList.filter(
+        (item) => !followingList.includes(item)
+      );
+      await axios
+        .get(`http://127.0.0.1:8000/api/get_requesters/?id=${currentId}`)
+        .then((res) => {
+          // console.log(res.data);
+          setPendingUser(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // get inbox messages
+      const userName = localStorage.getItem("username");
+      console.log(userName);
+      axios
+        .get(`http://127.0.0.1:8000/service/authors/${userName}/inbox`)
+        .then((res) => {
+          console.log(res.data["items"]);
+          setInbox(res.data["items"]);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    // const intervalId = setInterval(() => {
+    //   update();
+    // }, 500);
+    // return () => clearInterval(intervalId);
+    update();
   }, [activeSection, clickStatus]);
+  // handle functions
   const handleComposeClick = () => {
     setShowComposeModal(true);
   };
@@ -250,6 +380,8 @@ const Notifications = () => {
     event.preventDefault();
     setClickStatus(!clickStatus);
   };
+
+  console.log(inbox);
   return (
     <Container>
       <SideBar>
@@ -266,7 +398,7 @@ const Notifications = () => {
           </IconContext.Provider>
           <p style={{ color: "white", margin: "5px" }}>Inbox</p>
         </Tile>
-        {/* for sent messages */}
+        {/* TODO: for sent messages */}
         {/* <Tile
           onClick={() => handleSectionClick("sent")}
           active={activeSection === "sent"}
@@ -287,8 +419,8 @@ const Notifications = () => {
         </Tile>
       </SideBar>
       {/* for inbox */}
-      {activeSection === "inbox" && <MessageList>inbox message</MessageList>}
-      {activeSection === "inbox" && <Message>inbox message</Message>}
+      {activeSection === "inbox" && <RenderInBox inbox={inbox} />}
+      {/* {activeSection === "inbox" && <Message>inbox message</Message>} */}
       {/* for sent */}
       {/* {activeSection === "sent" && <MessageList>sent message</MessageList>}
       {activeSection === "sent" && <Message>sent message</Message>} */}
@@ -296,7 +428,7 @@ const Notifications = () => {
       {activeSection === "request" && (
         <RenderRequest requests={pendingUser} onClick={handleClickChoice} />
       )}
-      {/* render compose modal */}
+      {/* render compose modal for private posts */}
       {showComposeModal && <ComposeModal onClose={handleCloseCompos} />}
     </Container>
   );

@@ -24,8 +24,8 @@ class GetAllFriends {
                     const following = data.following;
                     const follow_requests = data.follow_requests;
 
-                    console.log("following = " + following);
-                    console.log("followers = " + follow_requests);
+                    //console.log("following = " + following);
+                    //console.log("followers = " + follow_requests);
     
                     following.forEach(userIFollow => {
                         follow_requests.forEach(userWhoFollowsMe => {

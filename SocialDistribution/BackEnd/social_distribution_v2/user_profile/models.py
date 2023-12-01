@@ -1,40 +1,37 @@
-# from django.db import models
-# from django.contrib.auth.models import User
-# # Create your models here.
-
-# class UserProfile(models.Model):
-#     options = (
-#         ('male', 'Male'),
-#         ('female', 'Female'),
-#         ('others','Others')
-#     )
-#     owner=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile_data')
-#     gender = models.CharField(
-#         max_length = 20,
-#         choices = options,
-#         default = 'male',
-#         null=False,
-#         blank=False
-#         )
-#     dob=models.DateField(null=True,blank=True,default=None)
-#     phone=models.CharField(max_length=20,null=True,blank=True)
-#     works_at=models.CharField(max_length=200,null=True,blank=True)
-#     lives_in=models.CharField(max_length=200,null=True,blank=True)
-#     studies_at=models.CharField(max_length=200,null=True,blank=True)
-#     profile_image=models.ImageField(upload_to="profile_image",null=True,blank=True)
-
-
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser 
+from django.urls import reverse
+import uuid
+DEFAULT_HOST = "http://127.0.0.1:8000/"
+class CustomUser(AbstractUser):
+
+    user_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    id = models.UUIDField(default=uuid.uuid4, editable=False) 
+    url = models.URLField(max_length=2048, null=True)
+    host = models.URLField(blank=True, default=DEFAULT_HOST, null=True)
+    def __str__(self) -> str:
+        return self.username 
+    def create_url(self):
+        if not self.host.endswith('/'):
+            self.host += "/"
+        return f"{self.host}authors/{self.user_id}"
+    def save(self, *args, **kwargs):
+        self.url = self.create_url()
+        self.id = self.user_id
+        super().save(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse('user_detail', args=[str(self.user_id)])
 
 class UserProfile(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False)
     options = (
         ('male', 'Male'),
         ('female', 'Female'),
         ('others', 'Others')
     )
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile_data')
+    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile', primary_key=True)
+    # fk = models.ForeignKey(CustomUser, on_delete=models.CASCADE, primary_key=True) 
     gender = models.CharField(
         max_length=20,
         choices=options,
@@ -69,3 +66,9 @@ class UserProfile(models.Model):
     
     def __str__(self):
         return str(self.owner)
+    def get_absolute_url(self):
+        return reverse('profile_detail', args=[str(self.owner.user_id)])
+
+    def save(self, *args, **kwargs):
+        self.id = self.owner.user_id
+        super().save(*args, **kwargs)

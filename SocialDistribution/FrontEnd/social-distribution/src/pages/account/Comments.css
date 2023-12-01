@@ -78,3 +78,8 @@ button:active {
     font-size: small;
     margin-bottom: 0px;
 }
+
+#comment-input {
+    resize: none;
+    width: 95%;
+}

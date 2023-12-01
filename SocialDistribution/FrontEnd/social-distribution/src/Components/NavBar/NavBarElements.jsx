@@ -130,6 +130,7 @@ export const SearchBar = () => {
     const handleSearch = async () => {
         var userExists = false;
         var searchedID = null;
+        // hit the users endpoint, determine if the user exists or not
         try {
             const authToken = localStorage.getItem('authToken');
             const response = await axios.get(`http://localhost:8000/api/users/`, {
@@ -150,6 +151,7 @@ export const SearchBar = () => {
             });
             setResults(response.data.results);  
         } 
+        // catch all erros
         catch (error) {
             console.error('Error searching:', error);
         }
@@ -159,6 +161,7 @@ export const SearchBar = () => {
         }
     };
 
+    // styling
     const BarStyle = 
     {
         width:"20rem",

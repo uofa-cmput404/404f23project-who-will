@@ -1,10 +1,7 @@
 from .models import Comment
-from rest_framework import permissions
-from user_profile.permissions import IsOwnerOrReadOnly
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 
 from . serializers import CommentSerializer
-from rest_framework.response import Response
 
 
 # Create your views here.
@@ -17,10 +14,13 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
+    
+    # for searching indivisual posts using parameters 
     def get_queryset(self):
+        qs = self.queryset
         query_parameter = self.request.query_params
         if not query_parameter:
-            return self.queryset
+            return Comment.objects.all()
         
-        return self.queryset.filter(post=query_parameter["post"])
+
+        return qs.filter(post=query_parameter["post"])

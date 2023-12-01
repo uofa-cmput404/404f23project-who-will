@@ -6,7 +6,9 @@ import { FaFileImage } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import GetAllFriends from "../utils/GetAllFriends";
 
+// styled components
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -50,10 +52,18 @@ const StyledLabel = styled.label`
 `;
 
 const ComposeModal = ({ onClose }) => {
+  // get all friends
+  const friendGetter = new GetAllFriends(localStorage.getItem("pk"));
+  const [friends, setFriends] = useState([]);
+  // get all categories
   const [categories, setCategories] = useState([]);
+  // for selecting categories
   const [selectedOptions, setSelectedOptioins] = useState([]);
+  // for selecting who the message is sent to
+  const [messageTo, setMessageTo] = useState(0);
+  // get data
   const [inputs, setInputs] = useState({});
-
+  // get friends and categories at the init render
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/categories/")
@@ -64,26 +74,48 @@ const ComposeModal = ({ onClose }) => {
       .catch((err) => {
         console.log(err);
       });
+    friendGetter
+      .GetAllFriends(localStorage.getItem("pk"))
+      .then((res) => {
+        console.log(res);
+        setFriends(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
+
+  console.log(friends);
+  // handle funtions
+  const handleSendTo = (event) => {
+    // for message receiver selection
+    const selectedValue = event.target.value;
+    console.log(selectedValue);
+    setMessageTo(selectedValue);
+  };
+
   const handleSelectChange = (event) => {
+    // for category selection
     const selectedValue = Array.from(
       event.target.selectedOptions,
       (option) => option.value
     );
     setSelectedOptioins(selectedValue);
   };
-  const currentID = localStorage.getItem('pk')
-  useEffect(() => {
+  const currentID = localStorage.getItem("pk");
 
+  // for update category selection
+  useEffect(() => {
     setInputs((values) => ({ ...values, categories: selectedOptions }));
     setInputs((values) => ({
       ...values,
       visibility: "friends only",
     }));
-    setInputs((values) => ({...values, owner: currentID }))
+    setInputs((values) => ({ ...values, owner: currentID }));
   }, [selectedOptions]);
 
   const handleChange = (event) => {
+    // for data input change
     const name = event.target.name;
     const value = event.target.value;
     // setInputs((values) => ({ ...values, [name]: value }));
@@ -115,6 +147,11 @@ const ComposeModal = ({ onClose }) => {
     handleChange(event);
   };
 
+  const handleSentToAndChange = (event) => {
+    handleSendTo(event);
+    handleChange(event);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const authToken = localStorage.getItem("authToken");
@@ -124,8 +161,8 @@ const ComposeModal = ({ onClose }) => {
       axios
         .post("http://127.0.0.1:8000/api/posts/", inputs, {
           headers: {
-            'Authorization': `Token ${authToken}`,
-            'Content-Type': "application/json"
+            Authorization: `Token ${authToken}`,
+            "Content-Type": "application/json",
           },
         })
         .then((res) => {
@@ -139,16 +176,26 @@ const ComposeModal = ({ onClose }) => {
         });
     }
   };
-
+  console.log(inputs);
+  console.log(messageTo);
   return (
     <Overlay>
       <ModalContainer>
         <h2>Send Post to A Friend</h2>
-        <TextInput
-          onChange={handleChange}
+        <label htmlFor="messageTo">Send the Post to:</label>
+        <select
           name="message_to"
-          placeholder={"To: "}
-        ></TextInput>
+          id="messageTo"
+          value={messageTo}
+          onChange={handleSentToAndChange}
+        >
+          <option value="null">Select an option</option>
+          {friends.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
         <TextInput
           onChange={handleChange}
           name="title"

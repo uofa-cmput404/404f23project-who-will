@@ -76,12 +76,15 @@ class Account extends Component {
 
     /* Follow / Friend Request code */
     sendFollowRequest = (IDtoFollow, currentUserID) => {
+        /* This function calls from the onlick method from the follow button
+        updates the follow_request fields in /profile/profileID api */
 
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
             // this is the ID of the user we WANT TO FOLLOW
             var actualID = Object.keys(IDtoFollow)[0];
             
+            // get the data at /api/profiles/id to determine profile
             axios.get(`http://localhost:8000/api/profiles/${actualID}/`, {
                 headers: {
 
@@ -91,7 +94,7 @@ class Account extends Component {
                 }
             }) 
             .then((res) => {
-
+                // declare profile data from the get request
                 var profileData = res.data;
                 var profileID = profileData.id;
             
@@ -103,7 +106,7 @@ class Account extends Component {
                     "delete_following": "None"
                 };
 
-               
+                // update the 'add_follow_request' field via a custom view in the api
                 axios.put(`http://localhost:8000/api/profiles/${profileID}/`, postData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
@@ -122,7 +125,7 @@ class Account extends Component {
                         "add_following": profileID,
                         "delete_following": "None"
                     };
-
+                    // update the 'add_following' field via a custom view in the api
                     axios.put(`http://localhost:8000/api/profiles/${currentUserID}/`, newPostData, {
                         headers: {
                             'Authorization': `Token ${authToken}`,
@@ -136,6 +139,7 @@ class Account extends Component {
                     })
                     
                 })
+                // catch all errors related to the requests
                 .catch((err) => {
                     console.log(err);
                     toast.error("Error sending follow request");
@@ -170,6 +174,7 @@ class Account extends Component {
                 "delete_following": "None"
             };
 
+            // update the 'delete_follow_request' custom view ihe api
             axios.put(`http://localhost:8000/api/profiles/${viewedProfileUserID}/`, putData, {
             headers: {
                 'Authorization': `Token ${authToken}`,
@@ -182,6 +187,7 @@ class Account extends Component {
                     "add_following": "None",
                     "delete_following": viewedProfileUserID
                 };
+                // update the 'delete_following' custom view ihe api
                 axios.put(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, secondPutData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
@@ -234,7 +240,6 @@ class Account extends Component {
             }
         })
         .then((res) => {
-            console.log("DATA ======= " + res.data);
             const user = { posts: res.data };
             this.setState({ user: user })
         })
@@ -319,6 +324,8 @@ class Account extends Component {
 
         var actualID = Object.keys(passedData)[0];
 
+        // This request checks, updates the profile viewed on state change to determine whether we are
+        // following the viewed user or not
         if (this.isFollowing !== true && this.isFollowing !== false) {
             if(authToken) {
                 axios.get(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, {
@@ -327,6 +334,7 @@ class Account extends Component {
                 }
                 })
                 .then((res) => {
+                    // set target parameters
                     var following = res.data.following;
                     following.forEach(element => {
                         if (String(element) === String(actualID)) {
@@ -344,7 +352,6 @@ class Account extends Component {
        
     
         const { user } = this.state;
-
         if (!user) {
             return (
                 <div>Could Not Load User Data</div>
@@ -374,6 +381,7 @@ class Account extends Component {
                 )}
 
                 {/*button shoudln't show up if you are already following */}
+                {/* display follow/unfollow buttons based on current parameters */}
                 {isNotEmptyObject(passedData) && actualID !== loggedInUsersID && this.isFollowing === true && (
                     <button onClick={this.sendUnfollowRequest.bind(this, passedData, loggedInUsersID)} className='send-friend-request' > Unfollow</button>
                 )}
@@ -392,13 +400,13 @@ class Account extends Component {
                 {user.posts
                     .filter(post => {
                         if (this.state.isMyAccount === true) {
-                            return this.state.ownerID ? post.owner === Number(this.state.ownerID) : true;
+                            return this.state.ownerID ? post.owner === this.state.ownerID : true;
                         } 
                         else if (this.state.isFriend === true) {
-                            return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
+                            return this.state.ownerID ? (post.owner === this.state.viewedProfileUserID && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
                         } 
                         else {
-                            return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
+                            return this.state.ownerID ? post.owner === this.state.viewedProfileUserID && post.visibility === 'public' : true;
                         }
                       })
                     .sort((a, b) => new Date(b.post_date_time) - new Date(a.post_date_time))

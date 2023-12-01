@@ -35,21 +35,22 @@ const SignUp = () => {
       let data;
       data = {
         username: inputs["userName"],
-        email: inputs["email"],
-        password: inputs["passWord"],
+        // email: inputs["email"],
+        password1: inputs["passWord"],
+        password2: inputs["passWord"],
       };
       console.log(data);
       axios
-        .post("http://localhost:8000/api/users/", data)
+        .post("http://localhost:8000/api/auth/register/", data)
         .then((res) => {
           console.log(res);
+          window.location.reload();
+          window.location.href = "/signin";
         })
         .catch((err) => {
           console.log(err);
+          alert(err['request']['response']);
         });
-
-      window.location.reload();
-      window.location.href = "/signin";
     }
   };
   return (
