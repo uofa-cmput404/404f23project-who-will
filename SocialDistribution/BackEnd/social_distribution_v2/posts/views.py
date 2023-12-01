@@ -1,5 +1,6 @@
 from .serializers import PostSerializer, CategoriesSerializer
 from .models import Post, Categories
+from user_profile.models import *
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import permissions
@@ -10,6 +11,14 @@ from .serializers import PostSerializer, CategoriesSerializer
 import requests
 from requests.auth import HTTPBasicAuth
 from rest_framework.views import APIView
+from django.contrib.auth.models import User
+
+from django.core.serializers import serialize
+from django.http import JsonResponse
+# from ..user_profile import UserProfile
+
+# from social_distribution_v2.user_profile.serializers import ProfileSerializer
+
 import json
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -21,8 +30,76 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        # OrderedDict([('content', 'ss'), 
+        # ('description', 'ss'),
+        #  ('title', 'ss'), 
+        # ('source', 's'), 
+        # ('origin', 's'), 
+        # ('visibility', 'public'),
+        #  ('owner', <CustomUser: rayna>)])
+        data_dict = serializer.validated_data
+        transformed_data = {
+            "type":"post"
+        }
+        
+        # title 
+        transformed_data["title"] = data_dict["title"] if "title" in data_dict else None
 
+        # TODO: id
+        transformed_data["source"] = data_dict["source"] if "source" in data_dict else None
+        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else None
+        transformed_data["description"] = data_dict["description"] if "description" in data_dict else None
+        transformed_data["contentType"] = data_dict["contentType"] if "contentType" in data_dict else "text/plain"
+        transformed_data["content"] = data_dict["content"] if "content" in data_dict else None
+        
+        # author 
+        author_val = {
+             "type":"author"
+        }
+
+        info = None
+        if "owner" in data_dict: 
+            owner = data_dict["owner"]  # display name: rayna
+            profile_data = UserProfile.objects.filter(owner=owner) #<QuerySet [<UserProfile: rayna>]>
+            serialized_profile = serialize('json', profile_data) 
+            profile_json= json.loads(serialized_profile)[0]
+            
+            info = profile_json["fields"]  # json
+            author_val["id"] = "http://127.0.0.1:8000/authors/"+info["id"]
+            author_val["host"] = "http://127.0.0.1:8000/"
+            author_val["displayName"] = owner.username  # this does not work
+            author_val["url"] = "http://127.0.0.1:8000/authors/"+info["id"]
+            author_val["github"] =info["github"]
+            author_val["profileImage"] = info["profile_image"]
+
+        transformed_data["author"] = author_val
+
+        # categories
+        transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
+
+        # counts
+        transformed_data["count"] = len(data_dict["comments"]) if "comments" in data_dict else 0
+
+        # comments
+        saved_post = serializer.save(owner=self.request.user)  # return: the new post id
+        post_data = serializer.to_representation(saved_post)
+        saved_post_id = post_data['id']
+        transformed_data["comments"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id+"/comments"
+        
+        # id
+        transformed_data["id"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id
+
+        # published (*)
+        transformed_data["published"] = post_data["post_date_time"]
+
+        # visibility (*)
+        transformed_data["visibility"] = data_dict["visibility"].upper()
+
+        # unlisted
+        transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else None # not sure
+
+        print("after create")
+        
     def get_post_team_good(self):
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
         external_api_response = requests.get(
