@@ -233,7 +233,7 @@ class Account extends Component {
 
     retrievePosts = () => {
         const authToken = localStorage.getItem("authToken");
-    
+
         axios.get(`http://localhost:8000/api/posts/?owner=${this.state.ownerID}`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
@@ -253,6 +253,10 @@ class Account extends Component {
         const queryParams = new URLSearchParams(window.location.search);
         const passedData = Object.fromEntries(queryParams.entries());
         this.state.viewedProfileUserID = Object.keys(passedData)[0];
+        console.log("__+++++++++++++++++++++++")
+        console.log(this.state.viewedProfileUserID);  // undefiend
+        console.log(this.state.ownerID);
+        console.log("__+++++++++++++++++++++++")
 
         if (this.state.viewedProfileUserID === undefined) {
             this.state.isMyAccount = true;
@@ -283,7 +287,6 @@ class Account extends Component {
     componentDidMount() {
         this.retrievePosts();
         this.state.ownerID = localStorage.getItem("pk");
-
         this.interval = setInterval(() => {
             this.retrievePosts();
         }, 5000);
@@ -399,13 +402,19 @@ class Account extends Component {
                 <div className="post-content">
                 {user.posts
                     .filter(post => {
-                        if (this.state.isMyAccount === true) {
-                            return this.state.ownerID ? post.owner === Number(this.state.ownerID) : true;
+                        if (this.state.isMyAccount === true) { // my account
+                            console.log("1");
+                            console.log(post.owner);
+                            console.log(this.state.ownerID);
+                            console.log(Number(this.state.ownerID));
+                            return this.state.ownerID ? post.owner === this.state.ownerID : true;
                         } 
                         else if (this.state.isFriend === true) {
+                            console.log("2");
                             return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
                         } 
                         else {
+                            console.log("3");
                             return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
                         }
                       })

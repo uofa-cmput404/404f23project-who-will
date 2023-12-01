@@ -4,10 +4,16 @@ from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User  # Make sure to import User
-from user_profile.models import UserProfile
-from .serializers import ProfileSerializer
-import requests
+from user_profile.models import UserProfile, CustomUser
+from .serializers import ProfileSerializer, CustomUserSerializer
 import json
+import uuid
+
+
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+
 
 class ProfileViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -18,7 +24,8 @@ class ProfileViewSet(viewsets.ViewSet):
     def create(self, request):
         serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)  # Assuming you want to associate the profile with the current user
+            # Assuming you want to associate the profile with the current user
+            serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -38,38 +45,42 @@ class ProfileViewSet(viewsets.ViewSet):
     def update(self, request, pk):
         try:
             print(request)
-            x=request.path.split('/')
+            x = request.path.split('/')
             if x[-1] == '':
                 x.pop()
-            to_follow=x[-1]
-            to_do=request.data
+            to_follow = x[-1]
+            to_do = request.data
             print(to_do)
-            response={'message': ''}
+            response = {'message': ''}
             if to_do['add_follow_request'] != 'None':
-                follower_id=to_do['add_follow_request']
-                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower_id = to_do['add_follow_request']
+                to_follow_profile = get_object_or_404(
+                    UserProfile, pk=to_follow)
                 follower = get_object_or_404(UserProfile, pk=follower_id)
                 to_follow_profile.follow_requests.add(follower)
                 response['message'] += f"'{follower}' added to '{to_follow_profile}' follow requests."
 
             if to_do['delete_follow_request'] != 'None':
-                follower_id=to_do['delete_follow_request']
-                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower_id = to_do['delete_follow_request']
+                to_follow_profile = get_object_or_404(
+                    UserProfile, pk=to_follow)
                 follower = get_object_or_404(UserProfile, pk=follower_id)
                 to_follow_profile.follow_requests.remove(follower)
                 response['message'] += f"'{follower}' removed from '{to_follow_profile}' follow requests."
 
             if to_do['add_following'] != 'None':
-                follower_id=to_do['add_following']
-                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower_id = to_do['add_following']
+                to_follow_profile = get_object_or_404(
+                    UserProfile, pk=to_follow)
                 # Add the follower to 'follow_requests'
                 follower = get_object_or_404(UserProfile, pk=follower_id)
                 to_follow_profile.following.add(follower)
                 response['message'] += f"'{follower}' added to '{to_follow_profile}' followers."
 
             if to_do['delete_following'] != 'None':
-                follower_id=to_do['delete_following']
-                to_follow_profile = get_object_or_404(UserProfile, pk=to_follow)
+                follower_id = to_do['delete_following']
+                to_follow_profile = get_object_or_404(
+                    UserProfile, pk=to_follow)
                 follower = get_object_or_404(UserProfile, pk=follower_id)
                 to_follow_profile.following.remove(follower)
                 response['message'] += f"'{follower}' removed from '{to_follow_profile}' followers."
@@ -114,7 +125,6 @@ class ProfileViewSet(viewsets.ViewSet):
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
     @action(detail=True, methods=['put'])
     def update_profile(self, request, pk=None):
         print("2,here")
@@ -127,11 +137,13 @@ class ProfileViewSet(viewsets.ViewSet):
 
 
 class GetRequestersView(APIView):
-     profiles = UserProfile.objects.all()
-
-     def get(self, request):
-        pk_lst = request.GET.get('ids', [])
-        pk_lst = json.loads(pk_lst)
-        profiles = UserProfile.objects.filter(pk__in=pk_lst)
+    def get(self, request):
+        pk = request.GET.get('id', '')
+        pk = uuid.UUID(pk, version=4)
+        user_profile = UserProfile.objects.filter(id=pk)
+        print(user_profile[0])
+        requests = user_profile[0].follow_requests.all()
+        following = user_profile[0].following.all()
+        profiles =  requests.difference(following)
         serialized_users = [{'profile_id':profile.id, 'owner':profile.owner.username} for profile in profiles]
         return Response(serialized_users)
