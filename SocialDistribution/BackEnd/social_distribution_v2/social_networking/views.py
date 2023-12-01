@@ -12,6 +12,7 @@ class UserViewSet(viewsets.ViewSet):
     basename='users'
 
     def follower_to_following(self):
+        print("follower_to_following fucntion")
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
         external_api_response = requests.get(
             external_api_url,
@@ -54,57 +55,60 @@ class UserViewSet(viewsets.ViewSet):
 
     def list(self, request):
         # team === good start
+        print("list fucntion")
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
         external_api_response = requests.get(
             external_api_url,
             auth=HTTPBasicAuth('whoiswill', 'cmput404')
         )
-        following_master_list = self.follower_to_following()
+        #following_master_list = self.follower_to_following()
         local_users = User.objects.all()
         local_serializer = UserSerializer(local_users, many=True)
         # Check if the external API call was successful (status code 200)
-        if external_api_response.status_code == 200:
-            # Deserialize the external API response
-            external_api_data = external_api_response.json()
-            # print(external_api_data['results'])
-            refactored_external_api_data = []
-            for i in external_api_data['items']:
-                refactored_external_api_data.append(
-                    {
-                        "id": i['key'],
-                        "username": i['key'],
-                        "is_active": 'true',
-                        "profile_data": {
-                            "id": i['user'],
-                            "owner": i['key'],
-                            "gender": None,
-                            "dob": None,
-                            "phone": None,
-                            "github": i['github'],
-                            "profile_image": None,
-                            "follow_requests": [],
-                            "following": following_master_list[i['key']]
-                        }
-                    }
-                )
-            # team === good send
+        return Response(local_serializer.data)
+        # if external_api_response.status_code == 200:
+        #     # Deserialize the external API response
+        #     external_api_data = external_api_response.json()
+        #     # print(external_api_data['results'])
+        #     refactored_external_api_data = []
+        #     for i in external_api_data['items']:
+        #         refactored_external_api_data.append(
+        #             {
+        #                 "id": i['key'],
+        #                 "username": i['key'],
+        #                 "is_active": 'true',
+        #                 "profile_data": {
+        #                     "id": i['user'],
+        #                     "owner": i['key'],
+        #                     "gender": None,
+        #                     "dob": None,
+        #                     "phone": None,
+        #                     "github": i['github'],
+        #                     "profile_image": None,
+        #                     "follow_requests": [],
+        #                     "following": following_master_list[i['key']]
+        #                 }
+        #             }
+        #         )
+        #     # team === good send
 
 
 
-            # Combine external and internal data
-            combined_data = refactored_external_api_data + local_serializer.data
+        #     # Combine external and internal data
+        #     combined_data = refactored_external_api_data + local_serializer.data
 
-            return Response(combined_data)
-        elif local_serializer.data:
-            return Response(local_serializer.data)
-        else:
-            # Handle the case when the external API call fails
-            return Response(
-                {"error": "Failed to fetch external data"},
-                status=external_api_response.status_code
-            )
+        #     return Response(combined_data)
+        # elif local_serializer.data:
+        #     return Response(local_serializer.data)
+        # else:
+        #     # Handle the case when the external API call fails
+        #     return Response(
+        #         {"error": "Failed to fetch external data"},
+        #         status=external_api_response.status_code
+        #     )
 
     def create(self, request):
+        print("create fucntion")
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -113,7 +117,7 @@ class UserViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk):
         # todo followers
-        print("1herere")
+        print("retrieve fucntion")
         following_master_list = self.follower_to_following()
         try:
             # Try to get the user from the local database using pk
@@ -173,6 +177,7 @@ class UserViewSet(viewsets.ViewSet):
                 )
    
     def update(self, request, pk):
+        print("update fucntion")
         user = get_object_or_404(User, pk=pk)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -181,6 +186,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk):
+        print("destroy fucntion")
         user = get_object_or_404(User, pk=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

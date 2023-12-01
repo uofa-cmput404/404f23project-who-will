@@ -42,6 +42,7 @@ def works(request):
     # return HttpResponse("Hello, world. You're at the polls index.")
 
 def author_to_json(user, user_profile):
+    print("in author_to_json()")
     return {
         "type": "author",
         "id": f"http://127.0.0.1:/service/author/{user.username}",
@@ -53,9 +54,13 @@ def author_to_json(user, user_profile):
     }
 
 def all_authors():
+    print("in all_authors()")
     response = {'type': 'author', 'items': []}
+    print("FRANKIE")
     for user in User.objects.all():
-        user_profile = UserProfile.objects.get(owner=user.id)
+        print(f"user id ----> {user.owner}")
+        user_profile = UserProfile.objects.get(owner=user.owner)
+        print("sending to author_to_json()")
         response['items'].append(author_to_json(user, user_profile))
     return response
 
@@ -236,6 +241,7 @@ def GET_request(request):
     print(path)
     # http://127.0.0.1:8000/service/author
     if path[-1] == 'authors':
+        print("sending to all_authors()")
         response = all_authors()
     # http://127.0.0.1:8000/service/author/{author_id}/
     elif path[-2] == 'authors': 
@@ -407,11 +413,61 @@ def POST_request(request):
         x = post_new_post(request,path)
     elif path[-1] == 'new_post':
         x = post_new_comment(request,path)
+    elif path[-1] == 'inbox':
+        x = determine_type(request, path)
+    #elif path[]
     # like to author/{}/inbox... TODO!
-    
-
-
+    else:
+        x = {'status': 'error in parsing post request'}
     return JsonResponse(x)
+
+def determine_type(request, path):
+    print("DETERMINING TYPE ----------------------")
+    data = json.loads(request.body.decode('utf-8'))
+    print(data)
+    print(data["type"])
+    if data["type"] == "Like":
+        print("LIKE TYPE")
+        x = post_like(request, path)
+    elif data["type"] == "post":
+        print("post TYPE")
+        x = {'status': 'NOT IMPLEMENTED YET!'}
+    elif data["type"] == "Follow":
+        print("Follow type")
+        x = {'status': 'NOT IMPLEMENTED YET!'}
+    elif data["type"] == "comment":
+        print("Comment type")
+        x = {'status': 'NOT IMPLEMENTED YET!'}
+    else:
+        x = {'status': 'field type is not correct'}
+    return x
+
+def post_like(request, path):
+    print("Entered post_like()")
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        username = data['author']['displayName']
+        print(f"username --> {username}")
+    except:
+        return {'status': 'no username given'}
+    try:
+        comment = data['summary']
+        print(f"comment --> {comment}")
+    except:
+        return {'status': 'no comment given'}
+    try:
+        vote = Vote.objects.create(id=8)
+        try:
+            vote.save()
+        except:
+            print("failed to save")
+            return {'status': 'vote failed to save'}
+        return {'statis': 'vote added!'}
+
+    except:
+        return {'status': 'vote failed to add'}
+
+    
 
 def PUT_request(request):
     print(request)
