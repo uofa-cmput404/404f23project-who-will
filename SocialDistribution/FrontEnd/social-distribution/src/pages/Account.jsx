@@ -66,6 +66,7 @@ class Account extends Component {
     }
 
     handleEditPost = (post) => {
+        console.log("handle editting**************");
         this.setState({ isEditPostOpen: true, postToEdit: post , currentPostVisibility: post.visibility});
     }
 
