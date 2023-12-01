@@ -17,6 +17,10 @@ class CustomUser(AbstractUser):
             self.host += "/"
         return f"{self.host}authors/{self.user_id}"
     def save(self, *args, **kwargs):
+        if not self.user_id:
+            self.user_id = uuid.uuid4()            
+        else:
+            self.user_id = self.user_id
         self.url = self.create_url()
         self.id = self.user_id
         super().save(*args, **kwargs)

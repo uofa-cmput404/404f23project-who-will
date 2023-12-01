@@ -318,7 +318,7 @@ def post_user(user_id, request):
             # Make a new user object
             try:
                 print(f"All the inputs ---> {user_id}, {name}")
-                new_user = CustomUser.objects.create_user(user_id=user_id, username=name, password="password")
+                new_user = CustomUser.objects.create(username=name, password="password")
                 new_user.save()
                 print("USER CREATED?!?")
             except:
@@ -426,10 +426,12 @@ def POST_request(request):
         x = post_new_post(request,path)
     elif path[-1] == 'new_post':
         x = post_new_comment(request,path)
+    elif path[-1] == 'inbox':
+        x = determine_type(request, path)
+    else:
+        x = {'status': 'error in parsing post request'}
     # like to author/{}/inbox... TODO!
     
-
-
     return JsonResponse(x)
 
 def PUT_request(request):
@@ -450,9 +452,23 @@ def DELETE_request(request):
 
     return JsonResponse(x)
 
+def DELETE_request(request):
+
+    # delete_post(request)
+    print(request)
+    path = request.path.split('/')
+    for i in path:
+        if i == '':
+            path.remove(i)
+    if path[-2] == 'posts':
+        x = delete_post(path)
+    print(f" PATH ----> {path}")
+
+    return JsonResponse(x)
 
 def delete_post(path):
-    #NOTE: POST id will most likely be sent in the url
+    #NOTE: When a post is deleted, so is are the comments and likes.
+    #TODO: account for comments and likes
 
     print("--------------------------delete_post----------------------------")
 
@@ -466,11 +482,107 @@ def delete_post(path):
         try:
             post.delete()
             print("Successfully deleted post")
-            return JsonResponse({'status': 'Post deleted successfully'})
+            return {'status': 'Post deleted successfully'}
         except:
             print("Failed to delete post")
-            return JsonResponse({'status': 'Error deleting post'})
+            return {'status': 'Error deleting post'}
     except:
         print("Failed to retrieve database")
-        return JsonResponse({'status': 'Error retrieving post'})
+        return {'status': 'Could not find post in database'}
 
+
+def PATCH_request(request):
+    print("PATCH REQUEST REGISTERED")
+    print(request)
+    path = request.path.split('/')
+    for i in path:
+        if i == '':
+            path.remove(i)
+    print(path)
+    if path[-2] == "posts":
+        x = patch_post(request, path)
+    else:
+        x = {'status': 'incorrect patch format'}
+    return JsonResponse(x)
+
+
+def patch_post(request, path):
+    print(request)
+    print(path)
+    print("PATCHING POST!!!!")
+
+    try:
+        post=Post.objects.get(id=path[-1]) 
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+        post.title = data['title']
+        post.source = data['source']
+        post.origin = data['origin']
+        post.description = data['description']
+        post.visibility = data['visibility']
+        post.content = data['content']
+        post.post_image = data['unlisted']
+        #post.message_to = data['message_to']
+        #post.categories = data['categories']
+        post.save()
+        return {'status': 'worked'}
+    except:
+        print("post could not be found")
+        return {'status': 'post could not be found'}
+
+
+def determine_type(request, path):
+    print("DETERMINING TYPE ----------------------")
+    data = json.loads(request.body.decode('utf-8'))
+    print(data)
+    print(data["type"])
+    if data["type"] == "Like":
+        print("LIKE TYPE")
+        x = post_like(request, path)
+    elif data["type"] == "post":
+        print("post TYPE")
+        x = {'status': 'NOT IMPLEMENTED YET!'}
+    elif data["type"] == "Follow":
+        print("Follow type")
+        x = {'status': 'NOT IMPLEMENTED YET!'}
+    elif data["type"] == "comment":
+        print("Comment type")
+        x = {'status': 'NOT IMPLEMENTED YET!'}
+    else:
+        x = {'status': 'field type is not correct'}
+    return x
+
+def post_like(request, path):
+    print("Entered post_like()")
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        user_id = path[-2]
+        print(f"THE USER ID ------> {user_id}")
+
+    except:
+        return {'status': 'could not splice data to obtain post id'}
+    try:
+        post = data['object']
+        post_id = post.split('/')[-1]
+        print(f"post id --> {post_id}")
+    except:
+        return {'status': 'could not splice data to obtain post id'}
+    try:
+        userObject = CustomUser.objects.get(user_id=user_id)
+    except:
+        return {'status': 'could not retrieve associated user'}
+    try:
+        postObject = Post.objects.get(id=post_id)
+    except:
+        return {'status': 'could not retreive associated post'}
+    try:
+        vote = Vote.objects.create(post=postObject, up_vote_by=userObject)
+        try:
+            vote.save()
+        except:
+            print("failed to save")
+            return {'status': 'vote failed to save'}
+        return {'statis': 'vote added!'}
+
+    except:
+        return {'status': 'vote failed to create with user'}
