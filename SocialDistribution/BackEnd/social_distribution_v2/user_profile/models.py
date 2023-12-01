@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
     host = models.URLField(blank=True, default=DEFAULT_HOST, null=True)
     def __str__(self) -> str:
         return self.username 
-    def create_url(self):
+    def create_url(self):  
         if not self.host.endswith('/'):
             self.host += "/"
         return f"{self.host}authors/{self.user_id}"
@@ -30,6 +30,13 @@ class UserProfile(models.Model):
         ('female', 'Female'),
         ('others', 'Others')
     )
+
+    # new added 
+    type = models.CharField(default ="author", max_length=6, blank = True, null = True)
+    # user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.URLField(max_length=2048, blank=True, null=True)
+
+
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile', primary_key=True)
     # fk = models.ForeignKey(CustomUser, on_delete=models.CASCADE, primary_key=True) 
     gender = models.CharField(

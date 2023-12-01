@@ -344,7 +344,7 @@ def Post_post(request,path):
     try:
         post=Post.objects.get(id=path[-1]) 
         data = json.loads(request.body.decode('utf-8'))
-        print(data)
+        print(data)        
         post.title = data['title']
         post.source = data['source']
         post.origin = data['origin']
