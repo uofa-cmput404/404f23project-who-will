@@ -42,7 +42,7 @@ class UserProfile(models.Model):
     id = models.URLField(max_length=2048, blank=True, null=True)
 
 
-    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile', primary_key=True)
+    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile_data', primary_key=True)
     # fk = models.ForeignKey(CustomUser, on_delete=models.CASCADE, primary_key=True) 
     gender = models.CharField(
         max_length=20,
