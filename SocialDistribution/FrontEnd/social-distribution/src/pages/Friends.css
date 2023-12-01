@@ -4,13 +4,21 @@
     border-top: 1px solid black;
     font-size: 15px;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     padding: 10px 60px;
 }
 
 .myFriends {
     border-bottom: 1px solid black;
     margin-top: 25px;
+}
+
+.viewProfileButton {
+    display: None !important;
+}
+
+#text {
+    display: None !important;
 }
 
 .messageButton, .viewProfileButton {
@@ -20,6 +28,7 @@
     color: white;
     width: 80px;
     text-align: center;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .messageButton:hover, .viewProfileButton:hover {
@@ -29,13 +38,19 @@
 
 .friendName {
     font-size: 18px;
-    width: 10px; /* hacky, fix if need */
+    width: 100px; /* hacky, fix if need */
+    display: flex;
+    align-items: center;
     
 }
 
 .friendsTitle {
-    color: #15cdfc;
+    color: black;
     text-align: center;
     font-size: 50px;
     font-weight: bold;
+    background: rgb(255,255,255);
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(21,205,252,1) 100%);
+    
+
 }
