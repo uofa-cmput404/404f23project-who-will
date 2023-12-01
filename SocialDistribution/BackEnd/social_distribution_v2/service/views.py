@@ -451,12 +451,17 @@ def post_like(request, path):
     except:
         return {'status': 'no username given'}
     try:
-        comment = data['summary']
-        print(f"comment --> {comment}")
+        post = data['object']
+        post_id = post.split('/')[-1]
+        print(f"post id --> {post_id}")
     except:
         return {'status': 'no comment given'}
     try:
-        vote = Vote.objects.create(id=8)
+        vote = Vote.objects.create(id=112)
+        try:
+            vote.post = '5'
+        except:
+            return {'status': 'FAIELD TO ADD username'}
         try:
             vote.save()
         except:
