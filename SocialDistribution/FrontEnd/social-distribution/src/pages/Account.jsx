@@ -400,13 +400,13 @@ class Account extends Component {
                 {user.posts
                     .filter(post => {
                         if (this.state.isMyAccount === true) {
-                            return this.state.ownerID ? post.owner === Number(this.state.ownerID) : true;
+                            return this.state.ownerID ? post.owner === this.state.ownerID : true;
                         } 
                         else if (this.state.isFriend === true) {
-                            return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
+                            return this.state.ownerID ? (post.owner === this.state.viewedProfileUserID && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
                         } 
                         else {
-                            return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
+                            return this.state.ownerID ? post.owner === this.state.viewedProfileUserID && post.visibility === 'public' : true;
                         }
                       })
                     .sort((a, b) => new Date(b.post_date_time) - new Date(a.post_date_time))

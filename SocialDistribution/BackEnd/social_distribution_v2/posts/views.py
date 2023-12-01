@@ -1,5 +1,6 @@
 from .serializers import PostSerializer, CategoriesSerializer
 from .models import Post, Categories
+from user_profile.models import *
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import permissions
@@ -22,6 +23,10 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+        actor_profile = UserProfile.objects.filter(owner=self.request.user)
+        print(actor_profile[0].id)
+        print("after create")
+
 
     def get_post_team_good(self):
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
