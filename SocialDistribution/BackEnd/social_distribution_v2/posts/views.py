@@ -30,79 +30,76 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        # post 
-        print(serializer.validated_data)
+        # OrderedDict([('content', 'ss'), 
+        # ('description', 'ss'),
+        #  ('title', 'ss'), 
+        # ('source', 's'), 
+        # ('origin', 's'), 
+        # ('visibility', 'public'),
+        #  ('owner', <CustomUser: rayna>)])
         data_dict = serializer.validated_data
-
         transformed_data = {
             "type":"post"
         }
+        
+        # title 
         transformed_data["title"] = data_dict["title"] if "title" in data_dict else None
+
         # TODO: id
-        # postId = data_dict["id"]
-        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else None
         transformed_data["source"] = data_dict["source"] if "source" in data_dict else None
+        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else None
         transformed_data["description"] = data_dict["description"] if "description" in data_dict else None
         transformed_data["contentType"] = data_dict["contentType"] if "contentType" in data_dict else "text/plain"
         transformed_data["content"] = data_dict["content"] if "content" in data_dict else None
-
-        # TODO: author
-        #         {
-        #     "id": 1,
-        #     "username": "rayna",
-        #     "is_active": true,
-        #     "profile_data": {
-        #         "id": 1,
-        #         "owner": "rayna",
-        #         "gender": "male",
-        #         "dob": null,
-        #         "phone": null,
-        #         "github": null,
-        #         "profile_image": null,
-        #         "follow_requests": [
-        #             2
-        #         ],
-        #         "following": [
-        #             2
-        #         ]
-        #     }
-        # },
+        
+        # author 
         author_val = {
              "type":"author"
         }
+
+        info = None
         if "owner" in data_dict: 
-            username = data_dict["owner"]  # display name: admin 
-            user_data = User.objects.all().filter(username=username)#<QuerySet [<User: admin>]>
+            owner = data_dict["owner"]  # display name: rayna
+            profile_data = UserProfile.objects.filter(owner=owner) #<QuerySet [<UserProfile: rayna>]>
+            serialized_profile = serialize('json', profile_data) 
+            profile_json= json.loads(serialized_profile)[0]
+            info = profile_json["fields"]  # json
+            author_val["id"] = "http://127.0.0.1:8000/authors/"+info["id"]
+            author_val["host"] = "http://127.0.0.1:8000/"
+            author_val["displayName"] = ''  # this does not work
+            author_val["url"] = "http://127.0.0.1:8000/authors/"+info["id"]
+            author_val["github"] =info["github"]
+            author_val["profileImage"] = info["profile_image"]
 
-            serialized_users = serialize('json', user_data) 
-            user_dict_list = json.loads(serialized_users)
-            user_json_data = user_dict_list[0]  # this is the json format of user information 
+        transformed_data["author"] = author_val
 
-            pk=user_json_data["pk"]
-            # TODO: user the pk to get the profile 
+        # categories
+        transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
 
-
-            
-            # user_profile = ProfileSerializer.objects.get(owner=user)  # Get the UserProfile associated with the user
-
-            # # Serialize the UserProfile instance to JSON
-            # profile_serializer = ProfileSerializer(user_profile)
-            # serialized_profile_data = profile_serializer.data
-
-            # print(serialized_profile_data)
-
-            # TODO: get user(author) id 
-
-        # TODO: categories
+        # counts
         transformed_data["count"] = len(data_dict["comments"]) if "comments" in data_dict else 0
 
         # comments
-        # comment_url = "http://127.0.0.1:5454/authors/"+userId+"/posts/"+postId+"/comments"
+        saved_post = serializer.save(owner=self.request.user)  # return: the new post id
+        post_data = serializer.to_representation(saved_post)
+        saved_post_id = post_data['id']
+        transformed_data["comments"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id+"/comments"
+        
+        # id
+        transformed_data["id"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id
 
-        serializer.save(owner=self.request.user)
-        actor_profile = UserProfile.objects.filter(owner=self.request.user)
-        print(actor_profile[0].id)
+        # published (*)
+        transformed_data["published"] = post_data["post_date_time"]
+
+        # visibility (*)
+        transformed_data["visibility"] = data_dict["visibility"].upper()
+
+        # unlisted
+        transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else None # not sure
+
+        print(transformed_data)
         print("after create")
+        
 
 
     def get_post_team_good(self):
