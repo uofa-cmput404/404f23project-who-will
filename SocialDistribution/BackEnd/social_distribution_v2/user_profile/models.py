@@ -24,6 +24,9 @@ class CustomUser(AbstractUser):
             self.foreign = self.user_id
         self.id = self.user_id
         super().save(*args, **kwargs)
+        # posting the user to other database
+        print('after create ----> (in model) ')
+        print(self.username)
     def get_absolute_url(self):
         return reverse('user_detail', args=[str(self.id)])
 
@@ -35,15 +38,9 @@ class UserProfile(models.Model):
         ('female', 'Female'),
         ('others', 'Others')
     )
-
     # new added 
     type = models.CharField(default ="author", max_length=6, blank = True, null = True)
-    # user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    id = models.URLField(max_length=2048, blank=True, null=True)
-
-
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile_data', primary_key=True)
-    # fk = models.ForeignKey(CustomUser, on_delete=models.CASCADE, primary_key=True) 
     gender = models.CharField(
         max_length=20,
         choices=options,
