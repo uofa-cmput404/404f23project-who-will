@@ -338,29 +338,34 @@ def Post_post(request,path):
     # get all post
     # get a specific post
     try:
-        post=Post.objects.get(id=path[-1]) 
+        post=Post.objects.get(foreign=path[-1]) 
+    except:
+        return {'status': 'failed to find post to edit'}
+    
+    try:
         data = json.loads(request.body.decode('utf-8'))
-        print(data)        
+    except:
+        return {'status': 'failed to load sent data'}
+    try: 
+        print(f"data -----> {data}")        
         post.title = data['title']
         post.source = data['source']
         post.origin = data['origin']
         post.description = data['description']
-        post.categories = data['categories']
+        #post.categories = data['categories']
         post.visibility = data['visibility']
         post.content = data['content']
         post.post_image = data['unlisted']
         # post.message_to = data['message_to']
         post.save()
-        return {'status': 'worked'}
+        return {'status': 'post edited'}
     except:
-        print("no post")
+        return {'status': 'post found, failed to make edits'}
     # if Post.objects.get(id=path[-1]):
     #     print("post exists")
     # else:
     #     print("post does not exist")
 
-
-    return {'status': '1'}
 
 
 def post_new_post(request,path):
@@ -433,7 +438,6 @@ def POST_request(request):
         print("sending to post_user")
         x = post_user(path[-1], request)
     elif path[-2] == 'posts':
-        #NOTE: This is used to update the posts user (who posted it)
         x = Post_post(request,path)
     elif path[-1] == 'posts':
         print("sending to post_new_post")
