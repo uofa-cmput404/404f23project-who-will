@@ -4,12 +4,15 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 import uuid
 DEFAULT_HOST = "http://127.0.0.1:8000/"
-class CustomUser(AbstractUser):
 
+
+class CustomUser(AbstractUser):
+    is_foreign = models.BooleanField(default=False)
     user_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4, editable=False) 
-    url = models.URLField(max_length=2048, null=True)
+    foreign = models.UUIDField(default=uuid.uuid4, editable=True)
     host = models.URLField(blank=True, default=DEFAULT_HOST, null=True)
+
     def __str__(self) -> str:
         return self.username 
     def create_url(self):  
@@ -17,14 +20,16 @@ class CustomUser(AbstractUser):
             self.host += "/"
         return f"{self.host}authors/{self.user_id}"
     def save(self, *args, **kwargs):
-        self.url = self.create_url()
+        if not self.is_foreign:
+            self.foreign = self.user_id
         self.id = self.user_id
         super().save(*args, **kwargs)
     def get_absolute_url(self):
-        return reverse('user_detail', args=[str(self.user_id)])
+        return reverse('user_detail', args=[str(self.id)])
 
 class UserProfile(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False)
+    foreign = models.UUIDField(default=uuid.uuid4, editable=True)
     options = (
         ('male', 'Male'),
         ('female', 'Female'),
@@ -37,7 +42,7 @@ class UserProfile(models.Model):
     id = models.URLField(max_length=2048, blank=True, null=True)
 
 
-    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile', primary_key=True)
+    owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile_data', primary_key=True)
     # fk = models.ForeignKey(CustomUser, on_delete=models.CASCADE, primary_key=True) 
     gender = models.CharField(
         max_length=20,
@@ -78,4 +83,5 @@ class UserProfile(models.Model):
 
     def save(self, *args, **kwargs):
         self.id = self.owner.user_id
+        self.foreign = self.owner.foreign
         super().save(*args, **kwargs)
