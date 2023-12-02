@@ -53,19 +53,22 @@ def author_to_json(user, user_profile):
 
 def all_authors():
     response = {'type': 'author', 'items': []}
-    for user in User.objects.all():
+    print("all_authors()\n")
+    for user in CustomUser.objects.all():
+        print(1,user)
         user_profile = UserProfile.objects.get(owner=user.id)
+        print(user_profile)
         response['items'].append(author_to_json(user, user_profile))
     return response
 
 def specific_author(requested_author):
-    user_with_username = User.objects.get(username=requested_author)
+    user_with_username = CustomUser.objects.get(username=requested_author)
     user_profile = UserProfile.objects.get(owner=user_with_username)
     response = author_to_json(user_with_username, user_profile)
     return response
 
 def all_followers(requested_author):
-    user_with_username = User.objects.get(username=requested_author)
+    user_with_username = CustomUser.objects.get(username=requested_author)
     user_profile = UserProfile.objects.get(owner=user_with_username)
     response = {'type': 'followers', 'items': []}
     followers = []
@@ -76,7 +79,7 @@ def all_followers(requested_author):
                 followers.append(str(profile))
     proper_followers = []
     for i in followers:
-        x=User.objects.get(username=i)
+        x=CustomUser.objects.get(username=i)
         y = UserProfile.objects.get(owner=x)
         proper_followers.append(author_to_json(x, y))
     response['items'] = proper_followers
@@ -236,42 +239,42 @@ def GET_request(request):
     # http://127.0.0.1:8000/service/author
     if path[-1] == 'authors':
         response = all_authors()
-    # http://127.0.0.1:8000/service/author/{author_id}/
-    elif path[-2] == 'authors': 
-        response = specific_author(path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/followers
-    elif path[-1] == 'followers': #done
-        response = all_followers(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
-    elif path[-2] == 'followers': #done
-        response = check_follower(path[-3],path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts
-    elif path[-1] == 'posts':
-        response = all_posts(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
-    elif path[-2] == 'posts':
-        response = get_specific_post(path[-3], path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
-    elif path[-3] == 'posts' and path[-1] == 'comments':
-        response = get_comments(Post.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
-    elif path[-4] == 'posts' and path[-2] == 'comments':
-        response = comment_to_json(Comment.objects.get(id=path[-1]))
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
-    elif path[-3] == 'posts' and path[-1] == 'image':
-        response = get_image(path[-4], path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
-    elif path[-3] == 'posts' and path[-1] == 'likes':
-        response = get_likes(Post.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/liked
-    elif path[-1] == 'liked':
-        response = get_likes_post(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
-    elif path[-3] == 'comments' and path[-1] == 'likes':
-        response = get_likes_comments(Comment.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/inbox
-    elif path[-1] == 'inbox':
-        response = get_inbox(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/
+    # elif path[-2] == 'authors': 
+    #     response = specific_author(path[-1])
+    # # http://127.0.0.1:8000/service/author/{author_id}/followers
+    # elif path[-1] == 'followers': #done
+    #     response = all_followers(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
+    # elif path[-2] == 'followers': #done
+    #     response = check_follower(path[-3],path[-1])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts
+    # elif path[-1] == 'posts':
+    #     response = all_posts(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
+    # elif path[-2] == 'posts':
+    #     response = get_specific_post(path[-3], path[-1])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
+    # elif path[-3] == 'posts' and path[-1] == 'comments':
+    #     response = get_comments(Post.objects.get(id=path[-2]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
+    # elif path[-4] == 'posts' and path[-2] == 'comments':
+    #     response = comment_to_json(Comment.objects.get(id=path[-1]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
+    # elif path[-3] == 'posts' and path[-1] == 'image':
+    #     response = get_image(path[-4], path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
+    # elif path[-3] == 'posts' and path[-1] == 'likes':
+    #     response = get_likes(Post.objects.get(id=path[-2]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/liked
+    # elif path[-1] == 'liked':
+    #     response = get_likes_post(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
+    # elif path[-3] == 'comments' and path[-1] == 'likes':
+    #     response = get_likes_comments(Comment.objects.get(id=path[-2]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/inbox
+    # elif path[-1] == 'inbox':
+    #     response = get_inbox(path[-2])
 
 
     return JsonResponse(response)
@@ -400,7 +403,7 @@ def post_new_post(request,path):
         return {'status': 'Error in creating post'}
 
 def post_new_comment(request,path):
-    author=User.objects.get(username=path[-4])
+    author=CustomUser.objects.get(username=path[-4])
     post=Post.objects.get(id=path[-2])
     comment=Comment.objects.create(owner=author,post=post)
     data = json.loads(request.body.decode('utf-8'))
