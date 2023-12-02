@@ -52,6 +52,7 @@ const StyledLabel = styled.label`
 `;
 
 const ComposeModal = ({ onClose }) => {
+  const currentID = localStorage.getItem("pk");
   // get all friends
   const friendGetter = new GetAllFriends(localStorage.getItem("pk"));
   const [friends, setFriends] = useState([]);
@@ -74,11 +75,11 @@ const ComposeModal = ({ onClose }) => {
       .catch((err) => {
         console.log(err);
       });
-    friendGetter
-      .GetAllFriends(localStorage.getItem("pk"))
+    axios
+      .get(`http://127.0.0.1:8000/api/get_friends/?id=${currentID}`)
       .then((res) => {
         console.log(res);
-        setFriends(res);
+        setFriends(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -102,7 +103,6 @@ const ComposeModal = ({ onClose }) => {
     );
     setSelectedOptioins(selectedValue);
   };
-  const currentID = localStorage.getItem("pk");
 
   // for update category selection
   useEffect(() => {
@@ -191,8 +191,8 @@ const ComposeModal = ({ onClose }) => {
         >
           <option value="null">Select an option</option>
           {friends.map((option) => (
-            <option key={option} value={option}>
-              {option}
+            <option key={option.id} value={option.profile_id}>
+              {option.owner}
             </option>
           ))}
         </select>
