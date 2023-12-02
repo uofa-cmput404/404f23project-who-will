@@ -212,7 +212,7 @@ def get_liked(requested_author):
     return response
 
 def get_inbox(requested_author):
-    user_with_username = User.objects.get(username=requested_author)
+    user_with_username = CustomUser.objects.get(id=requested_author)
     author_profile = UserProfile.objects.get(owner=user_with_username)
     response = {
         "type": "inbox",
