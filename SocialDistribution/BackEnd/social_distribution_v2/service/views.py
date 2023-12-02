@@ -53,7 +53,7 @@ def author_to_json(user, user_profile):
 
 def all_authors():
     response = {'type': 'author', 'items': []}
-    print("all_authors()\n")
+    # print("all_authors()\n")
     for user in CustomUser.objects.all():
         print(1,user)
         user_profile = UserProfile.objects.get(owner=user.id)
@@ -239,9 +239,9 @@ def GET_request(request):
     # http://127.0.0.1:8000/service/author
     if path[-1] == 'authors':
         response = all_authors()
-    # # http://127.0.0.1:8000/service/author/{author_id}/
-    # elif path[-2] == 'authors': 
-    #     response = specific_author(path[-1])
+    # http://127.0.0.1:8000/service/author/{author_id}/
+    elif path[-2] == 'authors': 
+        response = specific_author(path[-1])
     # # http://127.0.0.1:8000/service/author/{author_id}/followers
     # elif path[-1] == 'followers': #done
     #     response = all_followers(path[-2])
