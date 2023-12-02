@@ -283,8 +283,11 @@ def post_user(user_id, request):
     except:
         return {'status': 'error retrieving users'}
     found = False
+    print("-------------------------------------")
     
     for user in all_users:
+        print("-------------------------------------")
+        print(f" username -------> {user.username}")
         if user.username == user_id:
             found = True
 
@@ -299,9 +302,13 @@ def post_user(user_id, request):
             return {'status': 'UPDATED USER'}
 
     if not found:
+        print("-------------------------------------")
         try:
+            print("-----------first here-------------")
             # Decode the JSON data from the request body
             data = json.loads(request.body.decode('utf-8'))
+            print("----------here----------------")
+            print(data)
 
             # Splitting the displayName using spaces
             name = data['displayName']
@@ -311,10 +318,7 @@ def post_user(user_id, request):
             # Make a new user object
             try:
                 print(f"All the inputs ---> {user_id}, {name}")
-                #new_user = CustomUser.objects.create(foreign = user_id, username="FRANKIE BABY")
-                
-                new_user = CustomUser.objects.create(foreign = user_id, is_foreign = True, username=name, password="anything")
-                user.set_password("anything")
+                new_user = CustomUser.objects.create(username=name, password="password")
                 new_user.save()
                 print("USER CREATED?!?")
             except:
@@ -364,24 +368,16 @@ def Post_post(request,path):
 
 
 def post_new_post(request,path):
-    #print(path[-2])
+    print(path[-2])
     try:
-        author=CustomUser.objects.get(foreign=path[-2])
+        author=CustomUser.objects.get(user_id=path[-2])
     except:
         return {'status': 'failed to find user'}
-    data = json.loads(request.body.decode('utf-8'))
-    #print(data['id'])
-    post_foreign_id = data['id'].split('/')
-    for i in post_foreign_id:
-        if i == '':
-            post_foreign_id.remove(i)
-    #print(post_foreign_id)
-    post_foreign_id = post_foreign_id[-1]
-    #print(f"post foreign id == {post_foreign_id}")
     try:
         # make new post
-        post=Post.objects.create(owner=author, foreign=post_foreign_id)
+        post=Post.objects.create(owner=author)
         data = json.loads(request.body.decode('utf-8'))
+        print(data)
         post.title = data['title']
         post.source = data['source']
         post.origin = data['origin']
@@ -399,25 +395,14 @@ def post_new_post(request,path):
         return {'status': 'Error in creating post'}
 
 def post_new_comment(request,path):
-    try:
-        author=CustomUser.objects.get(foreign=path[-4])
-    except:
-        return {'status': 'error retrieving user'}
-    try:
-        post=Post.objects.get(foreign=path[-2])
-    except:
-        return {'status': 'error retrieving pots data'}
-    
-    try:
-        comment=Comment.objects.create(owner=author,post=post)
-        data = json.loads(request.body.decode('utf-8'))
-        print(data)
-        comment.comment = data['comment']
-        comment.save()
-    except:
-        return {'status': 'failed to save comment'}
-    
-    return {'status': 'comment succsefully added'}
+    author=User.objects.get(username=path[-4])
+    post=Post.objects.get(id=path[-2])
+    comment=Comment.objects.create(owner=author,post=post)
+    data = json.loads(request.body.decode('utf-8'))
+    print(data)
+    comment.comment = data['comment']
+    comment.save()
+    return {'status': '2'}
 
 def POST_request(request):
     print(2, request)
@@ -443,8 +428,6 @@ def POST_request(request):
         x = post_new_comment(request,path)
     elif path[-1] == 'inbox':
         x = determine_type(request, path)
-    elif path[-1] == 'comments':
-        x = post_new_comment(request, path)
     else:
         x = {'status': 'error in parsing post request'}
     # like to author/{}/inbox... TODO!
@@ -564,7 +547,6 @@ def determine_type(request, path):
         x = {'status': 'NOT IMPLEMENTED YET!'}
     elif data["type"] == "comment":
         print("Comment type")
-        # x = post_new_comment(request, path)
         x = {'status': 'NOT IMPLEMENTED YET!'}
     else:
         x = {'status': 'field type is not correct'}
@@ -586,11 +568,11 @@ def post_like(request, path):
     except:
         return {'status': 'could not splice data to obtain post id'}
     try:
-        userObject = CustomUser.objects.get(foreign=user_id)
+        userObject = CustomUser.objects.get(user_id=user_id)
     except:
         return {'status': 'could not retrieve associated user'}
     try:
-        postObject = Post.objects.get(foreign=post_id)
+        postObject = Post.objects.get(id=post_id)
     except:
         return {'status': 'could not retreive associated post'}
     try:

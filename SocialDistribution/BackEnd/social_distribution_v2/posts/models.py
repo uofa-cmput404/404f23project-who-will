@@ -31,10 +31,8 @@ class Post(models.Model):
         return str(self.id)
 
     def save(self, *args, **kwargs):
-        print(f"--------------------------------------> (buba gumps) {self.foreign}")
         if not self.owner.is_foreign:
             self.foreign = self.id
-        print(f"--------------------------------------> (buba gumps) {self.foreign}")
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
