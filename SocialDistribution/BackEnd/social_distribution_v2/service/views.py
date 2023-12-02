@@ -43,12 +43,12 @@ def works(request):
 def author_to_json(user, user_profile):
     return {
         "type": "author",
-        "id": f"http://127.0.0.1:/service/author/{user.username}",
-        "url": f"http://127.0.0.1:/service/author/{user.username}",
+        "id": f"http://127.0.0.1:/service/author/{user.id}",
+        "url": f"http://127.0.0.1:/service/author/{user.id}",
         "host": "http://127.0.0.1:8000/",
         "displayName": f"{user.username}",
         "github": user_profile.github,
-        "profileImage": "image"
+        "profileImage": user_profile.profile_image
     }
 
 def all_authors():
@@ -62,7 +62,7 @@ def all_authors():
     return response
 
 def specific_author(requested_author):
-    user_with_username = CustomUser.objects.get(username=requested_author)
+    user_with_username = CustomUser.objects.get(user_id=requested_author)
     user_profile = UserProfile.objects.get(owner=user_with_username)
     response = author_to_json(user_with_username, user_profile)
     return response
@@ -242,9 +242,9 @@ def GET_request(request):
     # http://127.0.0.1:8000/service/author/{author_id}/
     elif path[-2] == 'authors': 
         response = specific_author(path[-1])
-    # # http://127.0.0.1:8000/service/author/{author_id}/followers
-    # elif path[-1] == 'followers': #done
-    #     response = all_followers(path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/followers
+    elif path[-1] == 'followers': #done
+        response = all_followers(path[-2])
     # # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
     # elif path[-2] == 'followers': #done
     #     response = check_follower(path[-3],path[-1])
