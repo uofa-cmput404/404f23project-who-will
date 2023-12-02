@@ -10,6 +10,7 @@ import uuid
 class Comment(models.Model):
     comment_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4,editable=False)
+    foreign = models.UUIDField(default=uuid.uuid4, editable=True)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post=models.ForeignKey(Post,related_name='comments',on_delete=models.CASCADE)
     comment=models.CharField(max_length=4000)
@@ -22,5 +23,7 @@ class Comment(models.Model):
     def get_absolute_url(self):
         return reverse('comment_detail', args=[str(self.id)])
     def save(self, *args, **kwargs):
+        if not self.owner.is_foreign:
+            self.foreign = self.id
         self.id = self.comment_id
         super().save(*args, **kwargs)

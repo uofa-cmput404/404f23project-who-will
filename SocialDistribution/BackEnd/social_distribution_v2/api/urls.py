@@ -1,6 +1,5 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.routers import DefaultRouter
-from social_networking.views import UserViewSet
 from user_profile.views import ProfileViewSet, CustomUserViewSet
 from posts.views import PostViewSet, CategoryViewSet
 from comments.views import CommentViewSet
