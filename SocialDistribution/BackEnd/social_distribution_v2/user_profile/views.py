@@ -147,3 +147,15 @@ class GetRequestersView(APIView):
         profiles =  requests.difference(following)
         serialized_users = [{'profile_id':profile.id, 'owner':profile.owner.username} for profile in profiles]
         return Response(serialized_users)
+
+class GetFriendsView(APIView):
+    def get(self, request):
+        pk = request.GET.get('id', '')
+        pk = uuid.UUID(pk, version=4)
+        user_profile = UserProfile.objects.filter(id=pk)
+        requests = user_profile[0].follow_requests.all()
+        following = user_profile[0].following.all()
+        profiles =  requests.intersection(following)
+        serialized_users = [{'profile_id':profile.id, 'owner':profile.owner.username} for profile in profiles]
+        return Response(serialized_users)
+        

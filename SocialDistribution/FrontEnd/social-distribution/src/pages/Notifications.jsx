@@ -351,7 +351,7 @@ const Notifications = () => {
       const userName = localStorage.getItem("username");
       console.log(userName);
       axios
-        .get(`http://127.0.0.1:8000/service/authors/${userName}/inbox`)
+        .get(`http://127.0.0.1:8000/service/authors/${currentId}/inbox`)
         .then((res) => {
           console.log(res.data["items"]);
           setInbox(res.data["items"]);
