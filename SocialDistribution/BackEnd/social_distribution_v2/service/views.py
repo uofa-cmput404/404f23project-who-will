@@ -21,12 +21,14 @@ from django.middleware.csrf import get_token
 OUR_URL="https://whowill-22f35606f344.herokuapp.com"
 
 def get_csrf_token(request):
+    print("get_csrf_token()")
     csrf_token = get_token(request)
     return JsonResponse({"csrf_token": csrf_token})
 
 # Create your views here.
 @csrf_exempt
 def works(request):
+    print("works()")
     # return hello world
     # print(1,request)
     try:    
@@ -44,6 +46,7 @@ def works(request):
     # return HttpResponse("Hello, world. You're at the polls index.")
 
 def author_to_json(user, user_profile):
+    print("author_to_json()")
     return {
         "type": "author",
         "id": f"{OUR_URL}/service/author/{user.id}",
@@ -55,16 +58,16 @@ def author_to_json(user, user_profile):
     }
 
 def all_authors():
+    print("all_authors()")
     response = {'type': 'author', 'items': []}
     # print("all_authors()\n")
     for user in CustomUser.objects.all():
-        print(1,user)
         user_profile = UserProfile.objects.get(owner=user.id)
-        print(user_profile)
         response['items'].append(author_to_json(user, user_profile))
     return response
 
 def specific_author(requested_author):
+    print("specific_author()")
     user_with_username = CustomUser.objects.get(user_id=requested_author)
     user_profile = UserProfile.objects.get(owner=user_with_username)
     response = author_to_json(user_with_username, user_profile)
@@ -72,11 +75,8 @@ def specific_author(requested_author):
 
 def all_followers(requested_author):
     print("all_followers()")
-    print(requested_author)
     user_with_username = CustomUser.objects.get(id=requested_author)
-    print(1,user_with_username)
     user_profile = UserProfile.objects.get(owner=user_with_username)
-    print(2,user_profile)
     response = {'type': 'followers', 'items': []}
     followers = []
     all_user_profiles = UserProfile.objects.all()
@@ -84,7 +84,6 @@ def all_followers(requested_author):
         for i in profile.following.all():
             if str(i.id) == str(requested_author):
                 followers.append(str(profile))
-    print(3,followers)
     proper_followers = []
     for i in followers:
         x=CustomUser.objects.get(username=i)
@@ -94,6 +93,7 @@ def all_followers(requested_author):
     return response
 
 def check_follower(author, follower):
+    print("check_follower()")
     x= all_followers(author)['items']
     for i in x:
         if i['id'].split('/')[-1] == follower:
@@ -101,6 +101,7 @@ def check_follower(author, follower):
     return {'following': 'False'}
 
 def comment_to_json(comment):
+    print("comment_to_json()")
     id_string=OUR_URL+"/service/author/"+str(comment.owner)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
     response = {
         "type":"comment",
@@ -113,6 +114,7 @@ def comment_to_json(comment):
     return response
 
 def get_comments(post):
+    print("get_comments()")
     id_string=OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
     response = { 
         "type":"comments",
@@ -129,7 +131,7 @@ def get_comments(post):
     return response
 
 def post_to_json(post): 
-    print("here")
+    print("post_to_json()")
     id_string=OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
     comment_string =OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)+"/comments"
     response = {
@@ -154,6 +156,7 @@ def post_to_json(post):
     return response
 
 def get_specific_post(requested_author, requested_post):
+    print("get_specific_post()")
     post = Post.objects.get(id=requested_post)
     if str(post.owner) == str(requested_author):
         response = {'type': 'single post', 'post': post_to_json(post)}
@@ -161,6 +164,7 @@ def get_specific_post(requested_author, requested_post):
     return response
 
 def all_posts(requested_author):
+    print("all_posts()")
     all_posts = Post.objects.all()
     response = {'type': 'all posts', 'items': []}
     for post in all_posts:
@@ -169,6 +173,7 @@ def all_posts(requested_author):
     return response
     
 def get_image(requested_author, requested_post):
+    print("get_image()")
     post = Post.objects.get(id=requested_post)
     if str(post.owner) == str(requested_author):
         if post.post_image == None:
@@ -176,6 +181,7 @@ def get_image(requested_author, requested_post):
         return {'image': post.post_image}
 
 def get_likes_post(post):
+    print("get_likes_post()")
     print(post)
     all_likes = Vote.objects.all()
     post_name = post.title
@@ -196,6 +202,7 @@ def get_likes_post(post):
     return response
 
 def get_likes_comments(comment):
+    print("get_likes_comments()")
     all_likes = Vote.objects.all()
     comment_name = comment.comment
     comment_owner = comment.owner
@@ -215,6 +222,7 @@ def get_likes_comments(comment):
     return response
 
 def get_liked(requested_author):
+    print("get_liked()")
     response = {'type': 'liked', 'items': []}
     all_likes = Vote.objects.all()
     for like in all_likes:
@@ -223,6 +231,7 @@ def get_liked(requested_author):
     return response
 
 def get_inbox(requested_author):
+    print("get_inbox()")
     user_with_username = CustomUser.objects.get(id=requested_author)
     author_profile = UserProfile.objects.get(owner=user_with_username)
     response = {
@@ -236,6 +245,7 @@ def get_inbox(requested_author):
     return response
 
 def GET_request(request):
+    print("GET_request()")
     # print(request.path)
     print("split: ", request.path.split('/'))
     response = {'status': 'error'}  # Set a default value for response
@@ -288,6 +298,7 @@ def GET_request(request):
     return JsonResponse(response)
 
 def post_user(user_id, request):
+    print("post_user()")
     try:
         #all_users = User.objects.all()
         all_users = CustomUser.objects.all()
@@ -349,7 +360,7 @@ def post_user(user_id, request):
 # Your existing POST_request function
 
 def Post_post(request,path):
-    print(5,request)
+    print("Post_post()")
     # get all post
     # get a specific post
     try:
@@ -384,7 +395,7 @@ def Post_post(request,path):
 
 
 def post_new_post(request,path):
-    print(path[-2])
+    print("post_new_post()")
     try:
         author=CustomUser.objects.get(user_id=path[-2])
     except:
@@ -411,6 +422,7 @@ def post_new_post(request,path):
         return {'status': 'Error in creating post'}
 
 def post_new_comment(request,path):
+    print("post_new_comment()")
     author=CustomUser.objects.get(username=path[-4])
     post=Post.objects.get(id=path[-2])
     comment=Comment.objects.create(owner=author,post=post)
@@ -421,6 +433,7 @@ def post_new_comment(request,path):
     return {'status': '2'}
 
 def POST_request(request):
+    print("POST_request()")
     print(2, request)
     print("split: ", request.path.split('/'))
     response = {'status': 'error'}  # Set a default value for response
@@ -450,10 +463,12 @@ def POST_request(request):
     return JsonResponse(x)
 
 def PUT_request(request):
+    print("PUT_request()")
     print(request)
     return JsonResponse({'status': '3'})
 
 def DELETE_request(request):
+    print("DELETE_request()")
 
     # delete_post(request)
     print(request)
@@ -467,6 +482,7 @@ def DELETE_request(request):
     return JsonResponse(x)
 
 def delete_post(path):
+    print("delete_post()")
     #NOTE: When a post is deleted, so is are the comments and likes.
     #TODO: account for comments and likes
 
@@ -493,6 +509,7 @@ def delete_post(path):
 
 
 def PATCH_request(request):
+    print("PATCH_request()")
     print("PATCH REQUEST REGISTERED")
     print(request)
     path = request.path.split('/')
@@ -508,6 +525,7 @@ def PATCH_request(request):
 
 
 def patch_post(request, path):
+    print("patch_post()")
     print(request)
     print(path)
     print("PATCHING POST!!!!")
@@ -533,6 +551,7 @@ def patch_post(request, path):
 
 
 def determine_type(request, path):
+    print("determine_type()")
     print("DETERMINING TYPE ----------------------")
     data = json.loads(request.body.decode('utf-8'))
     print(data)
@@ -554,6 +573,7 @@ def determine_type(request, path):
     return x
 
 def post_like(request, path):
+    print("post_like()")
     print("Entered post_like()")
     data = json.loads(request.body.decode('utf-8'))
     try:
