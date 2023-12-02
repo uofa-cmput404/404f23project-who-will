@@ -465,21 +465,6 @@ def DELETE_request(request):
             path.remove(i)
     if path[-2] == 'posts':
         x = delete_post(path)
-    print(f" PATH ----> {path}")
-
-    return JsonResponse(x)
-
-def DELETE_request(request):
-
-    # delete_post(request)
-    print(request)
-    path = request.path.split('/')
-    for i in path:
-        if i == '':
-            path.remove(i)
-    if path[-2] == 'posts':
-        x = delete_post(path)
-    print(f" PATH ----> {path}")
 
     return JsonResponse(x)
 
@@ -494,7 +479,8 @@ def delete_post(path):
     print(f"postid = {post_id}")
 
     try:
-        post = Post.objects.get(id=post_id)
+        #NOTE: If two posts have the same foreign, then they create an error when deleting
+        post = Post.objects.get(foreign=post_id)
         print("Successfully retrieved post")
         try:
             post.delete()
