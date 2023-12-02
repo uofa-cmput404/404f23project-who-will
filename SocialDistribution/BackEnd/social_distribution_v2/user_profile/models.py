@@ -39,7 +39,6 @@ class UserProfile(models.Model):
     # new added 
     type = models.CharField(default ="author", max_length=6, blank = True, null = True)
     # user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    id = models.URLField(max_length=2048, blank=True, null=True)
 
 
     owner = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile_data', primary_key=True)
@@ -54,7 +53,7 @@ class UserProfile(models.Model):
     dob = models.DateField(null=True, blank=True, default=None)
     phone = models.CharField(max_length=20, null=True, blank=True)
     github = models.CharField(max_length=200, null=True, blank=True)
-    profile_image = models.CharField(max_length=1000000, null=True)
+    profile_image = models.CharField(max_length=1000000, null=True, blank= True)
     follow_requests = models.ManyToManyField('self', symmetrical=False, related_name='follow_requests_received', blank=True)
     following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
 

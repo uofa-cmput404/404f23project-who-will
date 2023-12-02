@@ -71,15 +71,20 @@ def specific_author(requested_author):
     return response
 
 def all_followers(requested_author):
-    user_with_username = CustomUser.objects.get(username=requested_author)
+    print("all_followers()")
+    print(requested_author)
+    user_with_username = CustomUser.objects.get(id=requested_author)
+    print(1,user_with_username)
     user_profile = UserProfile.objects.get(owner=user_with_username)
+    print(2,user_profile)
     response = {'type': 'followers', 'items': []}
     followers = []
     all_user_profiles = UserProfile.objects.all()
     for profile in all_user_profiles:
         for i in profile.following.all():
-            if str(i.owner) == str(requested_author):
+            if str(i.id) == str(requested_author):
                 followers.append(str(profile))
+    print(3,followers)
     proper_followers = []
     for i in followers:
         x=CustomUser.objects.get(username=i)
