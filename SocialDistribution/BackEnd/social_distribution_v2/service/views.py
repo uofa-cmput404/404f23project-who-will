@@ -469,20 +469,6 @@ def DELETE_request(request):
 
     return JsonResponse(x)
 
-def DELETE_request(request):
-
-    # delete_post(request)
-    print(request)
-    path = request.path.split('/')
-    for i in path:
-        if i == '':
-            path.remove(i)
-    if path[-2] == 'posts':
-        x = delete_post(path)
-    print(f" PATH ----> {path}")
-
-    return JsonResponse(x)
-
 def delete_post(path):
     #NOTE: When a post is deleted, so is are the comments and likes.
     #TODO: account for comments and likes
