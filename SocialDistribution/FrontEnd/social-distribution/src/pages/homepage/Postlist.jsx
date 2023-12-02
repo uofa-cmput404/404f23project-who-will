@@ -17,7 +17,10 @@ function Postlist({ posts, username}) {
   const filteredPosts = posts.filter(post => {
     if (selectedFilter === 'all') {
       return true; // Show all posts when 'all' is selected
-    } else {
+    } else if(selectedFilter == "friends only"){
+      
+    }
+    else {
       return post.visibility === selectedFilter; // Show posts matching the selected visibility
     }
   });

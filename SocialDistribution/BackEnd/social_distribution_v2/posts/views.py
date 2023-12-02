@@ -46,8 +46,8 @@ class PostViewSet(viewsets.ModelViewSet):
         transformed_data["title"] = data_dict["title"] if "title" in data_dict else None
 
         # TODO: id
-        transformed_data["source"] = data_dict["source"] if "source" in data_dict else None
-        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else None
+        transformed_data["source"] = data_dict["source"] if "source" in data_dict else "https://whoiswill-7ef8b333cade.herokuapp.com/admin/"
+        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else "https://whoiswill-7ef8b333cade.herokuapp.com/admin/"
         transformed_data["description"] = data_dict["description"] if "description" in data_dict else None
         transformed_data["contentType"] = data_dict["contentType"] if "contentType" in data_dict else "text/plain"
         transformed_data["content"] = data_dict["content"] if "content" in data_dict else None
@@ -84,7 +84,10 @@ class PostViewSet(viewsets.ModelViewSet):
         saved_post = serializer.save(owner=self.request.user)  # return: the new post id
         post_data = serializer.to_representation(saved_post)
         saved_post_id = post_data['id']
-        transformed_data["comments"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id+"/comments"
+        
+        # transformed_data["comments"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id+"/comments"
+
+        transformed_data["comments"] = data_dict["comments"] if "comments" in data_dict else []
         
         # id
         transformed_data["id"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id
@@ -96,9 +99,87 @@ class PostViewSet(viewsets.ModelViewSet):
         transformed_data["visibility"] = data_dict["visibility"].upper()
 
         # unlisted
-        transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else None # not sure
-
+        transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else False # not sure
+        
         print("after create")
+        self.send_post_to_server(transformed_data)
+    
+    def send_post_to_server(self, transformed_data): 
+        print("______________________")
+        print(json.dumps(transformed_data, indent=4))
+        print("______________________")
+
+
+        # post_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/posts/"
+
+        # username = "http@gmail.com"
+        # passward = "http"
+
+        # # Send a POST request to the server
+        # try:
+        #     response = requests.post(post_url, json = transformed_data, auth=(username,passward))
+
+        #     # Check the response
+        #     if response.status_code == 201:
+        #         print("Post created successfully on the server.")
+        #     else:
+        #         print("Failed to create the post on the server.")
+        #         print(response.status_code)
+        #         print(response.text)
+        # except:
+        #     print("error")
+
+
+        csrf_token_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/login"
+        login_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/user"
+        post_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/posts/"
+        session = requests.Session()
+        print("Session:", session)
+
+        # credentials
+        email = "admin@email.com"
+        password = "admin"
+
+
+        # Get CSRF token
+        csrf_response = session.post(
+            csrf_token_url, json={'email': email, "password": password})
+        print("CSRF Response Status Code:", csrf_response.status_code)
+        print("CSRF Response JSON:", csrf_response.json())
+
+        csrf_token = csrf_response.json().get('csrf_token')
+        print("CSRF Token:", csrf_token)
+
+
+        header = {
+            'X-CSRFToken': csrf_token
+        }
+
+        # Login request
+        login_response = session.get(login_url, headers=header)
+        print("Login Response Status Code:", login_response.status_code)
+
+        post_response = session.post(post_url, json=transformed_data, headers={
+            'X-CSRFToken': csrf_token,
+            'Referer': csrf_token_url
+        })
+
+        if post_response.status_code == 200:
+            print("post call successful!")
+            # THIS IS THE DATA TO RETRIEVE
+            print("post Response JSON:", json.dumps(post_response.json(), indent=4))
+            # Check if the user exists and has a valid password
+
+        else:
+            # debugging stuff
+            print(f"API call failed with status code: {post_response.status_code}")
+            print("Login Response Text:", post_response.text)
+            # Print out the response headers and cookies for debugging
+            print("Response Headers:", post_response.headers)
+            print("Response Cookies:", len(post_response.cookies))
+
+
+    
         
     def get_post_team_good(self):
         external_api_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/"
