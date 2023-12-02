@@ -17,6 +17,9 @@ import json
 # for the token
 from django.middleware.csrf import get_token
 
+
+OUR_URL="https://whowill-22f35606f344.herokuapp.com"
+
 def get_csrf_token(request):
     csrf_token = get_token(request)
     return JsonResponse({"csrf_token": csrf_token})
@@ -43,29 +46,32 @@ def works(request):
 def author_to_json(user, user_profile):
     return {
         "type": "author",
-        "id": f"http://127.0.0.1:/service/author/{user.username}",
-        "url": f"http://127.0.0.1:/service/author/{user.username}",
-        "host": "http://127.0.0.1:8000/",
+        "id": f"{OUR_URL}/service/author/{user.id}",
+        "url": f"{OUR_URL}/service/author/{user.id}",
+        "host": OUR_URL,
         "displayName": f"{user.username}",
         "github": user_profile.github,
-        "profileImage": "image"
+        "profileImage": user_profile.profile_image
     }
 
 def all_authors():
     response = {'type': 'author', 'items': []}
-    for user in User.objects.all():
+    # print("all_authors()\n")
+    for user in CustomUser.objects.all():
+        print(1,user)
         user_profile = UserProfile.objects.get(owner=user.id)
+        print(user_profile)
         response['items'].append(author_to_json(user, user_profile))
     return response
 
 def specific_author(requested_author):
-    user_with_username = User.objects.get(username=requested_author)
+    user_with_username = CustomUser.objects.get(user_id=requested_author)
     user_profile = UserProfile.objects.get(owner=user_with_username)
     response = author_to_json(user_with_username, user_profile)
     return response
 
 def all_followers(requested_author):
-    user_with_username = User.objects.get(username=requested_author)
+    user_with_username = CustomUser.objects.get(username=requested_author)
     user_profile = UserProfile.objects.get(owner=user_with_username)
     response = {'type': 'followers', 'items': []}
     followers = []
@@ -76,7 +82,7 @@ def all_followers(requested_author):
                 followers.append(str(profile))
     proper_followers = []
     for i in followers:
-        x=User.objects.get(username=i)
+        x=CustomUser.objects.get(username=i)
         y = UserProfile.objects.get(owner=x)
         proper_followers.append(author_to_json(x, y))
     response['items'] = proper_followers
@@ -90,7 +96,7 @@ def check_follower(author, follower):
     return {'following': 'False'}
 
 def comment_to_json(comment):
-    id_string="http://127.0.0.1:8000/service/author/"+str(comment.owner)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
+    id_string=OUR_URL+"/service/author/"+str(comment.owner)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
     response = {
         "type":"comment",
         "author":author_to_json(comment.owner, UserProfile.objects.get(owner=comment.owner)),
@@ -102,7 +108,7 @@ def comment_to_json(comment):
     return response
 
 def get_comments(post):
-    id_string="http://127.0.0.1:8000/service/author/"+str(post.owner)+"/posts/"+str(post.id)
+    id_string=OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
     response = { 
         "type":"comments",
         "page":1,
@@ -119,8 +125,8 @@ def get_comments(post):
 
 def post_to_json(post): 
     print("here")
-    id_string="http://127.0.0.1:8000/service/author/"+str(post.owner)+"/posts/"+str(post.id)
-    comment_string ="http://127.0.0.1:8000/service/author/"+str(post.owner)+"/posts/"+str(post.id)+"/comments"
+    id_string=OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
+    comment_string =OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)+"/comments"
     response = {
         "type":"post",
         "title":post.title,
@@ -170,7 +176,7 @@ def get_likes_post(post):
     post_name = post.title
     post_owner = post.owner
     summary = "Likes for " + str(post_name) + " by " + str(post_owner)
-    object_string= "http://127.0.0.1:8000/service/author/"+str(post.owner)+"/posts/"+str(post.id)
+    object_string= OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
     response = {
         'type': 'likes',
         'summary': summary,
@@ -189,7 +195,7 @@ def get_likes_comments(comment):
     comment_name = comment.comment
     comment_owner = comment.owner
     summary = "Likes for " + str(comment_name) + " by " + str(comment_owner)
-    object_string= "http://127.0.0.1:8000/service/author/"+str(comment.owner)+"/posts/"+str(comment.id)
+    object_string= OUR_URL+"/service/author/"+str(comment.owner)+"/posts/"+str(comment.id)
     response = {
         'type': 'likes',
         'summary': summary,
@@ -216,7 +222,7 @@ def get_inbox(requested_author):
     author_profile = UserProfile.objects.get(owner=user_with_username)
     response = {
         "type": "inbox",
-        "author": f"http://127.0.0.1:8000/service/author/{requested_author}",
+        "author": f"{OUR_URL}/service/author/{requested_author}",
         "items": []
     }
     posts = Post.objects.filter(message_to=author_profile)
@@ -242,36 +248,36 @@ def GET_request(request):
     # http://127.0.0.1:8000/service/author/{author_id}/followers
     elif path[-1] == 'followers': #done
         response = all_followers(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
-    elif path[-2] == 'followers': #done
-        response = check_follower(path[-3],path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts
-    elif path[-1] == 'posts':
-        response = all_posts(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
-    elif path[-2] == 'posts':
-        response = get_specific_post(path[-3], path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
-    elif path[-3] == 'posts' and path[-1] == 'comments':
-        response = get_comments(Post.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
-    elif path[-4] == 'posts' and path[-2] == 'comments':
-        response = comment_to_json(Comment.objects.get(id=path[-1]))
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
-    elif path[-3] == 'posts' and path[-1] == 'image':
-        response = get_image(path[-4], path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
-    elif path[-3] == 'posts' and path[-1] == 'likes':
-        response = get_likes(Post.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/liked
-    elif path[-1] == 'liked':
-        response = get_likes_post(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
-    elif path[-3] == 'comments' and path[-1] == 'likes':
-        response = get_likes_comments(Comment.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/inbox
-    elif path[-1] == 'inbox':
-        response = get_inbox(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
+    # elif path[-2] == 'followers': #done
+    #     response = check_follower(path[-3],path[-1])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts
+    # elif path[-1] == 'posts':
+    #     response = all_posts(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
+    # elif path[-2] == 'posts':
+    #     response = get_specific_post(path[-3], path[-1])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
+    # elif path[-3] == 'posts' and path[-1] == 'comments':
+    #     response = get_comments(Post.objects.get(id=path[-2]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
+    # elif path[-4] == 'posts' and path[-2] == 'comments':
+    #     response = comment_to_json(Comment.objects.get(id=path[-1]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
+    # elif path[-3] == 'posts' and path[-1] == 'image':
+    #     response = get_image(path[-4], path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
+    # elif path[-3] == 'posts' and path[-1] == 'likes':
+    #     response = get_likes(Post.objects.get(id=path[-2]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/liked
+    # elif path[-1] == 'liked':
+    #     response = get_likes_post(path[-2])
+    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
+    # elif path[-3] == 'comments' and path[-1] == 'likes':
+    #     response = get_likes_comments(Comment.objects.get(id=path[-2]))
+    # # http://127.0.0.1:8000/service/author/{author_id}/inbox
+    # elif path[-1] == 'inbox':
+    #     response = get_inbox(path[-2])
 
 
     return JsonResponse(response)
@@ -400,7 +406,7 @@ def post_new_post(request,path):
         return {'status': 'Error in creating post'}
 
 def post_new_comment(request,path):
-    author=User.objects.get(username=path[-4])
+    author=CustomUser.objects.get(username=path[-4])
     post=Post.objects.get(id=path[-2])
     comment=Comment.objects.create(owner=author,post=post)
     data = json.loads(request.body.decode('utf-8'))
