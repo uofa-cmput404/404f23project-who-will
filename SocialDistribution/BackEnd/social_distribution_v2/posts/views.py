@@ -38,6 +38,7 @@ class PostViewSet(viewsets.ModelViewSet):
         # ('visibility', 'public'),
         #  ('owner', <CustomUser: rayna>)])
         data_dict = serializer.validated_data
+
         transformed_data = {
             "type":"post"
         }
@@ -46,12 +47,13 @@ class PostViewSet(viewsets.ModelViewSet):
         transformed_data["title"] = data_dict["title"] if "title" in data_dict else None
 
         # TODO: id
-        transformed_data["source"] = data_dict["source"] if "source" in data_dict else "https://whoiswill-7ef8b333cade.herokuapp.com/admin/"
-        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else "https://whoiswill-7ef8b333cade.herokuapp.com/admin/"
+        # transformed_data["source"] = data_dict["source"] if "source" in data_dict else ""
+        # transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else ""
         transformed_data["description"] = data_dict["description"] if "description" in data_dict else None
         transformed_data["contentType"] = data_dict["contentType"] if "contentType" in data_dict else "text/plain"
         transformed_data["content"] = data_dict["content"] if "content" in data_dict else None
-        
+        transformed_data["image"] = data_dict["post_image"] if "post_image" in data_dict else None
+
         # author 
         author_val = {
              "type":"author"
@@ -70,24 +72,27 @@ class PostViewSet(viewsets.ModelViewSet):
             author_val["displayName"] = owner.username  # this does not work
             author_val["url"] = "http://127.0.0.1:8000/authors/"+info["id"]
             author_val["github"] =info["github"]
-            author_val["profileImage"] = info["profile_image"]
+            author_val["profileImage"] = info["profile_image"] 
 
-        transformed_data["author"] = author_val
+        # transformed_data["author"] = author_val
+        transformed_data["author"] =  "86c733fa-fd7c-4dc9-9b66-7fdbfa3a9792"
 
         # categories
         transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
 
         # counts
         transformed_data["count"] = len(data_dict["comments"]) if "comments" in data_dict else 0
-
+ 
         # comments
         saved_post = serializer.save(owner=self.request.user)  # return: the new post id
         post_data = serializer.to_representation(saved_post)
         saved_post_id = post_data['id']
         
-        # transformed_data["comments"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id+"/comments"
+        if ("comments" in data_dict) :
+            transformed_data["comments"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id+"/comments" 
+        else:
+            transformed_data["comments"] = None
 
-        transformed_data["comments"] = data_dict["comments"] if "comments" in data_dict else []
         
         # id
         transformed_data["id"] ="http://127.0.0.1:8000/authors/"+ info["id"]+"/posts/"+ saved_post_id
@@ -98,7 +103,7 @@ class PostViewSet(viewsets.ModelViewSet):
         # visibility (*)
         transformed_data["visibility"] = data_dict["visibility"].upper()
 
-        # unlisted
+        # # unlisted
         transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else False # not sure
         
         print("after create")
@@ -108,7 +113,6 @@ class PostViewSet(viewsets.ModelViewSet):
         print("______________________")
         print(json.dumps(transformed_data, indent=4))
         print("______________________")
-
 
         # post_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/posts/"
 
@@ -140,12 +144,13 @@ class PostViewSet(viewsets.ModelViewSet):
         email = "admin@email.com"
         password = "admin"
 
-
         # Get CSRF token
         csrf_response = session.post(
             csrf_token_url, json={'email': email, "password": password})
+        
         print("CSRF Response Status Code:", csrf_response.status_code)
         print("CSRF Response JSON:", csrf_response.json())
+
 
         csrf_token = csrf_response.json().get('csrf_token')
         print("CSRF Token:", csrf_token)
@@ -158,7 +163,10 @@ class PostViewSet(viewsets.ModelViewSet):
         # Login request
         login_response = session.get(login_url, headers=header)
         print("Login Response Status Code:", login_response.status_code)
-
+        print("login response: ", login_response)
+        print("------------transformed data--------------")
+        print(1,transformed_data)
+        print("---------------------------")
         post_response = session.post(post_url, json=transformed_data, headers={
             'X-CSRFToken': csrf_token,
             'Referer': csrf_token_url
@@ -173,9 +181,20 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             # debugging stuff
             print(f"API call failed with status code: {post_response.status_code}")
-            print("Login Response Text:", post_response.text)
-            # Print out the response headers and cookies for debugging
-            print("Response Headers:", post_response.headers)
+
+            print("Login Response Text:")
+            try:
+                login_response_text = json.loads(post_response.text)
+                # print(json.dumps(dict(login_response_text,indent=4)))
+                print("login_response_text",login_response_text)
+            except json.JSONDecodeError:
+                print("Invalid JSON format:", post_response.text)
+
+            # Print response headers for debugging in a readable format
+            print("Response Headers:")
+            # print(json.dumps(dict(post_response.headers), indent=4))
+            print("post_response.headers",post_response.headers)
+
             print("Response Cookies:", len(post_response.cookies))
 
 
@@ -260,11 +279,13 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         # print(local_serializer.data)
         # print(json.dumps(local_serializer.data, indent = 4))
-        refactored_external_api_data = self.get_post_team_good()
-        if refactored_external_api_data != []:
-            combined_data = refactored_external_api_data + local_serializer.data
-        else:
-            combined_data = local_serializer.data
+        
+        # refactored_external_api_data = self.get_post_team_good()
+        # if refactored_external_api_data != []:
+        #     combined_data = refactored_external_api_data + local_serializer.data
+        # else:
+        #     combined_data = local_serializer.data
+        combined_data = local_serializer.data
         
     
         return Response(combined_data)
