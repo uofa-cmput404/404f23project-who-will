@@ -94,7 +94,7 @@ def all_followers(requested_author):
 
 def check_follower(author, follower):
     print("check_follower()")
-    x= all_followers(author)['items']
+    x = all_followers(author)['items']
     for i in x:
         if i['id'].split('/')[-1] == follower:
             return {'following': 'True'}
@@ -263,9 +263,9 @@ def GET_request(request):
     # http://127.0.0.1:8000/service/author/{author_id}/followers
     elif path[-1] == 'followers': #done
         response = all_followers(path[-2])
-    # # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
-    # elif path[-2] == 'followers': #done
-    #     response = check_follower(path[-3],path[-1])
+    # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
+    elif path[-2] == 'followers': #done
+        response = check_follower(path[-3],path[-1])
     # # http://127.0.0.1:8000/service/author/{author_id}/posts
     # elif path[-1] == 'posts':
     #     response = all_posts(path[-2])
