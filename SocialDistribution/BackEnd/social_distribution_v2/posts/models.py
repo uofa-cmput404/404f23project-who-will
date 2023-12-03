@@ -24,12 +24,12 @@ class Post(models.Model):
     post_date_time = models.DateTimeField(default=timezone.now)
     
     title = models.CharField(max_length=3000, default=None, blank=True, null=True)
-    # source = models.CharField(
-    #     max_length=3000, default=None, blank=True, null=True, validators=[validate_url])
-    # origin = models.CharField(
-    #     max_length=3000, default=None, blank=True, null=True,validators=[validate_url])
-    source = models.CharField(max_length=3000, default=None, blank=True, null=True)
-    origin = models.CharField(max_length=3000, default=None, blank=True, null=True)
+    source = models.CharField(
+        max_length=3000, default=None, blank=True, null=True, validators=[validate_url])
+    origin = models.CharField(
+        max_length=3000, default=None, blank=True, null=True,validators=[validate_url])
+    # source = models.CharField(max_length=3000, default=None, blank=True, null=True)
+    # origin = models.CharField(max_length=3000, default=None, blank=True, null=True)
 
     categories = models.ManyToManyField('Categories', blank=True)  # Fix here
     visibility_choices = (("public", "public"), ("private","private"), ("friends only", "friends only"))

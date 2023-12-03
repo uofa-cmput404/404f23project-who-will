@@ -47,8 +47,11 @@ class PostViewSet(viewsets.ModelViewSet):
         transformed_data["title"] = data_dict["title"] if "title" in data_dict else None
 
         # TODO: id
-        # transformed_data["source"] = data_dict["source"] if "source" in data_dict else ""
-        # transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else ""
+        transformed_data["source"] = data_dict["source"] if "source" in data_dict else ""
+        print(transformed_data['source'])
+        transformed_data["origin"] = data_dict["origin"] if "origin" in data_dict else ""
+        print(transformed_data["origin"])
+
         transformed_data["description"] = data_dict["description"] if "description" in data_dict else None
         transformed_data["contentType"] = data_dict["contentType"] if "contentType" in data_dict else "text/plain"
         transformed_data["content"] = data_dict["content"] if "content" in data_dict else None
@@ -65,8 +68,10 @@ class PostViewSet(viewsets.ModelViewSet):
             profile_data = UserProfile.objects.filter(owner=owner) #<QuerySet [<UserProfile: rayna>]>
             serialized_profile = serialize('json', profile_data) 
             profile_json= json.loads(serialized_profile)[0]
+            print("profile json: ", profile_json)
             
             info = profile_json["fields"]  # json
+            print("info: ", )
             author_val["id"] = "http://127.0.0.1:8000/authors/"+info["id"]
             author_val["host"] = "http://127.0.0.1:8000/"
             author_val["displayName"] = owner.username  # this does not work
@@ -75,10 +80,10 @@ class PostViewSet(viewsets.ModelViewSet):
             # author_val["profileImage"] = info["profile_image"] 
             author_val["profileImage"] = "http://www.google.com"
 
-        transformed_data["author"] = author_val
+        # transformed_data["author"] = author_val
 
         # for academy team 
-        # transformed_data["author"] =  "86c733fa-fd7c-4dc9-9b66-7fdbfa3a9792"
+        transformed_data["author"] =  "86c733fa-fd7c-4dc9-9b66-7fdbfa3a9792"
 
         # categories
         transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
@@ -87,6 +92,7 @@ class PostViewSet(viewsets.ModelViewSet):
         transformed_data["count"] = len(data_dict["comments"]) if "comments" in data_dict else 0
  
         # comments
+        # saved_post = serializer.save(owner=self.request.user)  # return: the new post id
         saved_post = serializer.save(owner=self.request.user)  # return: the new post id
         post_data = serializer.to_representation(saved_post)
         saved_post_id = post_data['id']
@@ -111,7 +117,7 @@ class PostViewSet(viewsets.ModelViewSet):
         
         print("after create")
         self.send_post_to_academy_server(transformed_data)
-        self.send_post_to_team_good_server(transformed_data)
+        # self.send_post_to_team_good_server(transformed_data)
 
     def send_post_to_team_good_server(self,transformed_data):
         print("send post to team===good...")
