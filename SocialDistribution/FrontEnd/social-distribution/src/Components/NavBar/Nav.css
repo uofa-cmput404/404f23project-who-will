@@ -20,6 +20,13 @@ button.actionSearch:hover {
     color: #15cdfc;
     background-color: black;
     padding-top: 5px;
-    font-size: 50px;
     height: 35px;
+    /* start animation of logo */
 }
+
+.compName h3 {
+    font-size: 40px;
+    margin: 0;
+}
+
+
