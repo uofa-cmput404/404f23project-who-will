@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser 
 from django.urls import reverse
 import uuid
+from .send_to_foreign import send_data
 DEFAULT_HOST = "http://127.0.0.1:8000/"
 
 
@@ -26,7 +27,14 @@ class CustomUser(AbstractUser):
         super().save(*args, **kwargs)
         # posting the user to other database
         print('after create ----> (in model) ')
-        print(self.username)
+        data = {
+            "username": self.username,
+            "email": self.email,
+            "password": self.password,
+            "id": self.id,
+            "foreign": self.foreign,
+        }
+        send_data(data)
     def get_absolute_url(self):
         return reverse('user_detail', args=[str(self.id)])
 

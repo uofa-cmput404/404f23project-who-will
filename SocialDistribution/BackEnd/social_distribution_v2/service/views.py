@@ -276,8 +276,8 @@ def GET_request(request):
     # elif path[-3] == 'comments' and path[-1] == 'likes':
     #     response = get_likes_comments(Comment.objects.get(id=path[-2]))
     # # http://127.0.0.1:8000/service/author/{author_id}/inbox
-    # elif path[-1] == 'inbox':
-    #     response = get_inbox(path[-2])
+    elif path[-1] == 'inbox':
+        response = get_inbox(path[-2])
 
 
     return JsonResponse(response)

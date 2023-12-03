@@ -30,4 +30,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
         user.set_password(validated_data['password'])
         user.save()
+        print("after create in ser")
         return user
