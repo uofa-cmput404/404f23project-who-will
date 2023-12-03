@@ -36,7 +36,8 @@ const ButtonComponent = styled.button`
     };
     font-family: "Inter", sans-serif;
     font-weight: 500;
-    border: 1px solid transparent;
+    border: 1px solid grey;
+    width: 100px;
     background-color: ${(props) => 
         props.variant === "light"
             ? "#f8f9fa"
@@ -47,11 +48,11 @@ const ButtonComponent = styled.button`
             : props.variant === "secondary"
             ? "#6c757d"
             : props.variant === "success"
-            ? "#198754"
+            ? "#fff"
             : props.variant === "info"
             ? "#0dcaf0"
             : props.variant === "warning"
-            ? "#ffc107"
+            ? "#fff"
             : props.variant === "danger"
             ? "#dc3545"
             : "f8f9fa"
