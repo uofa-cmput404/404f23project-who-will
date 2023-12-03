@@ -6,10 +6,11 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
+        ("posts", "0001_initial"),
+        ("user_profile", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('posts', '0001_initial'),
         ('user_profile', '0001_initial'),
@@ -18,18 +19,30 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='comment',
-            name='comment_inbox',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='inbox', to='user_profile.userprofile'),
+            model_name="comment",
+            name="comment_inbox",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="inbox",
+                to="user_profile.userprofile",
+            ),
         ),
         migrations.AddField(
-            model_name='comment',
-            name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="comment",
+            name="owner",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
-            model_name='comment',
-            name='post',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='posts.post'),
+            model_name="comment",
+            name="post",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="posts.post",
+            ),
         ),
     ]

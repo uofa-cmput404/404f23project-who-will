@@ -140,7 +140,7 @@ class GetRequestersView(APIView):
     def get(self, request):
         pk = request.GET.get('id', '')
         pk = uuid.UUID(pk, version=4)
-        user_profile = UserProfile.objects.filter(id=pk)
+        user_profile = UserProfile.objects.all().filter(owner=pk)
         print(user_profile[0])
         requests = user_profile[0].follow_requests.all()
         following = user_profile[0].following.all()
@@ -152,7 +152,7 @@ class GetFriendsView(APIView):
     def get(self, request):
         pk = request.GET.get('id', '')
         pk = uuid.UUID(pk, version=4)
-        user_profile = UserProfile.objects.filter(id=pk)
+        user_profile = UserProfile.objects.filter(owner=pk)
         requests = user_profile[0].follow_requests.all()
         following = user_profile[0].following.all()
         profiles =  requests.intersection(following)
