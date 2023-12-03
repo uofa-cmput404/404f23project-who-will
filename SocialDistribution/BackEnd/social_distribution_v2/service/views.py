@@ -47,295 +47,337 @@ def works(request):
 
 def author_to_json(user, user_profile):
     print("author_to_json()")
-    return {
-        "type": "author",
-        "id": f"{OUR_URL}/service/author/{user.id}",
-        "url": f"{OUR_URL}/service/author/{user.id}",
-        "host": OUR_URL,
-        "displayName": f"{user.username}",
-        "github": user_profile.github,
-        "profileImage": user_profile.profile_image
-    }
+    try:
+        return {
+            "type": "author",
+            "id": f"{OUR_URL}/service/author/{user.id}",
+            "url": f"{OUR_URL}/service/author/{user.id}",
+            "host": OUR_URL,
+            "displayName": f"{user.username}",
+            "github": user_profile.github,
+            "profileImage": user_profile.profile_image
+        }
+    except:
+        return {'status': 'error'}
 
 def all_authors():
     print("all_authors()")
-    response = {'type': 'author', 'items': []}
-    # print("all_authors()\n")
-    for user in CustomUser.objects.all():
-        user_profile = UserProfile.objects.get(owner=user.id)
-        response['items'].append(author_to_json(user, user_profile))
-    return response
+    try:
+        response = {'type': 'author', 'items': []}
+        # print("all_authors()\n")
+        for user in CustomUser.objects.all():
+            user_profile = UserProfile.objects.get(owner=user.id)
+            response['items'].append(author_to_json(user, user_profile))
+        return response
+    except:
+        return {'status': 'error'}
 
 def specific_author(requested_author):
     print("specific_author()")
-    user_with_username = CustomUser.objects.get(user_id=requested_author)
-    user_profile = UserProfile.objects.get(owner=user_with_username)
-    response = author_to_json(user_with_username, user_profile)
-    return response
+    try:
+        user_with_username = CustomUser.objects.get(user_id=requested_author)
+        user_profile = UserProfile.objects.get(owner=user_with_username)
+        response = author_to_json(user_with_username, user_profile)
+        return response
+    except:
+        return {'status': 'error'}
 
 def all_followers(requested_author):
     print("all_followers()")
-    user_with_username = CustomUser.objects.get(id=requested_author)
-    user_profile = UserProfile.objects.get(owner=user_with_username)
-    response = {'type': 'followers', 'items': []}
-    followers = []
-    all_user_profiles = UserProfile.objects.all()
-    for profile in all_user_profiles:
-        for i in profile.following.all():
-            if str(i.id) == str(requested_author):
-                followers.append(str(profile))
-    proper_followers = []
-    for i in followers:
-        x=CustomUser.objects.get(username=i)
-        y = UserProfile.objects.get(owner=x)
-        proper_followers.append(author_to_json(x, y))
-    response['items'] = proper_followers
-    return response
+    try:
+        user_with_username = CustomUser.objects.get(id=requested_author)
+        user_profile = UserProfile.objects.get(owner=user_with_username)
+        response = {'type': 'followers', 'items': []}
+        followers = []
+        all_user_profiles = UserProfile.objects.all()
+        for profile in all_user_profiles:
+            for i in profile.following.all():
+                if str(i.id) == str(requested_author):
+                    followers.append(str(profile))
+        proper_followers = []
+        for i in followers:
+            x=CustomUser.objects.get(username=i)
+            y = UserProfile.objects.get(owner=x)
+            proper_followers.append(author_to_json(x, y))
+        response['items'] = proper_followers
+        return response
+    except:
+        return {'status': 'error'}
 
 def check_follower(author, follower):
     print("check_follower()")
-    x = all_followers(author)['items']
-    for i in x:
-        if i['id'].split('/')[-1] == follower:
-            return {'following': 'True'}
-    return {'following': 'False'}
+    try:
+        x = all_followers(author)['items']
+        for i in x:
+            if i['id'].split('/')[-1] == follower:
+                return {'following': 'True'}
+        return {'following': 'False'}
+    except:
+        return {'status': 'error'}
 
 def comment_to_json(comment):
     print("comment_to_json()")
-    id_string=OUR_URL+"/service/author/"+str(comment.owner.id)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
-    response = {
-        "type":"comment",
-        "author":author_to_json(comment.owner, UserProfile.objects.get(owner=comment.owner)),
-        "comment":comment.comment,
-        "contentType":"text/markdown",
-        "published":comment.post_date_time,
-        "id": id_string
-    }
-    return response
+    try:
+        id_string=OUR_URL+"/service/author/"+str(comment.owner.id)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
+        response = {
+            "type":"comment",
+            "author":author_to_json(comment.owner, UserProfile.objects.get(owner=comment.owner)),
+            "comment":comment.comment,
+            "contentType":"text/markdown",
+            "published":comment.post_date_time,
+            "id": id_string
+        }
+        return response
+    except:
+        return {'status': 'error'}
 
 def get_comments(post):
     print("get_comments()")
-    id_string=OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)
-    response = { 
-        "type":"comments",
-        "page":1,
-        "size":0,
-        "post":id_string,
-        "id":id_string,
-        "comments":[],
-    }
-    for comment in Comment.objects.all():
-        if str(comment.post) == str(post.id):
-            response['comments'].append(comment_to_json(comment))
-    response['size'] = len(response['comments'])
-    return response
+    try:
+        id_string=OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)
+        response = { 
+            "type":"comments",
+            "page":1,
+            "size":0,
+            "post":id_string,
+            "id":id_string,
+            "comments":[],
+        }
+        for comment in Comment.objects.all():
+            if str(comment.post) == str(post.id):
+                response['comments'].append(comment_to_json(comment))
+        response['size'] = len(response['comments'])
+        return response
+    except:
+        return {'status': 'error'}
 
 def post_to_json(post): 
     print("post_to_json()")
-    id_string=OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)
-    comment_string =OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)+"/comments"
-    response = {
-        "type":"post",
-        "title":post.title,
-        "id": id_string,
-        "source":post.source,
-        "origin":post.origin,
-        "description":post.description,
-        "contentType":"text/plain",
-        "content":post.content,
-        "author":author_to_json(post.owner, UserProfile.objects.get(owner=post.owner)),
-        # "categories": [category.category for category in post.category_part.all()]
-        "count": 0, 
-        "comments":comment_string,
-        "commentsSrc": get_comments(post),
-        "published":post.post_date_time,
-        "visibility":post.visibility,
-        "unlisted": post.post_image
-    }
-    response['count'] = len(response['commentsSrc']['comments'])
-    return response
+    try:
+        id_string=OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)
+        comment_string =OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)+"/comments"
+        response = {
+            "type":"post",
+            "title":post.title,
+            "id": id_string,
+            "source":post.source,
+            "origin":post.origin,
+            "description":post.description,
+            "contentType":"text/plain",
+            "content":post.content,
+            "author":author_to_json(post.owner, UserProfile.objects.get(owner=post.owner)),
+            # "categories": [category.category for category in post.category_part.all()]
+            "count": 0, 
+            "comments":comment_string,
+            "commentsSrc": get_comments(post),
+            "published":post.post_date_time,
+            "visibility":post.visibility,
+            "unlisted": post.post_image
+        }
+        response['count'] = len(response['commentsSrc']['comments'])
+        return response
+    except:
+        return {'status': 'error'}
 
 def get_specific_post(requested_author, requested_post):
     print("get_specific_post()")
-    post = Post.objects.get(id=requested_post)
-    user = CustomUser.objects.get(id=requested_author)
-    if str(post.owner) == str(user):
-        response = {'type': 'single post', 'post': post_to_json(post)}
+    try:
+        post = Post.objects.get(id=requested_post)
+        user = CustomUser.objects.get(id=requested_author)
+        if str(post.owner) == str(user):
+            response = {'type': 'single post', 'post': post_to_json(post)}
 
-    return response
+        return response
+    except:
+        return {'status': 'error'}
 
 def all_posts(requested_author):
     print("all_posts()")
-    user = CustomUser.objects.get(id=requested_author)
-    all_posts = Post.objects.all()
-    response = {'type': 'all posts', 'items': []}
-    for post in all_posts:
-        if str(post.owner) == str(user):
-            response['items'].append(post_to_json(post))
-    return response
+    try:
+        user = CustomUser.objects.get(id=requested_author)
+        all_posts = Post.objects.all()
+        response = {'type': 'all posts', 'items': []}
+        for post in all_posts:
+            if str(post.owner) == str(user):
+                response['items'].append(post_to_json(post))
+        return response
+    except:
+        return {'status': 'error'}
     
 def get_image(requested_author, requested_post):
     print("get_image()")
-    post = Post.objects.get(id=requested_post)
-    if str(post.owner.id) == str(requested_author):
-        if post.post_image == None:
-            return {'image': 'no image'}
-        return {'image': post.post_image}
+    try:
+        post = Post.objects.get(id=requested_post)
+        if str(post.owner.id) == str(requested_author):
+            if post.post_image == None:
+                return {'image': 'no image'}
+            return {'image': post.post_image}
+    except:
+        return {'status': 'error'}
+
 
 def get_likes_post(post):
     print("get_likes_post()")
-    all_likes = Vote.objects.all()
-    post_name = post.title
-    post_owner = post.owner
-    summary = "Likes for " + str(post_name) + " by " + str(post_owner)
-    object_string= OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
-    response = {
-        'type': 'likes',
-        'summary': summary,
-        'count': 0,
-        'items': [],
-        'object': object_string
-    }
-    for like in all_likes:
-        if like.post == post:
-            response['items'].append(author_to_json(like.up_vote_by, UserProfile.objects.get(owner=like.up_vote_by)))
-    response['count'] = len(response['items'])
-    return response
+    try:
+        all_likes = Vote.objects.all()
+        post_name = post.title
+        post_owner = post.owner
+        summary = "Likes for " + str(post_name) + " by " + str(post_owner)
+        object_string= OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
+        response = {
+            'type': 'likes',
+            'summary': summary,
+            'count': 0,
+            'items': [],
+            'object': object_string
+        }
+        for like in all_likes:
+            if like.post == post:
+                response['items'].append(author_to_json(like.up_vote_by, UserProfile.objects.get(owner=like.up_vote_by)))
+        response['count'] = len(response['items'])
+        return response
+    except:
+        return {'status': 'error'}
 
 def get_likes_comments(comment):
     print("get_likes_comments()")
-    all_likes = Vote.objects.all()
-    comment_name = comment.comment
-    comment_owner = comment.owner
-    summary = "Likes for " + str(comment_name) + " by " + str(comment_owner)
-    object_string= OUR_URL+"/service/author/"+str(comment.owner)+"/posts/"+str(comment.id)
-    response = {
-        'type': 'likes',
-        'summary': summary,
-        'count': 0,
-        'items': [],
-        'object': object_string
-    }
-    for like in all_likes:
-        if like.comment == comment:
-            response['items'].append(author_to_json(like.up_vote_by, UserProfile.objects.get(owner=like.up_vote_by)))
-    response['count'] = len(response['items'])
-    return response
+    try:
+        all_likes = Vote.objects.all()
+        comment_name = comment.comment
+        comment_owner = comment.owner
+        summary = "Likes for " + str(comment_name) + " by " + str(comment_owner)
+        object_string= OUR_URL+"/service/author/"+str(comment.owner)+"/posts/"+str(comment.id)
+        response = {
+            'type': 'likes',
+            'summary': summary,
+            'count': 0,
+            'items': [],
+            'object': object_string
+        }
+        for like in all_likes:
+            if like.comment == comment:
+                response['items'].append(author_to_json(like.up_vote_by, UserProfile.objects.get(owner=like.up_vote_by)))
+        response['count'] = len(response['items'])
+        return response
+    except:
+        return {'status': 'error'}
 
 def get_liked(requested_author):
     print("get_liked()")
-    response = {'type': 'liked', 'items': []}
-    all_likes = Vote.objects.all()
-    for like in all_likes:
-        if like.up_vote_by.username == requested_author:
-            response['items'].append(post_to_json(like.post))
-    return response
+    try:
+        response = {'type': 'liked', 'items': []}
+        all_likes = Vote.objects.all()
+        for like in all_likes:
+            if like.up_vote_by.username == requested_author:
+                response['items'].append(post_to_json(like.post))
+        return response
+    except:
+        return {'status': 'error'}
 
 def get_inbox(requested_author):
     print("get_inbox()")
-    user_with_username = CustomUser.objects.get(id=requested_author)
-    author_profile = UserProfile.objects.get(owner=user_with_username)
-    response = {
-        "type": "inbox",
-        "author": f"{OUR_URL}/service/author/{requested_author}",
-        "items": []
-    }
-    posts = Post.objects.filter(message_to=author_profile)
-    for post in posts:
-        response['items'].append(post_to_json(post))
-    return response
+    try:
+        user_with_username = CustomUser.objects.get(id=requested_author)
+        author_profile = UserProfile.objects.get(owner=user_with_username)
+        response = {
+            "type": "inbox",
+            "author": f"{OUR_URL}/service/author/{requested_author}",
+            "items": []
+        }
+        posts = Post.objects.filter(message_to=author_profile)
+        for post in posts:
+            response['items'].append(post_to_json(post))
+        return response
+    except:
+        return {'status': 'error'}  
 
 def get_all_liked(requested_author):
     print("get_all_liked()")
-    user_with_username = CustomUser.objects.get(id=requested_author)
-    print(1,user_with_username)
-    author_profile = UserProfile.objects.get(owner=user_with_username)
-    print(2,author_profile)
-    response = {
-        "type": "liked",
-        "items": []
-    }
-    liked = Vote.objects.filter(up_vote_by=user_with_username)
-    print(3,liked)
-    # # user= User.objects.get(username=str(user_with_username))
-    # user = User.objects.all()
-    # print(3,user)
-
-    print(list(liked))
-    for i in liked:
-        if i.post:
-            object_string= OUR_URL+"/service/author/"+str(i.post.owner)+"/posts/"+str(i.post.id)
-            small_response = {
-                "@context": "Liked",
-                "summary": "Like for post",
-                "author": author_to_json(i.up_vote_by, UserProfile.objects.get(owner=i.up_vote_by)),
-                "object": object_string,
-            }
-            response['items'].append(small_response)
-        elif i.comment:
-            object_string= OUR_URL+"/service/author/"+str(i.comment.owner)+"/posts/"+str(i.comment.post.id)+"/comments/"+str(i.comment.id)
-            small_response = {
-                "@context": "Liked",
-                "summary": "Like for comment",
-                "author": author_to_json(i.up_vote_by, UserProfile.objects.get(owner=i.up_vote_by)),
-                "object": object_string,
-            }
-            response['items'].append(small_response)
-    return response
+    try:
+        user_with_username = CustomUser.objects.get(id=requested_author)
+        author_profile = UserProfile.objects.get(owner=user_with_username)
+        response = {
+            "type": "liked",
+            "items": []
+        }
+        liked = Vote.objects.filter(up_vote_by=user_with_username)
+        for i in liked:
+            if i.post:
+                object_string= OUR_URL+"/service/author/"+str(i.post.owner)+"/posts/"+str(i.post.id)
+                small_response = {
+                    "@context": "Liked",
+                    "summary": "Like for post",
+                    "author": author_to_json(i.up_vote_by, UserProfile.objects.get(owner=i.up_vote_by)),
+                    "object": object_string,
+                }
+                response['items'].append(small_response)
+            elif i.comment:
+                object_string= OUR_URL+"/service/author/"+str(i.comment.owner)+"/posts/"+str(i.comment.post.id)+"/comments/"+str(i.comment.id)
+                small_response = {
+                    "@context": "Liked",
+                    "summary": "Like for comment",
+                    "author": author_to_json(i.up_vote_by, UserProfile.objects.get(owner=i.up_vote_by)),
+                    "object": object_string,
+                }
+                response['items'].append(small_response)
+        return response
+    except:
+        return {'status': 'error'}
 
 
 def GET_request(request):
     print("GET_request()")
-    # print(request.path)
-    print("split: ", request.path.split('/'))
-    response = {'status': 'error'}  # Set a default value for response
-    path = request.path.split('/')
-    for i in path:
-        if i == '':
-            path.remove(i)
-    print(path)
-    # http://127.0.0.1:8000/service/author
-    if path[-1] == 'authors':
-        response = all_authors()
-    # http://127.0.0.1:8000/service/author/{author_id}/
-    elif path[-2] == 'authors': 
-        response = specific_author(path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/followers
-    elif path[-1] == 'followers': #done
-        response = all_followers(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
-    elif path[-2] == 'followers': #done
-        response = check_follower(path[-3],path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts
-    elif path[-1] == 'posts':
-        response = all_posts(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
-    elif path[-2] == 'posts':
-        response = get_specific_post(path[-3], path[-1])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
-    elif path[-3] == 'posts' and path[-1] == 'comments':
-        response = get_comments(Post.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
-    elif path[-4] == 'posts' and path[-2] == 'comments':
-        print("getting comment")
-        response = comment_to_json(Comment.objects.get(id=path[-1]))
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
-    elif path[-3] == 'posts' and path[-1] == 'image':
-        response = get_image(path[-4], path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
-    elif path[-3] == 'posts' and path[-1] == 'likes':
-        print("getting likes")
-        response = get_likes_post(Post.objects.get(id=path[-2]))
-    # http://127.0.0.1:8000/service/author/{author_id}/liked
-    elif path[-1] == 'liked':
-        response = get_all_liked(path[-2])
-    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
-    elif path[-3] == 'comments' and path[-1] == 'likes':
-        response = get_likes_comments(Comment.objects.get(id=path[-2]))
-    # # http://127.0.0.1:8000/service/author/{author_id}/inbox
-    # elif path[-1] == 'inbox':
-    #     response = get_inbox(path[-2])
-
+    try:
+        # print(request.path)
+        response = {'status': 'error'}  # Set a default value for response
+        path = request.path.split('/')
+        for i in path:
+            if i == '':
+                path.remove(i)
+        print(path)
+        # http://127.0.0.1:8000/service/author
+        if path[-1] == 'authors':
+            response = all_authors()
+        # http://127.0.0.1:8000/service/author/{author_id}/
+        elif path[-2] == 'authors': 
+            response = specific_author(path[-1])
+        # http://127.0.0.1:8000/service/author/{author_id}/followers
+        elif path[-1] == 'followers': #done
+            response = all_followers(path[-2])
+        # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
+        elif path[-2] == 'followers': #done
+            response = check_follower(path[-3],path[-1])
+        # http://127.0.0.1:8000/service/author/{author_id}/posts
+        elif path[-1] == 'posts':
+            response = all_posts(path[-2])
+        # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
+        elif path[-2] == 'posts':
+            response = get_specific_post(path[-3], path[-1])
+        # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
+        elif path[-3] == 'posts' and path[-1] == 'comments':
+            response = get_comments(Post.objects.get(id=path[-2]))
+        # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
+        elif path[-4] == 'posts' and path[-2] == 'comments':
+            print("getting comment")
+            response = comment_to_json(Comment.objects.get(id=path[-1]))
+        # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
+        elif path[-3] == 'posts' and path[-1] == 'image':
+            response = get_image(path[-4], path[-2])
+        # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
+        elif path[-3] == 'posts' and path[-1] == 'likes':
+            print("getting likes")
+            response = get_likes_post(Post.objects.get(id=path[-2]))
+        # http://127.0.0.1:8000/service/author/{author_id}/liked
+        elif path[-1] == 'liked':
+            response = get_all_liked(path[-2])
+        # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
+        elif path[-3] == 'comments' and path[-1] == 'likes':
+            response = get_likes_comments(Comment.objects.get(id=path[-2]))
+        # # http://127.0.0.1:8000/service/author/{author_id}/inbox
+        # elif path[-1] == 'inbox':
+        #     response = get_inbox(path[-2])
+    except:
+        response = {'status': 'error'}
 
     return JsonResponse(response)
 
