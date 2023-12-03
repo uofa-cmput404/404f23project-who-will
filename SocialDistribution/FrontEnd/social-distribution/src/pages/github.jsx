@@ -3,7 +3,6 @@ import "./homepage.css"; // use css style
 import { useState, useEffect } from 'react';
 
 
-
 function Github({username}) {
     const [activity, setActivity] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);

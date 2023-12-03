@@ -185,6 +185,7 @@
         "sidebar-left content sidebar-right"
         "footer-left footer-center footer-right";
     grid-template-columns: 2fr 8fr 2fr;
+    margin-top: 20px;
 }
 
 .username {
@@ -199,6 +200,11 @@
     flex-direction: column;
     align-items: center; 
     grid-area: content;
+}
+
+.post-box > p {
+    margin-left: 20px;
+    
 }
 
 .post-box{
@@ -284,5 +290,5 @@
 #date-posted {
     font-size: small;
     margin-top: 0px;
-    margin-bottom: 2px;
+    margin-bottom: 10px;
 }

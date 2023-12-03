@@ -22,6 +22,8 @@ const Container = styled.div`
   display: flex;
 `;
 
+// old sidebar: background-color: #3b3939;
+
 const SideBar = styled.div`
   width: 15%;
   height: 100vh;
@@ -29,7 +31,9 @@ const SideBar = styled.div`
   text-align: center;
   align-items: baseline;
   justify-content: center;
-  background-color: #3b3939;
+  background: radial-gradient(circle, rgb(255, 255, 255) 0%, rgb(21, 205, 252) 100%);
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
   flex-direction: row;
   /* select all children to give margin */
   & > * {
