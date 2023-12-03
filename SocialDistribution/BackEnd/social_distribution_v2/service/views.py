@@ -102,7 +102,7 @@ def check_follower(author, follower):
 
 def comment_to_json(comment):
     print("comment_to_json()")
-    id_string=OUR_URL+"/service/author/"+str(comment.owner)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
+    id_string=OUR_URL+"/service/author/"+str(comment.owner.id)+"/posts/"+str(comment.post.id)+"/comments/"+str(comment.id)
     response = {
         "type":"comment",
         "author":author_to_json(comment.owner, UserProfile.objects.get(owner=comment.owner)),
@@ -115,7 +115,7 @@ def comment_to_json(comment):
 
 def get_comments(post):
     print("get_comments()")
-    id_string=OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
+    id_string=OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)
     response = { 
         "type":"comments",
         "page":1,
@@ -132,8 +132,8 @@ def get_comments(post):
 
 def post_to_json(post): 
     print("post_to_json()")
-    id_string=OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)
-    comment_string =OUR_URL+"/service/author/"+str(post.owner)+"/posts/"+str(post.id)+"/comments"
+    id_string=OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)
+    comment_string =OUR_URL+"/service/author/"+str(post.owner.id)+"/posts/"+str(post.id)+"/comments"
     response = {
         "type":"post",
         "title":post.title,
@@ -158,31 +158,32 @@ def post_to_json(post):
 def get_specific_post(requested_author, requested_post):
     print("get_specific_post()")
     post = Post.objects.get(id=requested_post)
-    if str(post.owner) == str(requested_author):
+    user = CustomUser.objects.get(id=requested_author)
+    if str(post.owner) == str(user):
         response = {'type': 'single post', 'post': post_to_json(post)}
 
     return response
 
 def all_posts(requested_author):
     print("all_posts()")
+    user = CustomUser.objects.get(id=requested_author)
     all_posts = Post.objects.all()
     response = {'type': 'all posts', 'items': []}
     for post in all_posts:
-        if str(post.owner) == str(requested_author):
+        if str(post.owner) == str(user):
             response['items'].append(post_to_json(post))
     return response
     
 def get_image(requested_author, requested_post):
     print("get_image()")
     post = Post.objects.get(id=requested_post)
-    if str(post.owner) == str(requested_author):
+    if str(post.owner.id) == str(requested_author):
         if post.post_image == None:
             return {'image': 'no image'}
         return {'image': post.post_image}
 
 def get_likes_post(post):
     print("get_likes_post()")
-    print(post)
     all_likes = Vote.objects.all()
     post_name = post.title
     post_owner = post.owner
@@ -244,6 +245,7 @@ def get_inbox(requested_author):
         response['items'].append(post_to_json(post))
     return response
 
+
 def GET_request(request):
     print("GET_request()")
     # print(request.path)
@@ -266,30 +268,32 @@ def GET_request(request):
     # http://127.0.0.1:8000/service/author/{author_id}/followers/{author_id_2}
     elif path[-2] == 'followers': #done
         response = check_follower(path[-3],path[-1])
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts
-    # elif path[-1] == 'posts':
-    #     response = all_posts(path[-2])
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
-    # elif path[-2] == 'posts':
-    #     response = get_specific_post(path[-3], path[-1])
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
-    # elif path[-3] == 'posts' and path[-1] == 'comments':
-    #     response = get_comments(Post.objects.get(id=path[-2]))
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
-    # elif path[-4] == 'posts' and path[-2] == 'comments':
-    #     response = comment_to_json(Comment.objects.get(id=path[-1]))
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
-    # elif path[-3] == 'posts' and path[-1] == 'image':
-    #     response = get_image(path[-4], path[-2])
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
-    # elif path[-3] == 'posts' and path[-1] == 'likes':
-    #     response = get_likes(Post.objects.get(id=path[-2]))
+    # http://127.0.0.1:8000/service/author/{author_id}/posts
+    elif path[-1] == 'posts':
+        response = all_posts(path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}
+    elif path[-2] == 'posts':
+        response = get_specific_post(path[-3], path[-1])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments
+    elif path[-3] == 'posts' and path[-1] == 'comments':
+        response = get_comments(Post.objects.get(id=path[-2]))
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}
+    elif path[-4] == 'posts' and path[-2] == 'comments':
+        print("getting comment")
+        response = comment_to_json(Comment.objects.get(id=path[-1]))
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/image
+    elif path[-3] == 'posts' and path[-1] == 'image':
+        response = get_image(path[-4], path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/likes
+    elif path[-3] == 'posts' and path[-1] == 'likes':
+        print("getting likes")
+        response = get_likes_post(Post.objects.get(id=path[-2]))
     # # http://127.0.0.1:8000/service/author/{author_id}/liked
     # elif path[-1] == 'liked':
     #     response = get_likes_post(path[-2])
-    # # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
-    # elif path[-3] == 'comments' and path[-1] == 'likes':
-    #     response = get_likes_comments(Comment.objects.get(id=path[-2]))
+    # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
+    elif path[-3] == 'comments' and path[-1] == 'likes':
+        response = get_likes_comments(Comment.objects.get(id=path[-2]))
     # # http://127.0.0.1:8000/service/author/{author_id}/inbox
     # elif path[-1] == 'inbox':
     #     response = get_inbox(path[-2])

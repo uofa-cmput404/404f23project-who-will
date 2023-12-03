@@ -13,7 +13,12 @@ class Vote(models.Model):
     # inbox_to = models.ForeignKey(UserProfile, related_name='inbox', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.post.content
+        if self.post:
+            return str(self.post.id)
+        elif self.comment:
+            return str(self.comment.id)
+        else:
+            return "Vote without post or comment"
     
     # def get_absolute_url(self):
     #     return reverse('vote_detail', args=[str(self.id)])
