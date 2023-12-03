@@ -18,7 +18,7 @@ from django.urls import path
 from django.urls.conf import include
 from django.conf import settings
 from django.conf.urls.static import static
-from user_profile.views import GetRequestersView
+from user_profile.views import GetRequestersView, GetFriendsView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -49,5 +49,6 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('service/', include('service.urls')),
     path('api/get_requesters/', GetRequestersView.as_view(), name='get_requesters'),
+    path('api/get_friends/', GetFriendsView.as_view(), name='get_friends'),
 ]
 urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
