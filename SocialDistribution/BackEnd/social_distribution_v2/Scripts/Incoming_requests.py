@@ -3,15 +3,15 @@ import requests
 #type
 #classification = "post"
 #classification = "author"
-classification = "like"
-#classification = "comment
+#classification = "like"
+classification = "comment"
 #classification = "edit_post"
 
 if classification == "post":
     data = {
         "type":"post",
         "title":"A post title about a post about web dev",
-        "id":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/4eb224d9-ce3c-4b8b-ae24-7fdfef4a2e90/",
+        "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/19207d1b-7f7e-432a-a799-6ab970e61fb9/",
         "source":"http://lastplaceigotthisfrom.com/posts/yyyyy",
         "origin":"http://whereitcamefrom.com/posts/zzzzz",
         "description":"This post discusses stuff -- brief",
@@ -19,7 +19,7 @@ if classification == "post":
         "content":"TEST Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
         "author":{
             "type":"author",
-            "id":"http://127.0.0.1:5454/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d",
+            "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
             "host":"http://127.0.0.1:5454/",
             "displayName":"Lara Croft",
             "url":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
@@ -66,14 +66,14 @@ if classification == "like":
         "type": "Like",
         "author":{
             "type":"author",
-            "id":"http://127.0.0.1:5454/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d",
+            "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
             "host":"http://127.0.0.1:5454/",
             "displayName":"Lara Croft",
-            "url":"http://127.0.0.1:5454/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d",
+            "url":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
             "github":"http://github.com/laracroft",
             "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
         },
-        "object":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/4eb224d9-ce3c-4b8b-ae24-7fdfef4a2e90"
+        "object":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/19207d1b-7f7e-432a-a799-6ab970e61fb9"
     }
 
 if classification == "edit_post":
@@ -131,10 +131,10 @@ if classification == "edit_post":
 if classification == "author":
     data = {
         "type":"author",
-        "id":"http://127.0.0.1:5454/authors/eed0ec23-267a-49f2-88d5-73b75d2baeb3",
+        "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
         "host":"http://127.0.0.1:5454/",
-        "displayName":"blud",
-        "url":"http://127.0.0.1:5454/authors/eed0ec23-267a-49f2-88d5-73b75d2baeb3",
+        "displayName":"Frank IS",
+        "url":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
         "github": "http://github.com/laracroft",
         "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
     }
@@ -144,8 +144,8 @@ if classification == "comment":
     "type":"comment",
     "author":{
         "type":"author",
-        "id":"http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
-        "url":"http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
+        "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
+        "url":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
         "host":"http://127.0.0.1:5454/",
         "displayName":"Greg Johnson",
         "github": "http://github.com/gjohnson",
@@ -154,7 +154,7 @@ if classification == "comment":
     "comment":"Sick Olde English",
     "contentType":"text/markdown",
     "published":"2015-03-09T13:07:04+00:00",
-    "id":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+    "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/16f679e9-5d69-4879-b6a7-a174e97bfcbb/comments/dcc59509-ac8e-4072-bddd-20f6ddd7b4be",
 }
 
 #action
@@ -164,21 +164,21 @@ test = "post"
 if test == "post":
     if classification == "post":
         #url = "http://127.0.0.1:8000/service/authors/admin/posts/"  # url handle who they are wanting to follow
-        url = "http://127.0.0.1:8000/service/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d/posts/"
+        url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/"
     elif classification == "edit_post":
         url = "http://127.0.0.1:8000/service/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d/posts/4eb224d9-ce3c-4b8b-ae24-7fdfef4a2e90"
     elif classification == "author":
-        url = "http://127.0.0.1:8000/service/authors/eed0ec23-267a-49f2-88d5-73b75d2baeb3"
+        url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9"
     elif classification == "like":
-        url = "http://127.0.0.1:8000/service/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d/inbox/"
+        url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9/inbox/"
     elif classification == "comment":
-        url = "http://127.0.0.1:8000/service/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d/posts/4eb224d9-ce3c-4b8b-ae24-7fdfef4a2e90/comments"
+        url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/16f679e9-5d69-4879-b6a7-a174e97bfcbb/comments"
 
     response = requests.post(url, json=data)
 
 
 elif test == "delete":
-    url = "http://127.0.0.1:8000/service/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d/posts/494b3b7a-b5ff-418d-98a5-119814a4661c"
+    url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/19207d1b-7f7e-432a-a799-6ab970e61fb9"
     response = requests.delete(url)
 
 elif test == "patch":
