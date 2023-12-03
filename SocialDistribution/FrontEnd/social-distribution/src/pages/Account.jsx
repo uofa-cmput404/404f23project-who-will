@@ -164,7 +164,6 @@ class Account extends Component {
         // And we want to remove viewedProfileUserID from the "following" field in /profiles/loggedInUsersID
 
         // IMPRORTANT: profileID NEEDS to equal userID or else everything will break
-        
         // works, but is very slow changing the buttons, w/e
 
         if(authToken) {
@@ -249,15 +248,17 @@ class Account extends Component {
             this.setState({ error: "Error loading user data" });
         });
     }
-      
+
+    
+  
     checkParams(){
         const queryParams = new URLSearchParams(window.location.search);
         const passedData = Object.fromEntries(queryParams.entries());
         this.state.viewedProfileUserID = Object.keys(passedData)[0];
-        console.log("__+++++++++++++++++++++++")
-        console.log(this.state.viewedProfileUserID);  // undefiend
-        console.log(this.state.ownerID);
-        console.log("__+++++++++++++++++++++++")
+        //console.log("__+++++++++++++++++++++++")
+        //console.log(this.state.viewedProfileUserID);  // undefiend
+        //console.log(this.state.ownerID);
+        //console.log("__+++++++++++++++++++++++")
 
         if (this.state.viewedProfileUserID === undefined) {
             this.state.isMyAccount = true;
@@ -285,8 +286,37 @@ class Account extends Component {
         
     }
 
+    getViewedUsername = async () => {
+        const authToken = localStorage.getItem("authToken");
+        const queryParams = new URLSearchParams(window.location.search);
+        const passedData = Object.fromEntries(queryParams.entries());
+        if(isNotEmptyObject(passedData)) {
+            var actualID = Object.keys(passedData)[0];
+            if(authToken) {
+                axios.get(`http://localhost:8000/api/users/${actualID}/`, {
+                headers: {
+                    'Authorization': `Token ${authToken}`,
+                }
+                })
+                .then((res) => {
+                        var data = res.data;
+                        this.vUser = data.username;
+                        console.log(this.vUser);
+                    });
+            }
+            
+        }
+        else {
+            var localUser = localStorage.getItem("username");
+            this.vUser = localUser;
+        }
+
+
+    }
+
     componentDidMount() {
         this.retrievePosts();
+        this.getViewedUsername();
         this.state.ownerID = localStorage.getItem("pk");
         this.interval = setInterval(() => {
             this.retrievePosts();
@@ -308,7 +338,6 @@ class Account extends Component {
     render() {
 
         const queryParams = new URLSearchParams(window.location.search);
-
         const passedData = Object.fromEntries(queryParams.entries());
 
         if (passedData !== this.state.currentPassedData) {
@@ -325,7 +354,6 @@ class Account extends Component {
 
          // Check if we are currently following the viewed page
         // ID OF THE ACCOUNT WE WANT TO FOLLOW
-
         var actualID = Object.keys(passedData)[0];
 
         // This request checks, updates the profile viewed on state change to determine whether we are
@@ -365,6 +393,7 @@ class Account extends Component {
         return (
             <div className="grid">
                 {/*Account Details*/}
+                <div className='usrName'>{this.vUser}'s Profile</div>
                 <div className="profile-picture">
                     <img  src="https://reactjs.org/logo-og.png" alt="Profile" /> {/*temporary image*/}
                 </div>
@@ -415,7 +444,7 @@ class Account extends Component {
                             return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
                         } 
                         else {
-                            console.log("3");
+                            //console.log("3");
                             return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
                         }
                       })
