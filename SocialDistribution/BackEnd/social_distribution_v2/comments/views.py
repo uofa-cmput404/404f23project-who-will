@@ -36,7 +36,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         # contentType
         # published
         # id
-        transformed_data["id"] = "http://127.0.0.1:8000/author/"+author_id+"/posts/"+post_id+"/comments/"+saved_comment_id
+        # transformed_data["id"] = "http://127.0.0.1:8000/author/"+author_id+"/posts/"+post_id+"/comments/"+saved_comment_id
 
     
     # for searching indivisual posts using parameters 
