@@ -72,10 +72,13 @@ class PostViewSet(viewsets.ModelViewSet):
             author_val["displayName"] = owner.username  # this does not work
             author_val["url"] = "http://127.0.0.1:8000/authors/"+info["id"]
             author_val["github"] =info["github"]
-            author_val["profileImage"] = info["profile_image"] 
+            # author_val["profileImage"] = info["profile_image"] 
+            author_val["profileImage"] = "http://www.google.com"
 
-        # transformed_data["author"] = author_val
-        transformed_data["author"] =  "86c733fa-fd7c-4dc9-9b66-7fdbfa3a9792"
+        transformed_data["author"] = author_val
+
+        # for academy team 
+        # transformed_data["author"] =  "86c733fa-fd7c-4dc9-9b66-7fdbfa3a9792"
 
         # categories
         transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
@@ -107,32 +110,40 @@ class PostViewSet(viewsets.ModelViewSet):
         transformed_data["unlisted"] = data_dict["unlisted"] if "unlisted" in data_dict else False # not sure
         
         print("after create")
-        self.send_post_to_server(transformed_data)
-    
-    def send_post_to_server(self, transformed_data): 
+        self.send_post_to_academy_server(transformed_data)
+        self.send_post_to_team_good_server(transformed_data)
+
+    def send_post_to_team_good_server(self,transformed_data):
+        print("send post to team===good...")
         print("______________________")
         print(json.dumps(transformed_data, indent=4))
         print("______________________")
 
-        # post_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/posts/"
+        post_url = "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/service/authors/fa343e15-bdc7-4a3d-8656-ef09b1cd2d37/inbox"
+        
+        username = 'whoiswill'
+        password = 'cmput404'
 
-        # username = "http@gmail.com"
-        # passward = "http"
+        headers = {
+            'Content-Type': 'application/json',
+        }
 
-        # # Send a POST request to the server
-        # try:
-        #     response = requests.post(post_url, json = transformed_data, auth=(username,passward))
+        # Make the request with basic authentication
+        response = requests.post(post_url, data=json.dumps(transformed_data), auth=(username, password),headers=headers)
 
-        #     # Check the response
-        #     if response.status_code == 201:
-        #         print("Post created successfully on the server.")
-        #     else:
-        #         print("Failed to create the post on the server.")
-        #         print(response.status_code)
-        #         print(response.text)
-        # except:
-        #     print("error")
+        print("response content ", response.json())
 
+        # Check the response
+        if response.status_code == 200:
+            print('Request successful')
+            print(response.json())  # If expecting JSON response
+        else:
+            print('Request failed:', response.status_code)
+
+    def send_post_to_academy_server(self, transformed_data): 
+        print("______________________")
+        print(json.dumps(transformed_data, indent=4))
+        print("______________________")
 
         csrf_token_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/login"
         login_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/user"
