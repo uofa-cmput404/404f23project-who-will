@@ -245,6 +245,44 @@ def get_inbox(requested_author):
         response['items'].append(post_to_json(post))
     return response
 
+def get_all_liked(requested_author):
+    print("get_all_liked()")
+    user_with_username = CustomUser.objects.get(id=requested_author)
+    print(1,user_with_username)
+    author_profile = UserProfile.objects.get(owner=user_with_username)
+    print(2,author_profile)
+    response = {
+        "type": "liked",
+        "items": []
+    }
+    liked = Vote.objects.filter(up_vote_by=user_with_username)
+    print(3,liked)
+    # # user= User.objects.get(username=str(user_with_username))
+    # user = User.objects.all()
+    # print(3,user)
+
+    print(list(liked))
+    for i in liked:
+        if i.post:
+            object_string= OUR_URL+"/service/author/"+str(i.post.owner)+"/posts/"+str(i.post.id)
+            small_response = {
+                "@context": "Liked",
+                "summary": "Like for post",
+                "author": author_to_json(i.up_vote_by, UserProfile.objects.get(owner=i.up_vote_by)),
+                "object": object_string,
+            }
+            response['items'].append(small_response)
+        elif i.comment:
+            object_string= OUR_URL+"/service/author/"+str(i.comment.owner)+"/posts/"+str(i.comment.post.id)+"/comments/"+str(i.comment.id)
+            small_response = {
+                "@context": "Liked",
+                "summary": "Like for comment",
+                "author": author_to_json(i.up_vote_by, UserProfile.objects.get(owner=i.up_vote_by)),
+                "object": object_string,
+            }
+            response['items'].append(small_response)
+    return response
+
 
 def GET_request(request):
     print("GET_request()")
@@ -288,9 +326,9 @@ def GET_request(request):
     elif path[-3] == 'posts' and path[-1] == 'likes':
         print("getting likes")
         response = get_likes_post(Post.objects.get(id=path[-2]))
-    # # http://127.0.0.1:8000/service/author/{author_id}/liked
-    # elif path[-1] == 'liked':
-    #     response = get_likes_post(path[-2])
+    # http://127.0.0.1:8000/service/author/{author_id}/liked
+    elif path[-1] == 'liked':
+        response = get_all_liked(path[-2])
     # http://127.0.0.1:8000/service/author/{author_id}/posts/{post_id}/comments/{comment_id}/likes
     elif path[-3] == 'comments' and path[-1] == 'likes':
         response = get_likes_comments(Comment.objects.get(id=path[-2]))
