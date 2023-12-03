@@ -17,6 +17,7 @@ const NavBar = () => {
   if(authToken) {
   return (
     <>
+        <div className='compName'>Who Will?</div>
         <Nav>
             <NavLogo to='/'>
                 <h1>Home</h1>

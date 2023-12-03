@@ -4,16 +4,21 @@ import { FaBars } from 'react-icons/fa';
 import { useState } from 'react'
 import axios from "axios";
 import { toast } from 'react-toastify';
+import "./Nav.css";
 
+// height was 80px before nav change
 export const Nav = styled.nav`
     background: #000;
-    height: 80px;
+    height: 100px;
     display: flex;
     justify-content: space-between;
     padding: 0.5rem calc((100vw-1000px) / 2);
     z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 `;
 
+
+// remove margin-top to revert nav change
 export const NavLogo = styled(Link)`
     color: #fff;
     display: flex;
@@ -23,6 +28,7 @@ export const NavLogo = styled(Link)`
     padding-left: 1rem;
     height: 100%;
     cursor: pointer;
+    margin-top: 25px;
     &.active{
         color: #15cdfc;
     }
@@ -33,10 +39,15 @@ export const NavLink = styled(Link)`
     display: flex;
     align-items: center;
     text-decoration: none;
-    padding: 0 15rem;
+    padding: 0 13rem;
     height: 100%;
     cursor: pointer;
+    margin-top: 5px;
+    font-weight: bold;
     &.active{
+        color: #15cdfc;
+    }
+    &:hover{
         color: #15cdfc;
     }
     @media (max-width: 2250px) {
@@ -86,27 +97,33 @@ export const Bars = styled(FaBars)`
     }
 `;
 
+// remove margin-top to revert nav changes
 export const NavMenu = styled.div`
     display: inline-flex;
     align-items: center;
+    margin-top: 52px;
     @media screen and (max-width:768px) {
         display: none;
     }
 `;
 
+// revert margin-top iff nav revert
 export const NavBtn = styled.nav`
     display: flex;
     align-items: center;
     margin-right: 24px;
+    margin-top: 37px;
+    
 
     @media screen and (max-width: 768px) {
         display: none;
     }
 `;
 
+
 export const NavBtnLink = styled(Link)`
     border-radius: 4px;
-    background: #256ce1;
+    background-color: #15cdfc;
     padding: 10px 22px;
     color: #fff;
     border: none;
@@ -121,6 +138,7 @@ export const NavBtnLink = styled(Link)`
         color: #010606;
     }
 `;
+
 
 export const SearchBar = () => {
     const [query, setQuery] = useState('');
@@ -162,15 +180,17 @@ export const SearchBar = () => {
     };
 
     // styling
+    // remove marginTop to revert nav changes
     const BarStyle = 
     {
         width:"20rem",
         background:"#F0F0F0", 
-        border: "1px solid blue",
+        border: "1px solid grey",
         display: "flex",
         borderRadius: "10px",
         margin: "20px",
         height: "30px",
+        marginTop: "50px",
     
     };
     
@@ -185,11 +205,11 @@ export const SearchBar = () => {
     {
         display: "flex",
         alignItems: "center",
-        height: "30px",
-        border: "1px solid blue",
-        fontSize: "13px",
+        height: "35px",
+        fontSize: "16px",
 
     };
+
 
     // in the future, call a query function in Django in the onChange section
     return (
@@ -202,7 +222,7 @@ export const SearchBar = () => {
         onChange={(e) => setQuery(e.target.value)}
         placeholder={"  Search Users"}
         />
-        <button style={SearchButtonStyle}  onClick={handleSearch}> Search</button>
+        <button className="actionSearch" style={SearchButtonStyle}  onClick={handleSearch}> Search</button>
         </div>
       </div>
     );

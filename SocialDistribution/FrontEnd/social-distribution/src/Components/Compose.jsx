@@ -244,7 +244,7 @@ const ComposeModal = ({ onClose }) => {
             Send
           </Button>
           <Button variant={"warning"} onClick={onClose}>
-            Cancle
+            Cancel
           </Button>
         </div>
       </ModalContainer>
