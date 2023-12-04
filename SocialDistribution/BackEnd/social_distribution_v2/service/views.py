@@ -504,21 +504,54 @@ def post_new_post(request,path):
     try:
         # make new post
         post=Post.objects.create(owner=author, foreign=post_foreign_id)
-        post.title = data['title']
-        post.source = data['source']
-        post.origin = data['origin']
-        post.description = data['description']
-        post.visibility = data['visibility']
-        post.content = data['content']
-        post.post_image = data['unlisted']
-        #NOTE: Update required to make these work
-        # post.message_to = data['message_to']
-        # post.categories = data['categories']
-        post.save()
-        print("-------------- POST ADDED?? -----------")
-        return {'status': 'Post Added Successfully'}
     except:
         return {'status': 'Error in creating post'}
+    
+    try:
+        post.title = data['title']
+    except:
+        print("Title not avaiable from json data")
+        
+    try:
+        post.source = data['source']
+    except:
+        print("Source not avaiable from json data")
+
+    try:
+        post.origin = data['origin']
+    except:
+        print("Origin not avaiable from json data")
+
+    try:
+        post.description = data['description']
+    except:
+        print("description not avaiable from json data")
+    try:
+        post.visibility = data['visibility']
+    except:
+        print("Visibility not avaiable from json data")
+    
+    try:
+        post.content = data['content']
+    except:
+        print("content not avaiable from json data")
+
+    try:
+        post.post_image = data['unlisted']
+    except:
+        print("image not avaiable from json data")
+    #NOTE: Update required to make these work
+    # post.message_to = data['message_to']
+    # post.categories = data['categories']
+
+    try:
+        post.save()
+    except:
+        print("failed to add post")
+        return {'status': 'failed to save the post'}
+
+    print("-------------- POST ADDED?? -----------")
+    return {'status': 'Post Added Successfully'}
 
 def post_new_comment(request,path):
     try:
@@ -646,22 +679,55 @@ def patch_post(request, path):
 
     try:
         post=Post.objects.get(id=path[-1]) 
-        data = json.loads(request.body.decode('utf-8'))
-        print(data)
-        post.title = data['title']
-        post.source = data['source']
-        post.origin = data['origin']
-        post.description = data['description']
-        post.visibility = data['visibility']
-        post.content = data['content']
-        post.post_image = data['unlisted']
-        #post.message_to = data['message_to']
-        #post.categories = data['categories']
-        post.save()
-        return {'status': 'worked'}
     except:
         print("post could not be found")
         return {'status': 'post could not be found'}
+    
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        print(data)
+    except:
+        return {'status': 'could not load data from json'}
+    
+    try:
+        post.title = data['title']
+    except:
+        print("Title not avaiable from json data")
+    try:
+        post.source = data['source']
+    except:
+        print("Source not avaiable from json data")
+    try:
+        post.origin = data['origin']
+    except:
+        print("Origin not avaiable from json data")
+    try:
+        post.description = data['description']
+    except:
+        print("description not avaiable from json data")
+    try:
+        post.visibility = data['visibility']
+    except:
+        print("visibility not avaiable from json data")
+    
+    try:
+        post.content = data['content']
+    except:
+        print("content not avaiable from json data")
+
+    try:
+        post.post_image = data['unlisted']
+    except:
+        print("image not avaiable from json data")
+
+    
+    #post.message_to = data['message_to']
+    #post.categories = data['categories']
+    try:
+        post.save()
+    except:
+        return {'status': 'post failed to save'}
+    return {'status': 'successfully added new post'}
 
 
 def determine_type(request, path):
