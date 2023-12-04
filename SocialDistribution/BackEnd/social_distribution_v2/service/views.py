@@ -542,6 +542,21 @@ def post_new_comment(request,path):
     except:
         return {'status' : 'failed to save comment'}
 
+def post_friend_request(request):
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        auth_asking_follow = data['author']['id']
+        auth_being_followed = data['object']['id']
+        auth_asking_follow_id=auth_asking_follow.split('/')[-1]
+        auth_being_followed_id=auth_being_followed.split('/')[-1]
+        asking_follow_profile = UserProfile.objects.get(id=auth_asking_follow_id)
+        being_followed_profile = UserProfile.objects.get(id=auth_being_followed_id)
+        asking_follow_profile.send_follow_request(being_followed_profile)
+        return {'status': 'follow request sent'}
+    except:
+        return {'status': 'failed to send follow request'}
+
+
 def POST_request(request):
     print("POST_request()")
     print(2, request)
@@ -678,7 +693,7 @@ def determine_type(request, path):
         x = {'status': 'NOT IMPLEMENTED YET!'}
     elif data["type"] == "Follow":
         print("Follow type")
-        x = {'status': 'NOT IMPLEMENTED YET!'}
+        x = post_friend_request(request)
     elif data["type"] == "comment":
         print("Comment type")
         x = {'status': 'NOT IMPLEMENTED YET!'}
