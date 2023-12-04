@@ -79,10 +79,9 @@ const MessageContainer = styled.div`
 `;
 
 const Request = styled.div`
-  width: 80vw;
+  width: 50px;
   height: 9%;
   display: flex;
-  border: 1px solid black;
   margin: 5px;
   border-radius: 5px;
   align-items: center;

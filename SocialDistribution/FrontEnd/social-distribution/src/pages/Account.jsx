@@ -250,10 +250,10 @@ class Account extends Component {
         });
     }
 
-    retrieveProfilePicture = () => {
+    retrieveProfilePicture = (id) => {
         const authToken = localStorage.getItem("authToken");
-
-        axios.get(`http://localhost:8000/api/profiles/${this.state.ownerID}/`, {
+        // if us, retrieve our profile image, else retrieve viewd profile id
+        axios.get(`http://localhost:8000/api/profiles/${id}/`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }
@@ -347,7 +347,14 @@ class Account extends Component {
         }, 5000);
 
         if (this.state.isMyAccount){
-            this.retrieveProfilePicture();
+            const id = localStorage.getItem('pk');
+            this.retrieveProfilePicture(id);
+        }
+        else {
+            const queryParams = new URLSearchParams(window.location.search);
+            const passedData = Object.fromEntries(queryParams.entries());
+            var actualID = Object.keys(passedData)[0];
+            this.retrieveProfilePicture(actualID);
         }
     }
 

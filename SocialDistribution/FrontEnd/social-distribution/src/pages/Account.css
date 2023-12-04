@@ -183,9 +183,9 @@
 }
 
 .profile-picture img{
-    width: auto; 
+    width: 200px; 
     height: 100%; 
-    margin-left: -90px;
+    /* margin-left: -90px; */
 }
 
 .grid {
