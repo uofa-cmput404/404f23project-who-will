@@ -36,6 +36,7 @@ class Account extends Component {
         currentPostVisibility: null,
         currentPasedData: null,
         postID: null,
+        profileImage: "https://reactjs.org/logo-og.png"
     };
 
     handleCommentsClick = (id) => {
@@ -249,6 +250,29 @@ class Account extends Component {
         });
     }
 
+    retrieveProfilePicture = () => {
+        const authToken = localStorage.getItem("authToken");
+
+        axios.get(`http://localhost:8000/api/profiles/${this.state.ownerID}/`, {
+            headers: {
+                'Authorization': `Token ${authToken}`,
+            }
+        })
+        .then((res) => {
+            const userProfile = res.data;
+
+        const profileImage = userProfile.profile_image;
+        
+        console.log("Profile Image URL:", profileImage);
+
+        this.setState({ profileImage: profileImage });
+        })
+        .catch((err) => {
+            console.log(err);
+            this.setState({ error: "Error profile picture" });
+        });
+    }
+
     
   
     checkParams(){
@@ -322,7 +346,9 @@ class Account extends Component {
             this.retrievePosts();
         }, 5000);
 
-        
+        if (this.state.isMyAccount){
+            this.retrieveProfilePicture();
+        }
     }
 
     componentWillUnmount(){
@@ -399,7 +425,7 @@ class Account extends Component {
                 {/*Account Details*/}
                 <div className='usrName'>{this.vUser}'s Profile</div>
                 <div className="profile-picture">
-                    <img  src="https://reactjs.org/logo-og.png" alt="Profile" /> {/*temporary image*/}
+                    <img  src={this.state.profileImage} alt="Profile" /> {/*temporary image*/}
                 </div>
                 
                 <p className='username'>{user.username}</p>

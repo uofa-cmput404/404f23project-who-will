@@ -16,6 +16,18 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 
 
 class ProfileViewSet(viewsets.ViewSet):
+    def partial_update(self, request, pk=None):
+        # Similar to your update method, retrieve the profile object
+        profile = get_object_or_404(UserProfile, pk=pk)
+        
+        # Apply partial updates using the data from the request
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def list(self, request):
         queryset = UserProfile.objects.all()
         serializer = ProfileSerializer(queryset, many=True)
