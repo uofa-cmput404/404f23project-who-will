@@ -2,10 +2,11 @@ import requests
 
 #type
 #classification = "post"
-classification = "author"
+#classification = "author"
 #classification = "like"
 # classification = "comment"
 #classification = "edit_post"
+classification = "follow"
 
 if classification == "post":
     data = {
@@ -131,10 +132,10 @@ if classification == "edit_post":
 if classification == "author":
     data = {
         "type":"author",
-        "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
+        "id":"http://127.0.0.1:5454/authors/d6dc16c8-9f12-42b2-bc5b-766560b94111",
         "host":"http://127.0.0.1:5454/",
-        "displayName":"Frank IS",
-        "url":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9",
+        "displayName":"Donald",
+        "url":"http://127.0.0.1:5454/authors/d6dc16c8-9f12-42b2-bc5b-766560b94111",
         "github": "http://github.com/laracroft",
         "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
     }
@@ -156,6 +157,29 @@ if classification == "comment":
     "published":"2015-03-09T13:07:04+00:00",
     "id":"http://127.0.0.1:5454/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/16f679e9-5d69-4879-b6a7-a174e97bfcbb/comments/dcc59509-ac8e-4072-bddd-20f6ddd7b4be",
 }
+if classification == "follow":
+   data = {
+    "type": "Follow",      
+    "summary":"Greg wants to follow Lara",
+    "actor":{
+        "type":"author",
+        "id":"http://127.0.0.1:5454/authors/d6dc16c8-9f12-42b2-bc5b-766560b94111",
+        "url":"http://127.0.0.1:5454/authors/d6dc16c8-9f12-42b2-bc5b-766560b94111",
+        "host":"http://127.0.0.1:5454/",
+        "displayName":"Greg Johnson",
+        "github": "http://github.com/gjohnson",
+        "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+    },
+    "object":{
+        "type":"author",
+        "id":"http://127.0.0.1:5454/authors/70b4e823-58f2-49e3-ac0f-ed3b07048862",
+        "host":"http://127.0.0.1:5454/",
+        "displayName":"Lara Croft",
+        "url":"http://127.0.0.1:5454/authors/70b4e823-58f2-49e3-ac0f-ed3b07048862",
+        "github": "http://github.com/laracroft",
+        "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+    }
+}
 
 #action
 #test = "delete"
@@ -168,11 +192,14 @@ if test == "post":
     elif classification == "edit_post":
         url = "http://127.0.0.1:8000/service/authors/b078bbd8-2ab0-469a-a7c6-4c7b7056e21d/posts/4eb224d9-ce3c-4b8b-ae24-7fdfef4a2e90"
     elif classification == "author":
-        url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9"
+        url = "http://127.0.0.1:8000/service/authors/d6dc16c8-9f12-42b2-bc5b-766560b94111"
     elif classification == "like":
         url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9/inbox/"
     elif classification == "comment":
         url = "http://127.0.0.1:8000/service/authors/f622e9e3-a876-4633-829f-15d900e1abf9/posts/16f679e9-5d69-4879-b6a7-a174e97bfcbb/comments"
+    elif classification == "follow":
+        #note that the id is id of the receiver. It is going to receivers inbox, so receivers inbox is kept
+        url = "http://127.0.0.1:8000/service/authors/70b4e823-58f2-49e3-ac0f-ed3b07048862/inbox/"
 
     response = requests.post(url, json=data)
 
