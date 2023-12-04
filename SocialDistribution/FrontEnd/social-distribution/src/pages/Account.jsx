@@ -335,6 +335,10 @@ class Account extends Component {
         return formattedDate;
     }
 
+    forceNavigatePost = (id) => {
+        window.location.href = `/post?${id}`;
+    }
+
     render() {
 
         const queryParams = new URLSearchParams(window.location.search);
@@ -473,9 +477,11 @@ class Account extends Component {
                                 <button className="delete-post-button" onClick={() => this.handleDeletePost(post.id)}>Delete</button>
                             </>
                         )}
-                        
+                       
                         </div>
+                        <div className='postID' onClick={this.forceNavigatePost.bind(this,post.id)}>Post ID: {post.id}</div>
                     </div>
+                    
                     ))}
                 </div>
                 {this.state.isCommentsOpen && (
