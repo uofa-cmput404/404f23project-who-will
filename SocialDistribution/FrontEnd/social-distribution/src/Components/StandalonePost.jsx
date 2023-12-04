@@ -36,7 +36,7 @@ class Standalone extends Component {
         // check if the past data is not null
         // also need to check if the postID exists
         if(isNotEmptyObject(passedData)) {
-            axios.get(`http://localhost:8000/api/posts/${actualID}/`, {
+            axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/${actualID}/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }  

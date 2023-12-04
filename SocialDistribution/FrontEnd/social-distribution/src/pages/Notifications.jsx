@@ -93,7 +93,7 @@ const Request = styled.div`
 
 const InboxMessage = styled.div`
   width: 25vw;
-  height: 9%;
+  height: 15%;
   display: flex;
   flex-direction: column;
   border: 1px solid black;
@@ -180,7 +180,7 @@ const RenderRequest = ({ requests, onClick }) => {
     }
     // console.log(data);
     axios
-      .put(`http://127.0.0.1:8000/api/profiles/${currentID}/`, data)
+      .put(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${currentID}/`, data)
       .then((res) => {
         console.log(res);
         if (choice === "accept") {
@@ -194,7 +194,7 @@ const RenderRequest = ({ requests, onClick }) => {
       });
     axios
       .put(
-        `http://127.0.0.1:8000/api/profiles/${handleUser["profile_id"]}/`,
+        `${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${handleUser["profile_id"]}/`,
         otherData
       )
       .then((res) => {
@@ -330,7 +330,7 @@ const Notifications = () => {
       const authToken = localStorage.getItem("authToken");
       // get requests list
       await axios
-        .get(`http://127.0.0.1:8000/api/profiles/${currentId}/`, {
+        .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${currentId}/`, {
           headers: {
             Authorization: `Token ${authToken}`,
           },
@@ -346,7 +346,7 @@ const Notifications = () => {
           actualDifference.forEach(element => {
             console.log("fuck me");
             console.log(element);
-            axios.get(`http://127.0.0.1:8000/api/profiles/${element}/`, {
+            axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${element}/`, {
               headers: {
                 Authorization: `Token ${authToken}`,
               },
@@ -379,7 +379,7 @@ const Notifications = () => {
       );
       
       await axios
-        .get(`http://127.0.0.1:8000/api/get_requesters/?id=${currentId}`)
+        .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/get_requesters/?id=${currentId}`)
         .then((res) => {
           // console.log(res.data);
           setPendingUser(res.data);
@@ -391,7 +391,7 @@ const Notifications = () => {
       const userName = localStorage.getItem("username");
       console.log(userName);
       axios
-        .get(`http://127.0.0.1:8000/service/authors/${currentId}/inbox`)
+        .get(`${process.env.REACT_APP_WHO_WILL_URL}/service/authors/${currentId}/inbox`)
         .then((res) => {
           console.log(res.data["items"]);
           setInbox(res.data["items"]);

@@ -67,7 +67,7 @@ const ComposeModal = ({ onClose }) => {
   // get friends and categories at the init render
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/categories/")
+      .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/categories/`)
       .then((res) => {
         console.log(res.data);
         setCategories(res.data);
@@ -76,7 +76,7 @@ const ComposeModal = ({ onClose }) => {
         console.log(err);
       });
     axios
-      .get(`http://127.0.0.1:8000/api/get_friends/?id=${currentID}`)
+      .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/get_friends/?id=${currentID}`)
       .then((res) => {
         console.log(res);
         setFriends(res.data);
@@ -159,7 +159,7 @@ const ComposeModal = ({ onClose }) => {
     console.log(inputs);
     if (authToken) {
       axios
-        .post("http://127.0.0.1:8000/api/posts/", inputs, {
+        .post(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/`, inputs, {
           headers: {
             Authorization: `Token ${authToken}`,
             "Content-Type": "application/json",

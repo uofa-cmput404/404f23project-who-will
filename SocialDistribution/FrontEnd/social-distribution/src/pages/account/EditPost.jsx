@@ -124,7 +124,7 @@ class EditPost extends Component {
     sendEditPostData = (postId, editedPostData) => {
         const authToken = localStorage.getItem("authToken"); // Use localStorage.getItem() to get the authToken
         if (authToken) {
-            axios.patch(`http://localhost:8000/api/posts/${postId}/`, editedPostData, {
+            axios.patch(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/${postId}/`, editedPostData, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                     'Content-Type': 'application/json'

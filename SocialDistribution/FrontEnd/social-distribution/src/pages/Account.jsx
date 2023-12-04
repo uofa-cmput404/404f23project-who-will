@@ -87,7 +87,7 @@ class Account extends Component {
             var actualID = Object.keys(IDtoFollow)[0];
             
             // get the data at /api/profiles/id to determine profile
-            axios.get(`http://localhost:8000/api/profiles/${actualID}/`, {
+            axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${actualID}/`, {
                 headers: {
 
                     'Authorization': `Token ${authToken}`,
@@ -109,7 +109,7 @@ class Account extends Component {
                 };
 
                 // update the 'add_follow_request' field via a custom view in the api
-                axios.put(`http://localhost:8000/api/profiles/${profileID}/`, postData, {
+                axios.put(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${profileID}/`, postData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
                     }
@@ -128,7 +128,7 @@ class Account extends Component {
                         "delete_following": "None"
                     };
                     // update the 'add_following' field via a custom view in the api
-                    axios.put(`http://localhost:8000/api/profiles/${currentUserID}/`, newPostData, {
+                    axios.put(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${currentUserID}/`, newPostData, {
                         headers: {
                             'Authorization': `Token ${authToken}`,
                         }
@@ -176,7 +176,7 @@ class Account extends Component {
             };
 
             // update the 'delete_follow_request' custom view ihe api
-            axios.put(`http://localhost:8000/api/profiles/${viewedProfileUserID}/`, putData, {
+            axios.put(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${viewedProfileUserID}/`, putData, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }
@@ -189,7 +189,7 @@ class Account extends Component {
                     "delete_following": viewedProfileUserID
                 };
                 // update the 'delete_following' custom view ihe api
-                axios.put(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, secondPutData, {
+                axios.put(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${loggedInUsersID}/`, secondPutData, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
                     }
@@ -235,7 +235,7 @@ class Account extends Component {
     retrievePosts = () => {
         const authToken = localStorage.getItem("authToken");
 
-        axios.get(`http://localhost:8000/api/posts/?owner=${this.state.ownerID}`, {
+        axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/?owner=${this.state.ownerID}`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }
@@ -253,7 +253,7 @@ class Account extends Component {
     retrieveProfilePicture = (id) => {
         const authToken = localStorage.getItem("authToken");
         // if us, retrieve our profile image, else retrieve viewd profile id
-        axios.get(`http://localhost:8000/api/profiles/${id}/`, {
+        axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${id}/`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }
@@ -317,7 +317,7 @@ class Account extends Component {
         if(isNotEmptyObject(passedData)) {
             var actualID = Object.keys(passedData)[0];
             if(authToken) {
-                axios.get(`http://localhost:8000/api/users/${actualID}/`, {
+                axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/users/${actualID}/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
@@ -397,7 +397,7 @@ class Account extends Component {
         // following the viewed user or not
         if (this.isFollowing !== true && this.isFollowing !== false) {
             if(authToken) {
-                axios.get(`http://localhost:8000/api/profiles/${loggedInUsersID}/`, {
+                axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${loggedInUsersID}/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }

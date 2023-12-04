@@ -6,7 +6,7 @@ const Logout = () => {
         // these logs are not even showing up in the console????
         const authToken = localStorage.getItem('authToken');
         console.log("attempting to logout...");
-        axios.post("http://localhost:8000/api/auth/logout/", {
+        axios.post(`${process.env.REACT_APP_WHO_WILL_URL}/api/auth/logout/`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
             }

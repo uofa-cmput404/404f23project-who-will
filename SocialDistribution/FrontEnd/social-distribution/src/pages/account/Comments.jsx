@@ -16,7 +16,7 @@ class Comments extends Component {
     getData = () => {
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
-            axios.get(`http://localhost:8000/api/comments/?post=${this.props.postID}`, {
+            axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/comments/?post=${this.props.postID}`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
