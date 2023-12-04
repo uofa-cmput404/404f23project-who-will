@@ -3,7 +3,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser 
 from django.urls import reverse
 import uuid
-from .send_to_foreign import send_data
+from .send_to_academy import *
+from .send_to_silk import *
 DEFAULT_HOST = "http://127.0.0.1:8000/"
 
 
@@ -34,7 +35,8 @@ class CustomUser(AbstractUser):
             "id": self.id,
             "foreign": self.foreign,
         }
-        send_data(data)
+        send_academy(data)
+        send_silk(data)
     def get_absolute_url(self):
         return reverse('user_detail', args=[str(self.id)])
 

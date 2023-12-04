@@ -17,7 +17,9 @@ print("Session:", session)
 email = "admin@email.com"
 password = "admin"
 
-# Get CSRF token
+
+
+#Get CSRF token
 csrf_response = session.post(
     csrf_token_url, json={'email': email, "password": password})
 print(f"\nCSRF Response Status Code:  {csrf_response.status_code}\n")
@@ -36,13 +38,16 @@ login_response = session.get(login_url, headers=header)
 print(f"\nLogin Response Status Code: {login_response.status_code} \n\n")
 
 
-def send_data(raw):
-
+def send_academy(raw):
+    #NOTE: FIX THIS FRANK Pweaseeeee 🥹👉👈
     data = {
         "username": raw['username'],
         "email": raw['email'],
         "password": raw['password'],
-        "id": f"{WHOWILLHOST}authors/{raw['id']}"
+        "id": f"{WHOWILLHOST}authors/{raw['id']}",
+        "foreign": f"{raw['id']}",
+        "isForeign": True
+
     }
     print("sending this data:", data)
     if raw['foreign'] == raw['id']:
