@@ -41,7 +41,7 @@ const Login = () => {
     };
     console.log(data);
     axios
-      .post("http://localhost:8000/api/auth/login/", data)
+      .post(`${process.env.REACT_APP_WHO_WILL_URL}/api/auth/login/`, data)
       .then((res) => {
         console.log(res.data);
         const authorizationToken = res.data.key;

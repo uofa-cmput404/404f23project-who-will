@@ -83,7 +83,8 @@ class PostViewSet(viewsets.ModelViewSet):
         # transformed_data["author"] = author_val
 
         # for academy team 
-        transformed_data["author"] =  info['id']
+        # transformed_data["author"] =  "fe4f939c-d2df-4a46-83e0-ecef443d6ec4"
+        transformed_data["author"] = info["id"]
 
         # categories
         transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
