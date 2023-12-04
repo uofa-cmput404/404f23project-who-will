@@ -41,7 +41,7 @@
     width: 100px; /* hacky, fix if need */
     display: flex;
     align-items: center;
-    
+    margin-right: 40px; 
 }
 
 .friendsTitle {

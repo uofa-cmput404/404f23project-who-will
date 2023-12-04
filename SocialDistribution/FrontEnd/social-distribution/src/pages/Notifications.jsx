@@ -93,7 +93,7 @@ const Request = styled.div`
 
 const InboxMessage = styled.div`
   width: 25vw;
-  height: 9%;
+  height: 15%;
   display: flex;
   flex-direction: column;
   border: 1px solid black;
