@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import ComposeModal from "../Components/Compose";
 import axios from "axios";
 import { toast } from "react-toastify";
+import './Notifications.css';
 
 // styled components
 const Container = styled.div`
@@ -308,7 +309,12 @@ const RenderMessage = ({ message }) => {
   );
 };
 
+
+
+
 const Notifications = () => {
+  const [reqList, setReq] = useState([]);
+  const [idList, setId] =  useState([]);
   const [activeSection, setActiveSection] = useState("inbox");
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [requestList, setRequestList] = useState([]);
@@ -316,6 +322,7 @@ const Notifications = () => {
   const [pendingUser, setPendingUser] = useState([]);
   const [clickStatus, setClickStatus] = useState(false);
   const [inbox, setInbox] = useState([]);
+
   // updating requesting list
 
   useEffect(() => {
@@ -330,7 +337,36 @@ const Notifications = () => {
           },
         })
         .then((res) => {
-          // console.log(res);
+          var data = res.data;
+        
+          // works
+          var actualDifference = data.follow_requests.filter(request => data.following.includes(request));
+          setId(actualDifference);
+          // make the id's usernames. use the useState method
+          var userNameList = []; 
+          actualDifference.forEach(element => {
+            console.log("fuck me");
+            console.log(element);
+            axios.get(`http://127.0.0.1:8000/api/profiles/${element}/`, {
+              headers: {
+                Authorization: `Token ${authToken}`,
+              },
+            })
+            .then((res) => {
+              var dataTwo = res.data;
+              var usr = data.owner;
+              userNameList.push(usr);
+            })
+
+          });
+          //works
+          console.log(userNameList);
+          setReq(userNameList);
+
+
+
+
+
           setRequestList(res.data["follow_requests"]);
           setFollowingList(res.data["following"]);
         })
@@ -338,10 +374,11 @@ const Notifications = () => {
           console.log(err);
         });
 
-      // get all requesting users
+      // get all users who are following us but not us following them
       var difference = requestList.filter(
         (item) => !followingList.includes(item)
       );
+      
       await axios
         .get(`http://127.0.0.1:8000/api/get_requesters/?id=${currentId}`)
         .then((res) => {
@@ -385,6 +422,15 @@ const Notifications = () => {
     setClickStatus(!clickStatus);
   };
 
+  const navigateToProfile = (idlist, index) => {
+    var profileToVisit = idList[index];
+    // i dont think the id is what i want lol...
+    window.location.href = `/account?${profileToVisit}`;
+  }
+  
+
+
+
   console.log(inbox);
   return (
     <Container>
@@ -422,6 +468,20 @@ const Notifications = () => {
           <p style={{ color: "white", margin: "5px" }}>Friend Request</p>
         </Tile>
       </SideBar>
+
+      {/*<div className="test">{reqList}</div>*/}
+      {
+      /*
+      <div className="notifRowsTotal">
+      {reqList.map((item, index) => (
+        <div key={index} className={`notifRow-${index}`}>
+          {item} has followed you!
+          <button className="viewProfile" onClick={() => navigateToProfile(idList, index)}>View Profile</button>
+        </div>
+      ))}
+      </div>
+      */
+      }
       {/* for inbox */}
       {activeSection === "inbox" && <RenderInBox inbox={inbox} />}
       {/* {activeSection === "inbox" && <Message>inbox message</Message>} */}
