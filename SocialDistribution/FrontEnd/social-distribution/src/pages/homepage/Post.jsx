@@ -31,6 +31,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
   // this.state.post_id = post_id;
   // this.state.username = username;
 
+  // get the post owner
   const getPostOwner=() =>{
 
       console.log("get post owner");

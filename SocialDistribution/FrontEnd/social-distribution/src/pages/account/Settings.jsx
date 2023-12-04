@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import './Settings.css';
+import axios from 'axios';
 
 class Settings extends Component {
     state = {
         newUsername: '',
         newProfilePicture: null,
+        newGithub: ""
     };
 
     handleUsernameChange = (e) => {
@@ -22,6 +24,7 @@ class Settings extends Component {
         this.props.onClose();
     };
 
+   
     render() {
         return (
             <div className="settings-popup">

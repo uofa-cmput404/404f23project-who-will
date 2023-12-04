@@ -5,7 +5,7 @@ import React from "react";
 import styled from "styled-components";
 
 const InputComponent = styled.input`
-  width: 30vw;
+  width: 29vw;
   padding: 0.5em;
   margin: 0.5em;
   border-radius: 3px;

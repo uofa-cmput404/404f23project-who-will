@@ -400,9 +400,13 @@ class Account extends Component {
                 
                 <p className='username'>{user.username}</p>
                 
-                <button className="settings-icon" onClick={this.handleSettingsClick}>
-                    <FaGear/>
-                </button>
+                    {this.state.isMyAccount ? (
+                        <button className="settings-icon" onClick={this.handleSettingsClick}>
+                        <FaGear/>
+                        </button>
+                    ) : null}
+                  
+
                 {this.state.isSettingsOpen && (
                     <Settings onClose={this.handleCloseSettings} />
                 )}
