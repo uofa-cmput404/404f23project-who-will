@@ -3,11 +3,29 @@ import Post from "./Post";
 import "../homepage.css"; // use css style
 import { useState, useEffect } from 'react';
 import Github from "../github";
+import GetAllFriends from "../../utils/GetAllFriends";
 
 
 
 function Postlist({ posts, username}) {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [friendLst, setFriendLst] = useState([]);
+
+  
+
+  const getAllFriendsInstance = new GetAllFriends(localStorage.getItem("pk"));
+
+  const friendsList = getAllFriendsInstance.GetAllFriends(localStorage.getItem("pk"));
+
+  friendsList.then((res) => {
+    setFriendLst(res);
+    console.log(res);
+    setFriendLst(res);
+  }).catch((err) => {
+    console.log(err);
+  })
+
+  //username --> retrieve list of friends
 
   const handleFilterChange = event => {
     setSelectedFilter(event.target.value);
@@ -15,14 +33,24 @@ function Postlist({ posts, username}) {
 
   // Filter posts based on the selected visibility
   const filteredPosts = posts.filter(post => {
-    if (selectedFilter === 'all') {
-      return true; // Show all posts when 'all' is selected
-    } else if(selectedFilter == "friends only"){
-      
+    if (selectedFilter === 'public') {
+      return post.visibility === selectedFilter || post.visibility === "PUBLIC"; // Show all posts when 'all' is selected
+    } else if(selectedFilter === "friends only"){
+        //return post.visibility === selectedFilter && post.owner in friendsList
+        console.log(typeof(friendLst[0]));
+        console.log("show postowner: ", post.owner);
+        console.log("show frinedList" ,friendLst);
+        if (friendLst.includes(post.owner)){
+          console.log("***********************************");
+        }
+        return (post.visibility === selectedFilter) && friendLst.includes(post.owner);
+    }else {
+      return;
     }
-    else {
-      return post.visibility === selectedFilter; // Show posts matching the selected visibility
-    }
+
+    // else {
+    //   return post.visibility === selectedFilter; // Show posts matching the selected visibility
+    // }
   });
  
     
