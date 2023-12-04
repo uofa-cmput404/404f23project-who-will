@@ -12,6 +12,9 @@ button.actionSearch:hover {
     color: #fff;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     margin-top: 35px;
+    margin-left: -95px;
+    height: 25px !important;
+
 }
 
 

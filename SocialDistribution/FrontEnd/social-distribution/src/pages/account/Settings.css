@@ -3,6 +3,9 @@
 }
 
 
+label {
+    margin: 15px;
+}
 
 .settings-popup {
     position: fixed;

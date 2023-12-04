@@ -189,6 +189,8 @@ export const SearchBar = () => {
         display: "flex",
         borderRadius: "10px",
         margin: "20px",
+        marginLeft: "0px",
+        marginRight: "0px",
         height: "30px",
         marginTop: "50px",
     
