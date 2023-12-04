@@ -14,7 +14,6 @@ import json
 
 
 
-
 # for the token
 from django.middleware.csrf import get_token
 
