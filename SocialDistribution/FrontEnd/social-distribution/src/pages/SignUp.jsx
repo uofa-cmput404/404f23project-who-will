@@ -40,7 +40,7 @@ const SignUp = () => {
       };
       console.log(data);
       axios
-        .post("http://localhost:8000/api/users/", data)
+        .post(`${process.env.REACT_APP_WHO_WILL_URL}/api/users/`, data)
         .then((res) => {
           console.log(res);
           window.location.reload();

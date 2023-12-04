@@ -42,7 +42,7 @@ class AddComment extends Component {
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
           axios
-            .post("http://localhost:8000/api/comments/", commentData, {
+            .post(`${process.env.REACT_APP_WHO_WILL_URL}/api/comments/`, commentData, {
               headers: {
                 Authorization: `Token ${authToken}`,
                 "Content-Type": "application/json",

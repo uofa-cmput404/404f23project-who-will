@@ -150,7 +150,7 @@ class AddPost extends Component {
 
     if (authToken) {
       axios
-        .post("http://localhost:8000/api/posts/", postData, {
+        .post(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/`, postData, {
           headers: {
             Authorization: `Token ${authToken}`,
             "Content-Type": "application/json",
@@ -175,7 +175,7 @@ class AddPost extends Component {
   
     if (authToken) {
       axios
-        .get(`http://localhost:8000/api/categories/`, {
+        .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/categories/`, {
           headers: {
             Authorization: `Token ${authToken}`,
           },

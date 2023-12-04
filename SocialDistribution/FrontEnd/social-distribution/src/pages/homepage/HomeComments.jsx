@@ -41,7 +41,7 @@ class HomeComments extends Component {
         const authToken = localStorage.getItem("authToken");
         if (authToken) {
             //queries posts with correct id
-            axios.get(`http://localhost:8000/api/comments/?post=${this.props.post_id}`, {
+            axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/comments/?post=${this.props.post_id}`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }

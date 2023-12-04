@@ -11,7 +11,7 @@ class DeletePost extends React.Component {
         const authToken = localStorage.getItem("authToken");
         console.log(" HERE HERE 1 1 1 1 1");
         if (authToken) {
-            axios.delete(`http://localhost:8000/api/posts/${postId}/`, {
+            axios.delete(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/${postId}/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }

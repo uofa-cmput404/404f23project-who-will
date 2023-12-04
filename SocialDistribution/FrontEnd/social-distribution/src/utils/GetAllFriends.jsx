@@ -13,7 +13,7 @@ class GetAllFriends {
     
         return new Promise((resolve, reject) => {
             if (authToken) {
-                axios.get(`http://localhost:8000/api/profiles/${userID}/`, {
+                axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${userID}/`, {
                     headers: {
                         'Authorization': `Token ${authToken}`,
                     }

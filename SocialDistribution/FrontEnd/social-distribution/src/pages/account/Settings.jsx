@@ -49,7 +49,7 @@ class Settings extends Component {
         const authToken = localStorage.getItem("authToken"); // Use localStorage.getItem() to get the authToken
         const pk = localStorage.getItem("pk");
         if (authToken) {
-            axios.patch(`http://localhost:8000/api/profiles/${pk}/`, editData, {
+            axios.patch(`${process.env.REACT_APP_WHO_WILL_URL}/api/profiles/${pk}/`, editData, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                     'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ class Settings extends Component {
 
     if (authToken) {
       axios
-        .post("http://localhost:8000/api/posts/", postData, {
+        .post(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/`, postData, {
           headers: {
             Authorization: `Token ${authToken}`,
             "Content-Type": "application/json",

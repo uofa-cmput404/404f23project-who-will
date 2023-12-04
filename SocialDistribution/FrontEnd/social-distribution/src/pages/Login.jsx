@@ -50,7 +50,7 @@ const Login = () => {
 
 
         if (authorizationToken) {
-            axios.get("http://localhost:8000/api/auth/user/", {
+            axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/auth/user/`, {
                 headers: {
                     'Authorization': `Token ${authorizationToken}`,
                 }

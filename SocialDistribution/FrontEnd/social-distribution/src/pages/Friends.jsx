@@ -48,7 +48,7 @@ class Friends extends Component {
           // get their usernames
           friendsList.forEach(id => {
               if (authToken) {
-                axios.get(`http://localhost:8000/api/users/${id}/`, {
+                axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/users/${id}/`, {
                   headers: {
                       'Authorization': `Token ${authToken}`,
                   }

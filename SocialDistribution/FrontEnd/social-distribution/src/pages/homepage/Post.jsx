@@ -39,10 +39,10 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
       const authToken = localStorage.getItem("authToken");
   
       if (authToken) {
-        console.log(`http://localhost:8000/api/users/${post_owner}/`);
+        console.log(`${process.env.REACT_APP_WHO_WILL_URL}/api/users/${post_owner}/`);
 
         axios
-          .get(`http://localhost:8000/api/users/${post_owner}/`, {
+          .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/users/${post_owner}/`, {
             headers: {
               Authorization: `Token ${authToken}`,
             },
@@ -80,7 +80,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
       // for the post, get the like count
       const authToken = localStorage.getItem("authToken");
       if (authToken) {
-        axios.get(`http://localhost:8000/api/votes/`, {
+        axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/votes/`, {
             headers: {
                 'Authorization': `Token ${authToken}`,
                 'Content-Type': "application/json"
@@ -125,7 +125,7 @@ function Post({ post, content , post_image, post_date,  post_owner, post_id, use
     console.log(postVote);
 
     if (authToken) {
-        axios.post('http://localhost:8000/api/votes/', postVote, {
+        axios.post(`${process.env.REACT_APP_WHO_WILL_URL}/api/votes/`, postVote, {
             headers: {
                 'Authorization': `Token ${authToken}`,
                 'Content-Type': "application/json"

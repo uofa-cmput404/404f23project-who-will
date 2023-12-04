@@ -21,7 +21,7 @@ const Home = () => {
 
     if (authToken) {
       axios
-        .get("http://localhost:8000/api/posts/", {
+        .get(`${process.env.REACT_APP_WHO_WILL_URL}/api/posts/`, {
           headers: {
             Authorization: `Token ${authToken}`,
           },

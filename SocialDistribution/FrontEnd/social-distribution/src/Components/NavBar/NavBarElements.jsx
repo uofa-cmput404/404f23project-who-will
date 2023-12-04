@@ -151,7 +151,7 @@ export const SearchBar = () => {
         // hit the users endpoint, determine if the user exists or not
         try {
             const authToken = localStorage.getItem('authToken');
-            const response = await axios.get(`http://localhost:8000/api/users/`, {
+            const response = await axios.get(`${process.env.REACT_APP_WHO_WILL_URL}/api/users/`, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                 }
