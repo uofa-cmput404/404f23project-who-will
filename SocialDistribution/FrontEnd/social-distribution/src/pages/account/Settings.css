@@ -19,6 +19,17 @@ label {
     align-items: center;
 }
 
+.entryFields {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.entryFields > label > input {
+    margin-left: 40px;
+    
+}
+
 .settings-content {
     background-color: var(--secondary-color);
     padding: 20px;

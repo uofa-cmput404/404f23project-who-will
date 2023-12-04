@@ -285,6 +285,19 @@
     text-decoration: underline;
 }
 
+/* account modification fields */
+
+.DOB, .gitHub, .phone {
+    padding: 5px 0px;
+    font-size: 23px;
+    margin-right: 11vw;
+    
+}
+
+.modifFields {
+    margin-top: 5px;
+}
+/* end accound modification fields */
 
 .settings-icon:hover {
     transform: scale(1.2);

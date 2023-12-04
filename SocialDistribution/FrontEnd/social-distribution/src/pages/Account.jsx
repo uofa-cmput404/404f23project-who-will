@@ -398,6 +398,11 @@ class Account extends Component {
             <div className="grid">
                 {/*Account Details*/}
                 <div className='usrName'>{this.vUser}'s Profile</div>
+                <div className='modifFields'>
+                    <div className='gitHub'>Github:</div>
+                    <div className='phone'>Phone:</div>
+                    <div className='DOB'>DOB:</div>
+                </div>
                 <div className="profile-picture">
                     <img  src="https://reactjs.org/logo-og.png" alt="Profile" /> {/*temporary image*/}
                 </div>
@@ -481,8 +486,10 @@ class Account extends Component {
                         </div>
                         <div className='postID' onClick={this.forceNavigatePost.bind(this,post.id)}>Post ID: {post.id}</div>
                     </div>
+    
                     
                     ))}
+                    
                 </div>
                 {this.state.isCommentsOpen && (
                     <Comments onClose={this.handleCloseComments} 

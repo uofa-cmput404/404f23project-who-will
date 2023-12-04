@@ -6,7 +6,9 @@ class Settings extends Component {
     state = {
         newUsername: '',
         newProfilePicture: null,
-        newGithub: ""
+        newGithub: "",
+        newDOB: "",
+        newPhone: ""
     };
 
     handleUsernameChange = (e) => {
@@ -24,20 +26,48 @@ class Settings extends Component {
         this.props.onClose();
     };
 
+    handleGithub = (e) => {
+        this.setState({ newGithub: e.target.value });
+    }
+
+    handleDOB = (e) => {
+        this.setState({ newDOB: e.target.value });
+    }
+
+    handlePhone = (e) => {
+        this.setState({ newPhone: e.target.value });
+    }
+    
+
    
     render() {
         return (
             <div className="settings-popup">
                 <div className = "settings-content">
                     <h2>Settings</h2>
-                    <label>
-                        New Username:
-                        <input type="text" value={this.state.newUsername} onChange={this.handleUsernameChange} />
-                    </label>
-                    <label>
-                        New Profile Picture:
-                        <input type="file" accept="image/*" onChange={this.handleProfilePictureChange} />
-                    </label>
+                    <div className='entryFields'>
+                        <label>
+                            New Username:
+                            <input type="text" value={this.state.newUsername} onChange={this.handleUsernameChange} />
+                        </label>
+                        <label>
+                            New DOB:
+                            <input type="text" value={this.state.newDOB} onChange={this.handleDOB} />
+                        </label>
+                        <label>
+                            New Phone Number:
+                            <input type="text" value={this.state.newPhone} onChange={this.handlePhone} />
+                        </label>
+                        <label>
+                            New Github:
+                            <input type="text" value={this.state.newGithub} onChange={this.handleGithub} />
+                        </label>
+
+                        <label>
+                            New Profile Picture:
+                            <input type="file" accept="image/*" onChange={this.handleProfilePictureChange} />
+                        </label>
+                    </div>
                     <button onClick={this.handleSaveSettings}>Save</button>
                     <button onClick={this.props.onClose}>Cancel</button>
                 </div>
