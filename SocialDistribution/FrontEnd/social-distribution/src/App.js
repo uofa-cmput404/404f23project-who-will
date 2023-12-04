@@ -12,6 +12,7 @@ import Standalone from './Components/StandalonePost';
 import Logout from './pages/Logout';
 import { ToastContainer } from 'react-toastify';
 
+// require('dotenv').config()
 function App() {
 
   // if username is also associated, we can route pathes to /friends/id ect
