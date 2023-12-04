@@ -271,6 +271,20 @@
     color: black;
   }
 
+  .post-box > div:nth-child(8) {
+    margin-left: 15px;
+  }
+
+.postID {
+    color: blue;
+    margin-left: 20px;
+}
+
+.postID:hover {
+    text-decoration: underline;
+}
+
+
 .settings-icon:hover {
     transform: scale(1.2);
 }
