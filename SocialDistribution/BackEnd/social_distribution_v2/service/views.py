@@ -541,17 +541,41 @@ def post_new_comment(request,path):
         return {'status': 'comment successfully added'}
     except:
         return {'status' : 'failed to save comment'}
+        
 
-def post_friend_request(request):
+def post_follow_request(request):
+    print("Post_follow_request()")
     try:
         data = json.loads(request.body.decode('utf-8'))
-        auth_asking_follow = data['author']['id']
+    except:
+        return {'status': 'failed to load data'}
+
+    print(f"\n\n\n\ {data} \n\n\n")
+    try:
+        print(" 'can you put a print 0 ontop of that' ")
+        auth_asking_follow = data['actor']['id']
+        print("1")
         auth_being_followed = data['object']['id']
+        print("2")
         auth_asking_follow_id=auth_asking_follow.split('/')[-1]
+        print("3")
         auth_being_followed_id=auth_being_followed.split('/')[-1]
-        asking_follow_profile = UserProfile.objects.get(id=auth_asking_follow_id)
-        being_followed_profile = UserProfile.objects.get(id=auth_being_followed_id)
-        asking_follow_profile.send_follow_request(being_followed_profile)
+        print("4")
+        try:
+            asking_follow_profile = UserProfile.objects.get(foreign=auth_asking_follow_id)
+        except:
+            return {'status': 'user asking to follow does not exist in db'}
+        try:
+            being_followed_profile = UserProfile.objects.get(id=auth_being_followed_id)
+        except:
+            print("to be followed is not internal")
+        try:
+            being_followed_profile = UserProfile.objects.get(foreign=auth_being_followed_id)
+        except:
+            print("to be followed is not external")
+        
+        being_followed_profile.send_follow_request(asking_follow_profile)
+        print("5")
         return {'status': 'follow request sent'}
     except:
         return {'status': 'failed to send follow request'}
@@ -693,7 +717,7 @@ def determine_type(request, path):
         x = {'status': 'NOT IMPLEMENTED YET!'}
     elif data["type"] == "Follow":
         print("Follow type")
-        x = post_friend_request(request)
+        x = post_follow_request(request)
     elif data["type"] == "comment":
         print("Comment type")
         x = {'status': 'NOT IMPLEMENTED YET!'}
