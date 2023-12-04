@@ -482,11 +482,10 @@ class Account extends Component {
                         } 
                         else if (this.state.isFriend === true) {
                             console.log("2");
-                            return this.state.ownerID ? (post.owner === Number(this.state.viewedProfileUserID) && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
+                            return this.state.ownerID ? (post.owner === this.state.viewedProfileUserID && (post.visibility === 'friends only' || post.visibility === 'public')) : true;
                         } 
                         else {
-                            //console.log("3");
-                            return this.state.ownerID ? post.owner === Number(this.state.viewedProfileUserID) && post.visibility === 'public' : true;
+                            return this.state.ownerID ? post.owner === this.state.viewedProfileUserID && post.visibility === 'public' : true;
                         }
                       })
                     .sort((a, b) => new Date(b.post_date_time) - new Date(a.post_date_time))
