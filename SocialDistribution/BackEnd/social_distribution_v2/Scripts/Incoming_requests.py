@@ -2,9 +2,9 @@ import requests
 
 #type
 #classification = "post"
-#classification = "author"
+classification = "author"
 #classification = "like"
-classification = "comment"
+# classification = "comment"
 #classification = "edit_post"
 
 if classification == "post":

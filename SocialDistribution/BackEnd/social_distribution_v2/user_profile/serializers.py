@@ -8,10 +8,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    profile_data = ProfileSerializer()
     class Meta:
         model = CustomUser
-        fields=('id','user_id', 'username','email','password', 'foreign', 'profile_data')
+        fields=('id','user_id', 'username','email','password', 'foreign')
         # extra_kwargs = {'password': {'write_only': True}}  # Hide password field in GET requests
 
     def create(self, validated_data):
@@ -31,5 +30,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
         user.set_password(validated_data['password'])
         user.save()
-
+        print("after create in ser")
         return user

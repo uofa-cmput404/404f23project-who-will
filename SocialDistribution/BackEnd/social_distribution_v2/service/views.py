@@ -542,7 +542,6 @@ def post_new_comment(request,path):
     except:
         return {'status' : 'failed to save comment'}
 
-
 def POST_request(request):
     print("POST_request()")
     print(2, request)

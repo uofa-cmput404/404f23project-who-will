@@ -284,6 +284,7 @@ class PostViewSet(viewsets.ModelViewSet):
         refactored_external_api_data=[]
         return refactored_external_api_data    
 
+    #local list
     def list(self, request):
         # TODO NOT DONE
         print("Grabbing all posts from everyone")
@@ -307,6 +308,7 @@ class PostViewSet(viewsets.ModelViewSet):
     
         return Response(combined_data)
 
+    #local retrieval
     def retrieve(self, request, pk):
         print("retrieve")
         # Implement your logic for retrieving a single post by ID
