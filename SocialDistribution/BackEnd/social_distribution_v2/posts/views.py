@@ -83,7 +83,7 @@ class PostViewSet(viewsets.ModelViewSet):
         # transformed_data["author"] = author_val
 
         # for academy team 
-        transformed_data["author"] =  "86c733fa-fd7c-4dc9-9b66-7fdbfa3a9792"
+        transformed_data["author"] =  info['id']
 
         # categories
         transformed_data["categories"] = data_dict["categories"] if "categories" in data_dict else None
@@ -151,9 +151,9 @@ class PostViewSet(viewsets.ModelViewSet):
         print(json.dumps(transformed_data, indent=4))
         print("______________________")
 
-        csrf_token_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/login"
-        login_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/user"
-        post_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/posts/"
+        csrf_token_url = "https://cmput404-httpacademy8-3caa8234de32.herokuapp.com/authors/login"
+        login_url = "https://cmput404-httpacademy8-3caa8234de32.herokuapp.com/authors/user"
+        post_url = "https://cmput404-httpacademy8-3caa8234de32.herokuapp.com/posts/"
         session = requests.Session()
         print("Session:", session)
 

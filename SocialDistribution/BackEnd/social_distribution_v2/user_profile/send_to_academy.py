@@ -7,10 +7,10 @@ WHOWILLHOST = "https://whowill-22f35606f344.herokuapp.com/"
 '''
 HTTPACADEMY 
 '''
-csrf_token_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/login"
+csrf_token_url = "https://cmput404-httpacademy8-3caa8234de32.herokuapp.com/authors/login"
 # the same for all requests
-login_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/user"
-post_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/register"
+login_url = "https://cmput404-httpacademy8-3caa8234de32.herokuapp.com/authors/user"
+post_url = "https://cmput404-httpacademy8-3caa8234de32.herokuapp.com/authors/register"
 session = requests.Session()
 print("Session:", session)
 # credentials
