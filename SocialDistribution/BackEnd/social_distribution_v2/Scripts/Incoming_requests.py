@@ -4,7 +4,7 @@ import requests
 #classification = "post"
 #classification = "author"
 #classification = "like"
-# classification = "comment"
+#classification = "comment"
 #classification = "edit_post"
 classification = "follow"
 

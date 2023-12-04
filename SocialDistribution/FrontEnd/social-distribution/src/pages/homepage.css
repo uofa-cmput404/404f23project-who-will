@@ -206,5 +206,39 @@ body {
 
 }
 
+.username-dialog {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  height: 200px;
+  width: 400px;
+}
 
+.username-box  {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 120px;
+}
+
+.username-box .input {
+  margin-top: 20px;
+  width: 300px;
+  height: 120px;
+}
+
+.submit-username {
+  flex-direction: column;
+
+}
+
+.submit-username {
+  margin-top: 20px;
+}
+.close-button {
+  margin-top: 10px;
+  margin-left: 300px;
+
+}
 
