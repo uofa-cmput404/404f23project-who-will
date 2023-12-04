@@ -287,6 +287,17 @@
 
 .settings-icon:hover {
     transform: scale(1.2);
+    cursor: pointer;
+    color: black;
+    grid-area: topbar-right;
+    width: min-content;
+    height: min-content;
+    border: none;
+    background-color: transparent;
+    border-radius: 40px;
+    padding: 0;
+    justify-self: end;
+    margin: 40px;
 }
 
 .likes {
