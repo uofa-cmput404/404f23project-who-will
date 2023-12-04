@@ -37,7 +37,7 @@ function Postlist({ posts, username}) {
         </select>
 
         <div className="github_activity">
-          <Github username = {username} ></Github>
+          <Github></Github>
         </div>
       </div>
 
