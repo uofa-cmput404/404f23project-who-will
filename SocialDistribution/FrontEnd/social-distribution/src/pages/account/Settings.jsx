@@ -40,14 +40,16 @@ class Settings extends Component {
             };
 
             reader.readAsDataURL(newProfilePicture);
+            window.location.reload();
         }
 
     };
 
     sendEditProfileData = (editData) => {
         const authToken = localStorage.getItem("authToken"); // Use localStorage.getItem() to get the authToken
+        const pk = localStorage.getItem("pk");
         if (authToken) {
-            axios.patch(`http://localhost:8000/api/profiles/${"050a406a-774e-4b38-9008-5915f15c1460"}/`, editData, {
+            axios.patch(`http://localhost:8000/api/profiles/${pk}/`, editData, {
                 headers: {
                     'Authorization': `Token ${authToken}`,
                     'Content-Type': 'application/json'
