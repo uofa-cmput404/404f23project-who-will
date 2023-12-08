@@ -18,7 +18,7 @@ Firstname Lastname
   
 User Stories:
 --------------------------------------------------------------------------------
-As an author I want to make public posts.                               [DONE]
+*As an author I want to make public posts.                               [DONE]
 As an author I want to edit public posts. 														  [DONE]
 As an author, posts I create can link to images.											  [DONE]
 As an author, posts I create can be images.														  [DONE]
