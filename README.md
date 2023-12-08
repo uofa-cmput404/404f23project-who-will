@@ -40,7 +40,7 @@ As an author, I can re-share other author’s friend posts to my friends        
 
 As an author, posts I make can be in simple plain text								             [DONE]			
 
-As an author, posts I make can be in CommonMark												             [NO]		
+- [ ] As an author, posts I make can be in CommonMark												       [NO]		
 
 As an author, I want a consistent identity per server									             [DONE]
 
@@ -115,7 +115,7 @@ HTTP Academy: We can recieve authors, posts, comments and likes. We can send aut
 
 Team == Good: 
 
-Credentials:
+Credentials: 
 
 Who Will: admin admin
 
