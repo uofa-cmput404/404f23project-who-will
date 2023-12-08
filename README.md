@@ -109,24 +109,25 @@ As a server admin, node to node connections can be authenticated with HTTP Basic
 
 Teams Connected With:
 --------------------------------------------------------------------------------
-Web Crawlers (Team Silk): We can receive authors, posts, follow requests, comments and likes we can send authors and posts
+Web Crawlers (Team Silk): We can receive authors, posts, follow requests, comments and likes we can send authors and posts.
 
-HTTP Academy: We can recieve authors, posts, comments and likes. We can send authors and posts
+HTTP Academy: We can recieve authors, posts, comments and likes. We can send authors and posts.
 
-Team == Good: 
+Team == Good: We can send posts.
 
 ** Credentials: **
 
 Who Will: admin admin
 
 Http Academy:
+https://cmput404-httpacademy10-929f7da50223.herokuapp.com/
 
 Team == Good: 
 
 Silk:
-Frontend: https://incandescent-croissant-3ddf57.netlify.app/
-Backend: https://silk-cmput404-project-21e5c91727a7.herokuapp.com/
-Username: Michelangelo
-Password: edEZCtef30dPm4ap%QcrzEhx
+Frontend: https://incandescent-croissant-3ddf57.netlify.app/  
+Backend: https://silk-cmput404-project-21e5c91727a7.herokuapp.com/  
+Username: Michelangelo  
+Password: edEZCtef30dPm4ap%QcrzEhx  
 
 Generally everything is LICENSE'D under the Apache License 2.0
