@@ -115,12 +115,17 @@ HTTP Academy: We can recieve authors, posts, comments and likes. We can send aut
 
 Team == Good: We can send posts.
 
-** Credentials: **
+**Credentials:**
 
-Who Will: admin admin
+Who Will: 
+deployed app URL:  https://whosocialwill.netlify.app/  
+username:admin  
+password:admin  
 
 Http Academy:
-https://cmput404-httpacademy10-929f7da50223.herokuapp.com/
+https://cmput404-httpacademy10-929f7da50223.herokuapp.com/  
+username: admin@email.com  
+password: admin  
 
 Team == Good: 
 
