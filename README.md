@@ -64,7 +64,7 @@ As an author, when someone sends me a friends only-post I want to see the likes.
 
 As an author, comments on friend posts are private only to me the original author. [DONE]
 
-As an author, I want un-befriend local and remote authors													 [Local]
+As an author, I want un-befriend local and remote authors													 [Local Done]
 
 As an author, I want to be able to use my web-browser to manage my profile				 [DONE]
 
