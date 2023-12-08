@@ -17,7 +17,9 @@ Firstname Lastname
 * Xuemeng Wei
   
 User Stories:
+
 --------------------------------------------------------------------------------
+
 As an author I want to make public posts.                                          [DONE]
 
 As an author I want to edit public posts. 														             [DONE]
