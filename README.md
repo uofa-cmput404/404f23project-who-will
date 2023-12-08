@@ -18,20 +18,27 @@ Firstname Lastname
   
 User Stories:
 --------------------------------------------------------------------------------
-As an author I want to make public posts.                               [DONE]
-As an author I want to edit public posts. 														  [DONE]
-As an author, posts I create can link to images.											  [DONE]
-As an author, posts I create can be images.														  [DONE]
-As a server admin, images can be hosted on my server.									  [DONE]
-As an author, posts I create can be private to another author					  [DONE]
-As an author, posts I create can be private to my friends								[DONE]																
-As an author, I can share other author’s public posts									 [via URI]
+As an author I want to make public posts.                                          [DONE]
 
-As an author, I can re-share other author’s friend posts to my friends [via URI]
+As an author I want to edit public posts. 														             [DONE]
 
-As an author, posts I make can be in simple plain text								 [DONE]			
+As an author, posts I create can link to images.											             [DONE]
 
-As an author, posts I make can be in CommonMark												 [NO]		
+As an author, posts I create can be images.														             [DONE]
+
+As a server admin, images can be hosted on my server.									             [DONE]
+
+As an author, posts I create can be private to another author					             [DONE]
+
+As an author, posts I create can be private to my friends								           [DONE]	
+
+As an author, I can share other author’s public posts									             [via URI]
+
+As an author, I can re-share other author’s friend posts to my friends             [via URI]
+
+As an author, posts I make can be in simple plain text								             [DONE]			
+
+As an author, posts I make can be in CommonMark												             [NO]		
 
 As an author, I want a consistent identity per server									             [DONE]
 
