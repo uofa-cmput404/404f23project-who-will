@@ -40,7 +40,7 @@ User Stories:
 
 - [x] As an author, posts I make can be in simple plain text								           	
 
-- [ ] As an author, posts I make can be in CommonMark												       [NO]		
+- [ ] As an author, posts I make can be in CommonMark												      
 
 - [x] As an author, I want a consistent identity per server									            
 
@@ -59,7 +59,6 @@ User Stories:
 - [ ] As an author, I want to befriend remote authors																     [NO - other team problem]
 
 - [x] As an author, I want to feel safe about sharing images and posts with my friends – images shared to friends should only be visible to friends. public images are public						                                     
-
 - [x] As an author, when someone sends me a friends only-post I want to see the likes.  
 
 - [x] As an author, comments on friend posts are private only to me the original author. 
@@ -98,9 +97,9 @@ As an author, I want un-befriend local and remote authors													 [Local Do
 
 - [ ] As a server admin, I want to be able to remove nodes and stop sharing with them.  
 
-As a server admin, I can limit nodes connecting to me via authentication.				      [Not really] - some auth
+As a server admin, I can limit nodes connecting to me via authentication.				      [partially complete] - some auth
 
-As a server admin, node to node connections can be authenticated with HTTP Basic Auth [Not really] - 1/2 implemented in all teams
+As a server admin, node to node connections can be authenticated with HTTP Basic Auth  [partially complete] - 1/2 implemented in all teams
 
 - [x] As a server admin, I can disable the node to node interfaces for connections that are not authenticated!
 
@@ -128,6 +127,8 @@ username: admin@email.com
 password: admin  
 
 Team == Good: 
+frontend:  https://cmput404-social-network-401e4cab2cc0.herokuapp.com/  
+backend:  https://cmput404-social-network-401e4cab2cc0.herokuapp.com/  
 
 Silk:
 Frontend: https://incandescent-croissant-3ddf57.netlify.app/  
