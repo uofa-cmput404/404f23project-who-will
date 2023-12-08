@@ -71,7 +71,7 @@ As an author, I want un-befriend local and remote authors													 [Local Do
 
 - [x] As a server admin, I want to be able add, modify, and remove authors.						
 
-- [ ] As a server admin, I want to OPTIONALLY be able allow users to sign up but require my OK to finally be on my server	[Not really] 
+- [ ] As a server admin, I want to OPTIONALLY be able allow users to sign up but require my OK to finally be on my server	
 
 - [x] As a server admin, I don’t want to do heavy setup to get the posts of my author’s friends.										
 
