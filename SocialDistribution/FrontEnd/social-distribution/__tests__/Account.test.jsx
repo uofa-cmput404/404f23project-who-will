@@ -4,6 +4,6 @@ import { render, screen } from '@testing-library/react';
 import Account from '../src/pages/Account';
 test('renders Account', () => {
     render(<Account/>)
-    const element = screen.getByText(/sign in/i);
+    const element = screen.getByText(/profile/i);
     expect(element).toBeInDocument();
 })

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './Account.css';
 import { FaGear, IconName } from "react-icons/fa6";
 import AddPost from './account/AddPost.jsx'
-import photo from '../images/free_profile_picture.png'; //need to import local images, I wonder how this will work for django database
 import Settings from './account/Settings';
 import EditPost from './account/EditPost.jsx';
 import DeletePost from './account/DeletePost.jsx';
