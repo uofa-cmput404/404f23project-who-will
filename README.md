@@ -118,7 +118,7 @@ Team == Good: We can send posts.
 
 Who Will: 
 deployed app URL:  https://whosocialwill.netlify.app/  
-backend URL: https://whoiswill-130181bf2e5e.herokuapp.com/
+backend URL: https://whoiswill-130181bf2e5e.herokuapp.com/  
 username:admin  
 password:admin  
 
@@ -128,8 +128,10 @@ username: admin@email.com
 password: admin  
 
 Team == Good: 
-frontend:  https://cmput404-social-network-401e4cab2cc0.herokuapp.com/  
+frontend:  https://cmput404-social-network-401e4cab2cc0.herokuapp.com/   
 backend:  https://cmput404-social-network-401e4cab2cc0.herokuapp.com/  
+username:admin  
+password: admin  
 
 Silk:
 Frontend: https://incandescent-croissant-3ddf57.netlify.app/  
